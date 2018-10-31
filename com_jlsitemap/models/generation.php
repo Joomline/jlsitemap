@@ -202,6 +202,12 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			// Remove slash in root page
 			$urls['site_root']->set('loc', rtrim($urls['site_root']->get('loc'), '/'));
 
+			// Remove index.php
+			if (isset($urls['index.php']))
+			{
+				unset($urls['index.php']);
+			}
+
 			$this->_urls = $urls;
 		}
 
