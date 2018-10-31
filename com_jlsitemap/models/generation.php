@@ -199,6 +199,9 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$urls['site_root'] = new Registry($root);
 			}
 
+			// Remove slash in root page
+			$urls['site_root']->set('loc', rtrim($urls['site_root']->get('loc'), '/'));
+
 			$this->_urls = $urls;
 		}
 
