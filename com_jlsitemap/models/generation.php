@@ -199,7 +199,6 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$urls['site_root'] = new Registry($root);
 			}
 
-
 			// Remove index.php
 			if (isset($urls['index.php']))
 			{
