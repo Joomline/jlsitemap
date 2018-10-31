@@ -50,7 +50,7 @@ class JLSiteMapController extends BaseController
 		catch (Exception $e)
 		{
 			$this->setError($e->getMessage());
-			$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_FAILURE', $this->getError(), 'error'));
+			$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_FAILURE', $this->getError()), 'error');
 			$this->setRedirect('index.php?option=com_jlsitemap');
 
 			return false;
