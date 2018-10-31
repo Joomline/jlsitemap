@@ -44,7 +44,7 @@ class JLSitemapHelper extends CMSHelper
 		}
 
 		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_PLUGINS'),
-			'index.php?option=com_plugins&filter[folder]=sitemap',
+			'index.php?option=com_plugins&filter[folder]=jlsitemap',
 			$vName == 'plugins');
 
 
