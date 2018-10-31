@@ -14,6 +14,7 @@ use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
@@ -120,10 +121,11 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	{
 		if ($this->_urls === null)
 		{
-			$site   = SiteApplication::getInstance('site');
-			$router = $site->getRouter();
-			$config = ComponentHelper::getParams('com_jlsitemap');
-			$access = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
+			$site          = SiteApplication::getInstance('site');
+			$router        = $site->getRouter();
+			$config        = ComponentHelper::getParams('com_jlsitemap');
+			$access        = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
+			$multilanguage = Multilanguage::isEnabled();
 
 			// Set Changefreq priority
 			$changefreqPriority = array(
@@ -140,7 +142,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$urls = array();
 			foreach ($this->getPlugins() as $name => $plugin)
 			{
-				$pluginUrls = $plugin->onGetUrls($access);
+				$pluginUrls = $plugin->onGetUrls($access, $multilanguage);
 				if (!empty($pluginUrls))
 				{
 					foreach ($pluginUrls as $url)

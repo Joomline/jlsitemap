@@ -27,13 +27,14 @@ class plgJLSitemapMenu extends CMSPlugin
 	/**
 	 * Method to get urls array
 	 *
-	 * @param array $access Guest access levels
+	 * @param array $access        Guest access levels
+	 * @param bool  $multilanguage Enable multilanguage in site
 	 *
 	 * @return array Urls array with attributes
 	 *
 	 * @since 0.0.1
 	 */
-	public function onGetUrls($access = array())
+	public function onGetUrls($access = array(), $multilanguage = false)
 	{
 		if ($this->_urls === null)
 		{
@@ -81,9 +82,16 @@ class plgJLSitemapMenu extends CMSPlugin
 			$urls = array();
 			foreach ($rows as $row)
 			{
+				// Prepare loc attribute
+				$loc = 'index.php?Itemid=' . $row->id;
+				if (!empty($row->language) && $row->language !== '*' && $multilanguage)
+				{
+					$loc .= '&lang=' . $row->language;
+				}
+
 				// Prepare ulr object
 				$url             = new stdClass();
-				$url->loc        = 'index.php?Itemid=' . $row->id . '&lang=' . $row->language;
+				$url->loc        = $loc;
 				$url->changefreq = $changefreq;
 				$url->priority   = $priority;
 
