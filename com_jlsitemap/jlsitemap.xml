@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.8" type="component" method="upgrade">
+	<name>COM_JLSITEMAP</name>
+	<author>Joomline</author>
+	<creationDate>October 2018</creationDate>
+	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>sales@joomline.ru</authorEmail>
+	<authorUrl>https://joomline.ru/</authorUrl>
+	<version>0.0.1</version>
+	<description>COM_JLSITEMAP_DESCRIPTION</description>
+	<administration>
+		<menu>COM_JLSITEMAP</menu>
+		<files>
+			<folder>helpers</folder>
+			<folder>models</folder>
+			<folder>views</folder>
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<filename>jlsitemap.php</filename>
+		</files>
+		<languages folder="language">
+			<language tag="en-GB">en-GB/en-GB.com_jlsitemap.ini</language>
+			<language tag="en-GB">en-GB/en-GB.com_jlsitemap.sys.ini</language>
+			<language tag="ru-RU">ru-RU/ru-RU.com_jlsitemap.ini</language>
+			<language tag="ru-RU">ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
+		</languages>
+	</administration>
+	<media destination="com_jlsitemap" folder="media">
+		<folder>css</folder>
+	</media>
+</extension>

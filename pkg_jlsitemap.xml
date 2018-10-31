@@ -15,6 +15,7 @@
 		<language tag="ru-RU">ru-RU/ru-RU.pkg_jlsitemap.sys.ini</language>
 	</languages>
 	<files>
+		<folder type="component" id="com_jlsitemap">com_jlsitemap</folder>
 	</files>
 	<updateservers>
 		<server type="extension" priority="1" name="Joomline">
