@@ -10,3 +10,16 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\Controller\BaseController;
+
+class JLSiteMapController extends BaseController
+{
+	/**
+	 * The default view.
+	 *
+	 * @var  string
+	 *
+	 * @since 0.0.1
+	 */
+	protected $default_view = 'home';
+}
