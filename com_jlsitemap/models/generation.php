@@ -24,15 +24,6 @@ use Joomla\Registry\Registry;
 class JLSitemapModelGeneration extends BaseDatabaseModel
 {
 	/**
-	 * jlsitemap plugins
-	 *
-	 * @var array
-	 *
-	 * @since 0.0.1
-	 */
-	protected $_plugins = null;
-
-	/**
 	 * Sitemap xml
 	 *
 	 * @var string
@@ -133,7 +124,8 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$config->set('siteRobots', Factory::getConfig()->get('robots'));
 			$config->set('guestAccess', array_unique(Factory::getUser(0)->getAuthorisedViewLevels()));
 			$config->set('multilanguage', Multilanguage::isEnabled());
-
+			$config->set('changefreqPriority',
+				array('always' => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4, 'monthly' => 5, 'yearly' => 6, 'never' => 7));
 
 			// Create urls arrays
 			$all      = array();
@@ -180,6 +172,64 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				}
 			}
 
+			// Add urls from plugins
+			PluginHelper::importPlugin('jlsitemap');
+			$dispatcher = JEventDispatcher::getInstance();
+			$dispatcher->trigger('onGetUrls', array(&$rows, &$config));
+			foreach ($rows as $row)
+			{
+				$item = new Registry($row);
+				if ($loc = $item->get('loc', false))
+				{
+					$loc = trim(str_replace('administrator/', '', $router->build($loc)->toString()), '/');
+					$key = (empty($loc)) ? '/' : $loc;
+
+					// Check menu excludes
+					if (in_array($key, $menuExcludes)) continue;
+
+					// Prepare url attributes
+					$changefreq         = $item->get('changefreq', $config->get('changefreq', 'weekly'));
+					$changefreqPriority = $config->get('changefreqPriority')[$changefreq];
+					$priority           = $item->get('priority', $config->get('priority', '0.5'));
+					$lastmod            = $item->get('lastmod', false);
+
+					// Change attributes if url already exist
+					$exist = (isset($all[$key])) ? $all[$key] : false;
+					if ($exist)
+					{
+						$changefreq = ($changefreqPriority < $exist->get('changefreqPriority')) ? $changefreq : $exist->get('changefreq');
+						$priority   = (floatval($priority) > floatval($exist->get('priority'))) ? $priority : $exist->get('priority');
+						$lastmod    = ($lastmod && Factory::getDate($lastmod)->toUnix() > Factory::getDate($exist->get('lastmod'))->toUnix())
+							? $lastmod : $exist->get('lastmod');
+					}
+
+					// Create url Registry
+					$url = new Registry();
+					$url->set('loc', Uri::root() . $loc);
+					$url->set('changefreq', $changefreq);
+					$url->set('changefreqPriority', $config->get('changefreqPriority')[$changefreq]);
+					$url->set('priority', $priority);
+					if ($lastmod)
+					{
+						$url->set('lastmod', Factory::getDate($lastmod)->toISO8601());
+					}
+
+					// Add url to arrays
+					$all[$key] = $url;
+					if ($item->get('exclude', false))
+					{
+						$excludes[$key] = $item->get('exclude');
+
+						// Exclude item if already in array (last item has priority)
+						unset($includes[$key]);
+					}
+					else
+					{
+						$includes[$key] = $url;
+					}
+				}
+			}
+
 			// Sort urls arrays
 			ksort($all);
 			ksort($includes);
@@ -190,8 +240,6 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$urls->includes = $includes;
 			$urls->excludes = $excludes;
 			$urls->all      = $all;
-
-			echo '<pre>', print_r($urls, true), '</pre>';
 
 			// Set urls object
 			$this->_urls = $urls;
@@ -220,6 +268,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				->from($db->quoteName('#__menu'))
 				->where('client_id = 0')
 				->where('id > 1')
+				->where('published IN (0, 1)')
 				->order($db->escape('lft') . ' ' . $db->escape('asc'));
 			$db->setQuery($query);
 			$rows = $db->loadObjectList('id');
@@ -236,9 +285,8 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 					$loc .= '&lang=' . $row->language;
 				}
 
-				// Prepare exclude & noAccess attribute
-				$params = new Registry($row->params);
-
+				// Prepare exclude attribute
+				$params  = new Registry($row->params);
 				$exclude = false;
 				if (preg_match('/noindex/', $params->get('robots', $config->get('siteRobots'))))
 				{
@@ -273,55 +321,5 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 		}
 
 		return $this->_menuItems;
-	}
-
-	/**
-	 * Method to get jlsitemap plugins
-	 *
-	 * @return array
-	 *
-	 * @since 0.0.1
-	 */
-	protected function getPlugins()
-	{
-		if ($this->_plugins === null)
-		{
-			// Get jlsitemap plugins
-			PluginHelper::importPlugin('jlsitemap');
-			$rows = PluginHelper::getPlugin('jlsitemap');
-
-			// Create jlsitemap plugins array
-			$plugins = array();
-			foreach ($rows as $plugin)
-			{
-				$key       = $plugin->name;
-				$className = 'plg' . $plugin->type . $plugin->name;
-				if (class_exists($className))
-				{
-					$plugin = new $className($this, (array) $plugin);
-					if (method_exists($className, 'onGetUrls'))
-					{
-						$plugins[$key] = $plugin;
-					}
-				}
-			}
-
-			$this->_plugins = $plugins;
-		}
-
-		return $this->_plugins;
-	}
-
-	/**
-	 * Attach an observer object
-	 *
-	 * @param   object $observer An observer object to attach
-	 *
-	 * @return  void
-	 *
-	 * @since 0.0.1
-	 */
-	public function attach($observer)
-	{
 	}
 }
