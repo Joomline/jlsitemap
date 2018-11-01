@@ -233,6 +233,11 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				}
 			}
 
+			// Unset index.php page from arrays
+			unset($all['index.php']);
+			unset($includes['index.php']);
+			unset($excludes['index.php']);
+
 			// Sort urls arrays
 			ksort($all);
 			ksort($includes);
