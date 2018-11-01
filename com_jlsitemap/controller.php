@@ -45,7 +45,8 @@ class JLSiteMapController extends BaseController
 				return false;
 			}
 
-			$this->setMessage(Text::plural('COM_JLSITEMAP_GENERATION_SUCCESS', count($urls)));
+			$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_SUCCESS', count($urls->includes),
+				count($urls->excludes), count($urls->all)));
 		}
 		catch (Exception $e)
 		{

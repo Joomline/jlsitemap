@@ -15,6 +15,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
@@ -41,36 +42,37 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	protected $_xml = null;
 
 	/**
-	 * Urls array
+	 * Object with urls array
 	 *
-	 * @var array
+	 * @var object
 	 *
 	 * @since 0.0.1
 	 */
 	protected $_urls = null;
 
 	/**
+	 * Menu items array
+	 *
+	 * @var array
+	 *
+	 * @since 0.0.1
+	 */
+	protected $_menuItems = null;
+
+	/**
 	 * Method to generate sitemap.xml
 	 *
-	 * @return bool|array Array if successful, false otherwise and internal error is set.
+	 * @return bool|object Array if successful, false otherwise and internal error is set.
 	 *
 	 * @since 0.0.1
 	 */
 	public function generate()
 	{
-		// Check plugins
-		if (empty($this->getPlugins()))
-		{
-			$this->setError('COM_JLSITEMAP_ERROR_PLUGINS_NOT_FOUND');
-
-			return false;
-		}
-
 		// Get urs
 		$urls = $this->getUrls();
 
 		// Get sitemap xml
-		$xml = $this->getXML();
+		$xml = $this->getXML($urls->inludes);
 
 		$file = JPATH_ROOT . '/sitemap.xml';
 		if (File::exists($file))
@@ -85,20 +87,23 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	/**
 	 * Method to get sitemap xml sting
 	 *
+	 * @param array $rows Include urls array
+	 *
 	 * @return string
 	 *
 	 * @since 0.0.1
 	 */
-	protected function getXML()
+	protected function getXML($rows = array())
 	{
 		if ($this->_xml === null)
 		{
-			$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>');
+			$rows = (empty($rows)) ? $this->getUrls()->includes : $rows;
+			$xml  = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>');
 
-			foreach ($this->getUrls() as $registry)
+			foreach ($rows as $row)
 			{
 				$url = $xml->addChild('url');
-				foreach ($registry->toArray() as $name => $value)
+				foreach ($row->toArray() as $name => $value)
 				{
 					$url->addChild($name, $value);
 				}
@@ -113,7 +118,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	/**
 	 * Method to get sitemap urls array
 	 *
-	 * @return array
+	 * @return object
 	 *
 	 * @since 0.0.1
 	 */
@@ -121,94 +126,153 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	{
 		if ($this->_urls === null)
 		{
-			$site          = SiteApplication::getInstance('site');
-			$router        = $site->getRouter();
-			$config        = ComponentHelper::getParams('com_jlsitemap');
-			$access        = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
-			$multilanguage = Multilanguage::isEnabled();
+			// Prepare variables
+			$site   = SiteApplication::getInstance('site');
+			$router = $site->getRouter();
+			$config = ComponentHelper::getParams('com_jlsitemap');
+			$config->set('siteRobots', Factory::getConfig()->get('robots'));
+			$config->set('guestAccess', array_unique(Factory::getUser(0)->getAuthorisedViewLevels()));
+			$config->set('multilanguage', Multilanguage::isEnabled());
 
-			// Set Changefreq priority
-			$changefreqPriority = array(
-				'always'  => 1,
-				'hourly'  => 2,
-				'daily'   => 3,
-				'weekly'  => 4,
-				'monthly' => 5,
-				'yearly'  => 6,
-				'never'   => 7
-			);
 
-			// Create urls array
-			$urls = array();
-			foreach ($this->getPlugins() as $name => $plugin)
+			// Create urls arrays
+			$all      = array();
+			$includes = array();
+			$excludes = array();
+
+			// Add home page to urls
+			$home = new Registry();
+			$home->set('loc', Uri::root());
+			$home->set('changefreq', $config->get('changefreq', 'weekly'));
+			$home->set('priority', $config->get('priority', '0.5'));
+			$all ['/']     = $home;
+			$includes['/'] = $home;
+
+			// Add menu items to urls arrays
+			$menuHomes    = array();
+			$menuExcludes = array();
+			foreach ($this->getMenuItems($config) as $menu)
 			{
-				$pluginUrls = $plugin->onGetUrls($access, $multilanguage);
-				if (!empty($pluginUrls))
+				// Prepare url loc and urls arrays key
+				$loc = trim(str_replace('administrator/', '', $router->build($menu->loc)->toString()), '/');
+				$key = (empty($loc)) ? '/' : $loc;
+
+				// Create url Registry
+				$url = new Registry();
+				$url->set('loc', Uri::root() . $loc);
+				$url->set('changefreq', $menu->changefreq);
+				$url->set('priority ', $menu->priority);
+
+				// Add url to arrays
+				$all[$key] = $url;
+				if ($menu->home)
 				{
-					foreach ($pluginUrls as $url)
-					{
-						$url = new Registry($url);
-						if ($loc = $url->get('loc', false))
-						{
-							// Prepare url loc and array key
-							$loc = trim(str_replace('administrator/', '', $router->build($loc)->toString()), '/');
-							$key = (empty($loc)) ? 'site_root' : $loc;
-
-							// Prepare url attributes
-							$changefreq = $url->get('changefreq', $config->get('changefreq', 'weekly'));
-							$priority   = $url->get('priority', $config->get('priority', '0.5'));
-							$lastmod    = $url->get('lastmod', false);
-
-							// Change attributes if url already exist
-							$exist = (isset($urls[$key])) ? $urls[$key] : false;
-							if ($exist)
-							{
-								$changefreq = ($changefreqPriority[$changefreq] < $changefreqPriority[$exist->get('changefreq')]) ?
-									$changefreq : $exist->get('changefreq');
-								$priority   = (floatval($priority) > floatval($exist->get('priority'))) ? $priority : $exist->get('priority');
-								$lastmod    = ($lastmod && $lastmod > $exist->get('lastmod')) ? $lastmod : $exist->get('lastmod');
-							}
-
-							// Create url object
-							$item             = new stdClass();
-							$item->loc        = Uri::root() . $loc;
-							$item->changefreq = $changefreq;
-							$item->priority   = $priority;
-							if ($lastmod)
-							{
-								$item->lastmod = Factory::getDate($lastmod)->toISO8601();
-							}
-
-							// Add url to array
-							$urls[$key] = new Registry($item);
-						}
-					}
+					$menuHomes[] = $key;
+				}
+				if ($menu->exclude && !$menu->home)
+				{
+					$excludes[$key]     = Text::_('COM_JLSITEMAP_EXCLUDE_MENU_' . strtoupper($menu->exclude));
+					$menuExcludes[$key] = $menu->exclude;
+				}
+				else
+				{
+					$includes[$key] = $url;
 				}
 			}
 
-			// Add root if not in array
-			if (empty($urls['site_root']))
-			{
-				// Prepare root object
-				$root             = new stdClass();
-				$root->loc        = Uri::root();
-				$root->changefreq = $config->get('changefreq', 'weekly');
-				$root->priority   = $config->get('priority', '0.5');
+			// Sort urls arrays
+			ksort($all);
+			ksort($includes);
+			ksort($excludes);
 
-				// Add root to array
-				$urls['site_root'] = new Registry($root);
-			}
+			// Prepare urls object
+			$urls           = new stdClass();
+			$urls->includes = $includes;
+			$urls->excludes = $excludes;
+			$urls->all      = $all;
 
-			// Remove index.php
-			if (isset($urls['index.php']))
-			{
-				unset($urls['index.php']);
-			}
+			echo '<pre>', print_r($urls, true), '</pre>';
 
+			// Set urls object
 			$this->_urls = $urls;
 		}
 
 		return $this->_urls;
+	}
+
+	/**
+	 * Method to get menu items array
+	 *
+	 * @param Registry $config Component config
+	 *
+	 * @return array
+	 *
+	 * @since 0.0.1
+	 */
+	protected function getMenuItems($config)
+	{
+		if ($this->_menuItems === null)
+		{
+			// Get menu items
+			$db    = Factory::getDbo();
+			$query = $db->getQuery(true)
+				->select(array('id', 'type', 'published', 'access', 'home', 'params', 'language'))
+				->from($db->quoteName('#__menu'))
+				->where('client_id = 0')
+				->where('id > 1')
+				->order($db->escape('lft') . ' ' . $db->escape('asc'));
+			$db->setQuery($query);
+			$rows = $db->loadObjectList('id');
+
+			// Create menu items array
+			$items        = array();
+			$excludeTypes = array('alias', 'separator', 'heading', 'url');
+			foreach ($rows as $row)
+			{
+				// Prepare loc attribute
+				$loc = 'index.php?Itemid=' . $row->id;
+				if (!empty($row->language) && $row->language !== '*' && $config->get('multilanguage', false))
+				{
+					$loc .= '&lang=' . $row->language;
+				}
+
+				// Prepare exclude & noAccess attribute
+				$params = new Registry($row->params);
+
+				$exclude = false;
+				if (preg_match('/noindex/', $params->get('robots', $config->get('siteRobots'))))
+				{
+					$exclude = 'noindex';
+				}
+				if ($row->published != 1)
+				{
+					$exclude = 'published';
+				}
+				if (in_array($row->type, $excludeTypes))
+				{
+					$exclude = 'system_type';
+				}
+				if (!in_array($row->access, $config->get('guestAccess', array())))
+				{
+					$exclude = 'access';
+				}
+
+				// Prepare menu item object
+				$item             = new stdClass();
+				$item->loc        = $loc;
+				$item->changefreq = $config->get('changefreq', 'weekly');
+				$item->priority   = $config->get('priority', '0.5');
+				$item->home       = $row->home;
+				$item->exclude    = $exclude;
+
+				// Add menu item to array
+				$items[] = $item;
+			}
+
+			$this->_menuItems = $items;
+		}
+
+		return $this->_menuItems;
 	}
 
 	/**
