@@ -63,7 +63,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 		$urls = $this->getUrls();
 
 		// Get sitemap xml
-		$xml = $this->getXML($urls->inludes);
+		$xml = $this->getXML($urls->includes);
 
 		$file = JPATH_ROOT . '/sitemap.xml';
 		if (File::exists($file))
