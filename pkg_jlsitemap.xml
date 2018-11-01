@@ -17,7 +17,6 @@
 	<files>
 		<folder type="component" id="com_jlsitemap">com_jlsitemap</folder>
 		<folder type="plugin" id="content" group="jlsitemap">plg_jlsitemap_content</folder>
-		<folder type="plugin" id="menu" group="jlsitemap">plg_jlsitemap_menu</folder>
 	</files>
 	<updateservers>
 		<server type="extension" priority="1" name="Joomline">
