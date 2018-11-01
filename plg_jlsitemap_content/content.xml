@@ -2,7 +2,7 @@
 <extension version="3.8" type="plugin" group="jlsitemap" method="upgrade">
 	<name>PLG_JLSITEMAP_CONTENT</name>
 	<author>Joomline</author>
-	<creationDate>October 2018</creationDate>
+	<creationDate>November 2018</creationDate>
 	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sales@joomline.ru</authorEmail>
