@@ -96,7 +96,10 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$url = $xml->addChild('url');
 				foreach ($row->toArray() as $name => $value)
 				{
-					$url->addChild($name, $value);
+					if (in_array($name, array('loc', 'changefreq', 'priority', 'lastmod')))
+					{
+						$url->addChild($name, $value);
+					}
 				}
 			}
 
