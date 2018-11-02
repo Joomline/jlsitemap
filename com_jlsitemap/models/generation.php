@@ -275,7 +275,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$query = $db->getQuery(true)
 				->select(array('m.id', 'm.type', 'm.published', 'm.access', 'm.home', 'm.params', 'm.language', 'e.extension_id'))
 				->from($db->quoteName('#__menu', 'm'))
-				->join('LEFT', '#__extensions AS e ON e.extension_id = m.component_id')
+				->join('LEFT', '#__extensions AS e ON e.extension_id = m.component_id AND e.enabled = 1')
 				->where('m.client_id = 0')
 				->where('m.id > 1')
 				->where('m.published IN (0, 1)')
@@ -312,7 +312,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				}
 				if ($row->type == 'component' && empty($row->extension_id))
 				{
-					$exclude = 'component_remove';
+					$exclude = 'component';
 				}
 				if (!in_array($row->access, $config->get('guestAccess', array())))
 				{
