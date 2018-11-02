@@ -105,14 +105,14 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 		{
 			$success = Text::sprintf('PLG_SYSTEM_JLSITEMAP_GENERATION_SUCCESS', count($urls->includes),
 				count($urls->excludes), count($urls->all));
+
+			//  Prepare json response
 			if ($app->input->get('format', 'raw') == 'json')
 			{
-				return explode('<br />', $success);
+				$success = explode('<br />', $success);
 			}
 
-			echo $success;
-
-			return true;
+			return $success;
 		}
 		elseif ($error)
 		{
