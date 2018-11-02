@@ -74,6 +74,16 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	{
 		try
 		{
+			// Update last run
+			$this->params->set('last_run', Factory::getDate()->toSql());
+			$plugin          = new stdClass();
+			$plugin->type    = 'plugin';
+			$plugin->element = 'jlsitemap_cron';
+			$plugin->folder  = 'system';
+			$plugin->params  = (string) $this->params;
+			Factory::getDbo()->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
+
+			// Run generation
 			BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_jlsitemap/models');
 			$model = BaseDatabaseModel::getInstance('Generation', 'JLSitemapModel', array('ignore_request' => true));
 
