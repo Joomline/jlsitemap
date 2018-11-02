@@ -273,12 +273,13 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			// Get menu items
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('id', 'type', 'published', 'access', 'home', 'params', 'language'))
-				->from($db->quoteName('#__menu'))
-				->where('client_id = 0')
-				->where('id > 1')
-				->where('published IN (0, 1)')
-				->order($db->escape('lft') . ' ' . $db->escape('asc'));
+				->select(array('m.id', 'm.type', 'm.published', 'm.access', 'm.home', 'm.params', 'm.language', 'e.extension_id'))
+				->from($db->quoteName('#__menu', 'm'))
+				->join('LEFT', '#__extensions AS e ON e.extension_id = m.component_id AND e.enabled = 1')
+				->where('m.client_id = 0')
+				->where('m.id > 1')
+				->where('m.published IN (0, 1)')
+				->order($db->escape('m.lft') . ' ' . $db->escape('asc'));
 			$db->setQuery($query);
 			$rows = $db->loadObjectList('id');
 
@@ -308,6 +309,10 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				if (in_array($row->type, $excludeTypes))
 				{
 					$exclude = 'system_type';
+				}
+				if ($row->type == 'component' && empty($row->extension_id))
+				{
+					$exclude = 'component';
 				}
 				if (!in_array($row->access, $config->get('guestAccess', array())))
 				{
