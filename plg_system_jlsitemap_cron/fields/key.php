@@ -10,3 +10,38 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\FormField;
+
+class JFormFieldKey extends FormField
+{
+	/**
+	 * The form field type.
+	 *
+	 * @var string
+	 *
+	 * @since 0.0.2
+	 */
+	protected $type = 'key';
+
+	/**
+	 * Name of the layout being used to render the field
+	 *
+	 * @var string
+	 *
+	 * @since 0.0.2
+	 */
+	protected $layout = 'plugins.system.jlsitemap_cron.fields.key';
+
+	/**
+	 * Method to get the field label markup.
+	 *
+	 * @return  string  The field label markup.
+	 *
+	 * @since 0.0.2
+	 */
+	protected function getLabel()
+	{
+		return '';
+	}
+
+}

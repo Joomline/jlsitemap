@@ -22,8 +22,26 @@
 		<folder>layouts</folder>
 	</files>
 	<config>
-		<fields name="params">
+		<fields name="params" addfieldpath="/plugins/system/jlsitemap_cron/fields">
 			<fieldset name="basic">
+				<field name="link" type="link" label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK"/>
+				<field name="key_enabled" type="radio"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_KEY"
+					   default="0"
+					   class="btn-group btn-group-yesno"
+					   showon="users_enabled:0">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="key" type="key" showon="key_enabled:1[AND]users_enabled:0"/>
+				<field name="users_enabled" type="radio"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS"
+					   default="0"
+					   class="btn-group btn-group-yesno">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+
 			</fieldset>
 		</fields>
 	</config>
