@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.8" type="plugin" group="system" method="upgrade">
+	<name>PLG_SYSTEM_JLSITEMAP_CRON</name>
+	<author>Joomline</author>
+	<creationDate>November 2018</creationDate>
+	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>sales@joomline.ru</authorEmail>
+	<authorUrl>https://joomline.ru/</authorUrl>
+	<version>0.0.2</version>
+	<description>PLG_SYSTEM_JLSITEMAP_CRON_DESCRIPTION</description>
+	<scriptfile>script.php</scriptfile>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_system_jlsitemap_cron.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_system_jlsitemap_cron.sys.ini</language>
+		<language tag="ru-RU">ru-RU/ru-RU.plg_system_jlsitemap_cron.ini</language>
+		<language tag="ru-RU">ru-RU/ru-RU.plg_system_jlsitemap_cron.sys.ini</language>
+	</languages>
+	<files>
+		<filename plugin="jlsitemap_cron">jlsitemap_cron.php</filename>
+		<folder>fields</folder>
+		<folder>layouts</folder>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+			</fieldset>
+		</fields>
+	</config>
+	<media destination="plg_system_jlsitemap_cron" folder="media">
+		<folder>css</folder>
+		<folder>js</folder>
+	</media>
+</extension>
