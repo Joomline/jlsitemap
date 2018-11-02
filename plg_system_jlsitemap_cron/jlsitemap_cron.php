@@ -10,11 +10,12 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Date\Date;
 
 class PlgSystemJLSitemap_Cron extends CMSPlugin
 {
@@ -28,7 +29,20 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	protected $autoloadLanguage = true;
 
 	/**
-	 * Run cron
+	 * Method to add cron js
+	 *
+	 * @since 0.0.2
+	 */
+	public function onBeforeRender()
+	{
+		if ($this->params->get('users_enabled') && $this->checkCacheTime())
+		{
+			HTMLHelper::_('script', 'media/plg_system_jlsitemap_cron/js/cron.min.js', array('version' => 'auto'));
+		}
+	}
+
+	/**
+	 * Method to run cron
 	 *
 	 * @since 0.0.2
 	 */
