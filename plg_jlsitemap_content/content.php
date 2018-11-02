@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    JLSitemap - Content Plugin
- * @version    0.0.1
+ * @version    0.0.2
  * @author     Joomline - joomline.ru
  * @copyright  Copyright (c) 2010 - 2018 Joomline. All rights reserved.
  * @license    GNU/GPL license: http://www.gnu.org/copyleft/gpl.html

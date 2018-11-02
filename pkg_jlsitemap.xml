@@ -8,7 +8,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sales@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<description>PKG_JLSITEMAP_DESCRIPTION</description>
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.pkg_jlsitemap.sys.ini</language>
