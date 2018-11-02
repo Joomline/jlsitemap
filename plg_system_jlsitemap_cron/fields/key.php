@@ -43,5 +43,4 @@ class JFormFieldKey extends FormField
 	{
 		return '';
 	}
-
 }
