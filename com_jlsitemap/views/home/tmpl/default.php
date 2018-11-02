@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
@@ -65,24 +66,38 @@ HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('vers
 					</div>
 				</a>
 			</div>
-			<div class="span3">
-				<a class="item"
-				   href="<?php echo Route::_('index.php?option=com_config&view=component&component=com_jlsitemap'); ?>">
-					<div class="img">
-						<span class="icon-options large-icon"></span>
-					</div>
-					<div class="title">
-						<?php echo Text::_('COM_JLSITEMAP_CONFIG'); ?>
-					</div>
-				</a>
-			</div>
+			<?php if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron')): ?>
+				<div class="span3">
+					<a class="item" target="_blank"
+					   href="<?php echo Route::_('index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id); ?>">
+						<div class="img">
+							<span class="icon-clock large-icon"></span>
+						</div>
+						<div class="title">
+							<?php echo Text::_('COM_JLSITEMAP_CRON'); ?>
+						</div>
+					</a>
+				</div>
+			<?php else: ?>
+				<div class="span3">
+					<a class="item"
+					   href="<?php echo Route::_('index.php?option=com_config&view=component&component=com_jlsitemap'); ?>">
+						<div class="img">
+							<span class="icon-options large-icon"></span>
+						</div>
+						<div class="title">
+							<?php echo Text::_('COM_JLSITEMAP_CONFIG'); ?>
+						</div>
+					</a>
+				</div>
+			<?php endif; ?>
 		</div>
 	</div>
 	<div class="span4">
-		<div class="row-fluid icons-block">	
+		<div class="row-fluid icons-block">
 			<div class="item">
 				<div class="title">
-					<?php echo Text::_('COM_JLSITEMAP_ADMIN_TEXT'); ?>					
+					<?php echo Text::_('COM_JLSITEMAP_ADMIN_TEXT'); ?>
 				</div>
 			</div>
 		</div>

@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Helper\CMSHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
 
 class JLSitemapHelper extends CMSHelper
@@ -47,6 +48,12 @@ class JLSitemapHelper extends CMSHelper
 			'index.php?option=com_plugins&filter[folder]=jlsitemap',
 			$vName == 'plugins');
 
+		if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron'))
+		{
+			JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_CRON'),
+				'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id,
+				$vName == 'cron');
+		}
 
 		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_CONFIG'),
 			'index.php?option=com_config&view=component&component=com_jlsitemap',
