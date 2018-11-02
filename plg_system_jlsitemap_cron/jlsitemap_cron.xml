@@ -25,7 +25,7 @@
 		<fields name="params" addfieldpath="/plugins/system/jlsitemap_cron/fields">
 			<fieldset name="basic">
 				<field name="link" type="link" label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK"/>
-				<field name="last_run" type="text"
+				<field name="last_run" type="date"
 					   readonly="true"
 					   class="readonly"
 					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LAST_RUN"/>
