@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -32,6 +33,33 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	 */
 	public function onAjaxJLSitemap_Cron()
 	{
+		$generate = false;
+		$error    = '';
+		$usersRun = $this->params->get('users_enabled');
+
+		// Server checks
+		if (!$usersRun)
+		{
+			if (!$this->params->get('key_enabled'))
+			{
+				$generate = true;
+			}
+			elseif (!$generate = (Factory::getApplication()->input->get('key', '') == $this->params->get('key')))
+			{
+				$error = Text::_('PLG_SYSTEM_JLSITEMAP_GENERATION_ERROR_KEY');
+			}
+		}
+
+		// Run generation
+		if (!$error && $generate && $urls = $this->generate())
+		{
+			echo Text::sprintf('PLG_SYSTEM_JLSITEMAP_GENERATION_SUCCESS', count($urls->includes),
+				count($urls->excludes), count($urls->all));
+		}
+		elseif ($error)
+		{
+			throw new Exception(Text::sprintf('PLG_SYSTEM_JLSITEMAP_GENERATION_FAILURE', $error));
+		}
 
 	}
 
