@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Date\Date;
 
 class PlgSystemJLSitemap_Cron extends CMSPlugin
 {
@@ -36,6 +37,19 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 		$generate = false;
 		$error    = '';
 		$usersRun = $this->params->get('users_enabled');
+
+		// User checks
+		if ($usersRun)
+		{
+			if ($this->checkCacheTime())
+			{
+				$generate = true;
+			}
+			else
+			{
+				$error = Text::_('PLG_SYSTEM_JLSITEMAP_GENERATION_ERROR_CACHE');
+			}
+		}
 
 		// Server checks
 		if (!$usersRun)
@@ -98,5 +112,27 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 		{
 			throw new Exception(Text::sprintf('PLG_SYSTEM_JLSITEMAP_GENERATION_FAILURE', $e->getMessage()));
 		}
+	}
+
+	/**
+	 * Method to check users cache time
+	 *
+	 * @return bool True if  run. False if don't  run
+	 *
+	 * @since 0.0.2
+	 */
+	protected function checkCacheTime()
+	{
+		if (!$lastRun = $this->params->get('last_run', false))
+		{
+			return true;
+		}
+
+		// Prepare cache time
+		$offset = ' + ' . $this->params->get('users_cache_number', 1) . ' ' .
+			$this->params->get('users_cache_value', 'day');
+		$cache  = new Date($lastRun . $offset);
+
+		return (Factory::getDate()->toUnix() >= $cache->toUnix());
 	}
 }

@@ -45,7 +45,23 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-
+				<field name="users_cache_number" type="number"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE"
+					   default="1"
+					   min="1"
+					   step="1"
+					   showon="users_enabled:1"/>
+				<field name="users_cache_value" type="list"
+					   label=" "
+					   default="day"
+					   showon="users_enabled:1">
+					<option value="minutes">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_MINUTES</option>
+					<option value="hours">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_HOURS</option>
+					<option value="day">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_DAY</option>
+					<option value="week">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_WEEK</option>
+					<option value="month">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_MONTH</option>
+					<option value="year">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_YEAR</option>
+				</field>
 			</fieldset>
 		</fields>
 	</config>
