@@ -15,8 +15,8 @@
 				code = $(field).find('code'),
 				baseLink = $(field).data('input-link'),
 				group = $(field).closest('.control-group'),
-				enabledKey = $('[name="jform[params][key_enabled]"]'),
-				enabledUsers = $('[name="jform[params][users_enabled]"]'),
+				keyEnable = $('[name="jform[params][key_enabled]"]'),
+				clientEnable = $('[name="jform[params][client_enable]"]'),
 				key = $('[name="jform[params][key]"]');
 
 			// Remove label & remove margin
@@ -26,20 +26,20 @@
 			// Set link
 			function setLink() {
 				let link = baseLink,
-					enabledKey_val = $(enabledKey).filter(':checked').val() * 1,
-					enabledUsers_val = $(enabledUsers).filter(':checked').val() * 1;
+					keyEnable_val = $(keyEnable).filter(':checked').val() * 1,
+					clientEnable_val = $(clientEnable).filter(':checked').val() * 1;
 
-				if (enabledKey_val === 1 && enabledUsers_val === 0) {
+				if (keyEnable_val === 1 && clientEnable_val === 0) {
 					link += '&key=' + $(key).val();
 				}
 				(input).val(link);
 				$(code).html(link);
 			}
 
-			$(enabledKey).on('change', function () {
+			$(keyEnable).on('change', function () {
 				setLink()
 			});
-			$(enabledUsers).on('change', function () {
+			$(clientEnable).on('change', function () {
 				setLink()
 			});
 			$(key).on('change', function () {

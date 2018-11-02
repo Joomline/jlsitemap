@@ -12,16 +12,16 @@
 		$('[data-input-key]').each(function () {
 			let field = $(this),
 				input = $(field).find('input'),
-				enabledKey = $('[name="jform[params][key_enabled]"]'),
-				enabledUsers = $('[name="jform[params][users_enabled]"]'),
+				keyEnable = $('[name="jform[params][key_enabled]"]'),
+				clientEnable = $('[name="jform[params][client_enable]"]'),
 				generate = $(field).find('.generate');
 
 			// Set required
 			function setRequired() {
-				let enabledKey_val = $(enabledKey).filter(':checked').val() * 1,
-					enabledUsers_val = $(enabledUsers).filter(':checked').val() * 1;
+				let keyEnable_val = $(keyEnable).filter(':checked').val() * 1,
+					clientEnable_val = $(clientEnable).filter(':checked').val() * 1;
 
-				if (enabledKey_val === 1 && enabledUsers_val === 0) {
+				if (keyEnable_val === 1 && clientEnable_val === 0) {
 					$(input).attr('required', 'true');
 				}
 				else {
@@ -29,10 +29,10 @@
 				}
 			}
 
-			$(enabledKey).on('change', function () {
+			$(keyEnable).on('change', function () {
 				setRequired();
 			});
-			$(enabledUsers).on('change', function () {
+			$(clientEnable).on('change', function () {
 				setRequired();
 			});
 			setRequired();

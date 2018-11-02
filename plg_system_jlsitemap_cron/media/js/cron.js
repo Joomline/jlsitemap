@@ -9,8 +9,9 @@
 
 try {
 	document.addEventListener('DOMContentLoaded', function () {
-		let xhr = new XMLHttpRequest();
-		xhr.open('GET', 'index.php?option=com_ajax&plugin=jlsitemap_cron&group=system&format=json', false);
+		let xhr = new XMLHttpRequest(),
+			params = Joomla.getOptions('jlsitemap_cron', '');
+		xhr.open('GET', params.ajax_url, false);
 		xhr.send();
 		if (xhr.status !== 200) {
 			console.error('Sitemap cron error:' + xhr.status + ': ' + xhr.statusText);

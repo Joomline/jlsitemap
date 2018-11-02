@@ -33,34 +33,43 @@
 					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_KEY"
 					   default="0"
 					   class="btn-group btn-group-yesno"
-					   showon="users_enabled:0">
+					   showon="client_enable:0">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="key" type="key" showon="key_enabled:1[AND]users_enabled:0"/>
-				<field name="users_enabled" type="radio"
-					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS"
+				<field name="key" type="key" showon="key_enabled:1[AND]client_enable:0"/>
+				<field name="client_enable" type="radio"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT"
 					   default="0"
 					   class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
-				<field name="users_cache_number" type="number"
-					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE"
+				<field name="client_mode" type="radio"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_MODE"
+					   default="all"
+					   class="btn-group btn-group-yesno"
+					   showon="client_enable:1">
+					<option value="all">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_MODE_ALL</option>
+					<option value="admin">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_MODE_ADMIN</option>
+					<option value="site">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_MODE_SITE</option>
+				</field>
+				<field name="client_cache_number" type="number"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE"
 					   default="1"
 					   min="1"
 					   step="1"
-					   showon="users_enabled:1"/>
-				<field name="users_cache_value" type="list"
+					   showon="client_enable:1"/>
+				<field name="client_cache_value" type="list"
 					   label=" "
 					   default="day"
-					   showon="users_enabled:1">
-					<option value="minutes">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_MINUTES</option>
-					<option value="hours">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_HOURS</option>
-					<option value="day">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_DAY</option>
-					<option value="week">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_WEEK</option>
-					<option value="month">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_MONTH</option>
-					<option value="year">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_USERS_CACHE_YEAR</option>
+					   showon="client_enable:1">
+					<option value="minutes">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE_MINUTES</option>
+					<option value="hours">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE_HOURS</option>
+					<option value="day">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE_DAY</option>
+					<option value="week">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE_WEEK</option>
+					<option value="month">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE_MONTH</option>
+					<option value="year">PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_CLIENT_CACHE_YEAR</option>
 				</field>
 			</fieldset>
 		</fields>
