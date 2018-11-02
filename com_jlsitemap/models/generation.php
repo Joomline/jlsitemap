@@ -176,6 +176,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			}
 
 			// Add urls from plugins
+			$rows = array();
 			PluginHelper::importPlugin('jlsitemap');
 			$dispatcher = JEventDispatcher::getInstance();
 			$dispatcher->trigger('onGetUrls', array(&$rows, &$config));
