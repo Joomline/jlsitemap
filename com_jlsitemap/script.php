@@ -10,8 +10,9 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Folder;
 
 class com_jlsitemapInstallerScript
 {
@@ -43,6 +44,22 @@ class com_jlsitemapInstallerScript
 			$component->element = 'com_jlsitemap';
 			$component->params  = (string) $params;
 			Factory::getDbo()->updateObject('#__extensions', $component, array('element'));
+		}
+
+		return true;
+	}
+
+	/**
+	 * Method to remove home view folder
+	 *
+	 * @return bool
+	 *
+	 * @since  1.1.0
+	 */
+	function update()
+	{
+		if (Folder::exists(JPATH_ADMINISTRATOR.'/components/com_jlsitemap/views/home')) {
+			Folder::delete(JPATH_ADMINISTRATOR.'/components/com_jlsitemap/views/home');
 		}
 
 		return true;
