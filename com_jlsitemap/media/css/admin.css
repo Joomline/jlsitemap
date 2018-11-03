@@ -11,11 +11,21 @@
 	float: right;
 }
 
-.icons-block + .icons-block {
-	margin-top: 2.76243094%;
+.icons-block {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .icons-block .item {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 275px;
+	max-width: 100%;
+	margin: 0 15px 30px;
+}
+
+.icons-block .item,
+.sidebar .wrapper {
 	background: #fff;
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 	color: #666;
@@ -30,7 +40,8 @@
 	text-decoration: none;
 }
 
-.icons-block .item .title {
+.icons-block .item .title,
+.sidebar .wrapper .title {
 	display: block;
 	font-size: 16px;
 	padding: 10px;

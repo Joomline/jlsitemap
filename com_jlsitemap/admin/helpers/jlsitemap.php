@@ -29,9 +29,9 @@ class JLSitemapHelper extends CMSHelper
 	 */
 	static function addSubmenu($vName)
 	{
-		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_HOME'),
-			'index.php?option=com_jlsitemap&view=home',
-			$vName == 'home');
+		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_CONTROL_PANEL'),
+			'index.php?option=com_jlsitemap&view=controlpanel',
+			$vName == 'controlpanel');
 
 		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_GENERATION'),
 			'index.php?option=com_jlsitemap&task=generate',

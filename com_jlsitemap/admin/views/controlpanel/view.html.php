@@ -16,7 +16,7 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
-class JLSitemapViewHome extends HtmlView
+class JLSitemapViewControlPanel extends HtmlView
 {
 	/**
 	 * The sidebar html
@@ -39,10 +39,10 @@ class JLSitemapViewHome extends HtmlView
 	public function display($tpl = null)
 	{
 		// Set title
-		ToolBarHelper::title(Text::_('COM_JLSITEMAP'), 'tree-2');
+		ToolBarHelper::title(Text::_('COM_JLSITEMAP').': '. Text::_('COM_JLSITEMAP_CONTROL_PANEL'), 'tree-2');
 
 		// Set sidebar
-		JLSitemapHelper::addSubmenu('home');
+		JLSitemapHelper::addSubmenu('controlpanel');
 		$this->sidebar = JHtmlSidebar::render();
 
 		$user = Factory::getUser();

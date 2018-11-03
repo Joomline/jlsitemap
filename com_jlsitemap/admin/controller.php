@@ -26,7 +26,7 @@ class JLSiteMapController extends BaseController
 	 *
 	 * @since 0.0.1
 	 */
-	protected $default_view = 'home';
+	protected $default_view = 'controlpanel';
 
 	/**
 	 * Method to generate sitemap.xml
