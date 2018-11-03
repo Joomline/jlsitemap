@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
 
 extract($displayData);
 
@@ -23,11 +24,10 @@ extract($displayData);
  * @var  string $value Value attribute of the field.
  */
 
-HTMLHelper::_('jquery.framework');
-HTMLHelper::_('script', 'media/plg_system_jlsitemap_cron/js/key.min.js', array('version' => 'auto'));
-
+$date = (empty($value)) ? Text::_('JNEVER') : HTMLHelper::_('date', $value, Text::_('DATE_FORMAT_LC2')) .
+	' (' . Factory::getConfig()->get('offset') . ')'
 ?>
-<div class="input-append" data-input-key="<?php echo $id; ?>">
-	<input id="<?php echo $id; ?>" name="<?php echo $name; ?>" type="text" value="<?php echo $value; ?>">
-	<a class="btn generate"><?php echo Text::_('PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_KEY_GENERATE'); ?></a>
+<div data-input-date="<?php echo $id; ?>">
+	<input type="text" readonly value="<?php echo $date; ?>">
+	<input id="<?php echo $id; ?>" type="hidden" readonly value="<?php echo $value; ?>">
 </div>

@@ -12,14 +12,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormField;
 
-class JFormFieldKey extends FormField
+class JFormFieldDate extends FormField
 {
 	/**
 	 * The form field type.
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.2
+	 * @since 1.0.1
 	 */
 	protected $type = 'key';
 
@@ -28,19 +28,7 @@ class JFormFieldKey extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.2
+	 * @since 1.0.1
 	 */
-	protected $layout = 'plugins.system.jlsitemap_cron.fields.key';
-
-	/**
-	 * Method to get the field label markup.
-	 *
-	 * @return  string  The field label markup.
-	 *
-	 * @since 0.0.2
-	 */
-	protected function getLabel()
-	{
-		return '';
-	}
+	protected $layout = 'plugins.system.jlsitemap_cron.fields.date';
 }
