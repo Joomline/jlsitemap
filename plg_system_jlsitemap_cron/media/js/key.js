@@ -1,6 +1,6 @@
 /*
  * @package    System - JLSitemap Cron Plugin
- * @version    ${VERSION}
+ * @version    @version@
  * @author     Joomline - joomline.ru
  * @copyright  Copyright (c) 2010 - 2018 Joomline. All rights reserved.
  * @license    GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
