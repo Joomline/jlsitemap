@@ -2,12 +2,12 @@
 <extension version="3.9" type="component" method="upgrade">
 	<name>COM_JLSITEMAP</name>
 	<author>Joomline</author>
-	<creationDate>November 2018</creationDate>
+	<creationDate>${DATE}</creationDate>
 	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sales@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
-	<version>1.1.0</version>
+	<version>${VERSION}</version>
 	<description>COM_JLSITEMAP_DESCRIPTION</description>
 	<scriptfile>script.php</scriptfile>
 	<files folder="site">
