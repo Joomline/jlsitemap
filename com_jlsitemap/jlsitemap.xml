@@ -9,22 +9,33 @@
 	<authorUrl>https://joomline.ru/</authorUrl>
 	<version>1.0.0</version>
 	<description>COM_JLSITEMAP_DESCRIPTION</description>
+	<scriptfile>script.php</scriptfile>
+	<files folder="site">
+		<folder>models</folder>
+		<filename>controller.php</filename>
+		<filename>jlsitemap.php</filename>
+	</files>
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.sys.ini</language>
+		<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.ini</language>
+		<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
+	</languages>
 	<administration>
 		<menu>COM_JLSITEMAP</menu>
-		<files>
+		<files folder="admin">
 			<folder>helpers</folder>
-			<folder>models</folder>
 			<folder>views</folder>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
 			<filename>jlsitemap.php</filename>
 		</files>
-		<languages folder="language">
-			<language tag="en-GB">en-GB/en-GB.com_jlsitemap.ini</language>
-			<language tag="en-GB">en-GB/en-GB.com_jlsitemap.sys.ini</language>
-			<language tag="ru-RU">ru-RU/ru-RU.com_jlsitemap.ini</language>
-			<language tag="ru-RU">ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.sys.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
 		</languages>
 	</administration>
 	<media destination="com_jlsitemap" folder="media">

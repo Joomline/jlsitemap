@@ -7,6 +7,10 @@
  * @link       https://joomline.ru/
  */
 
+#toolbar #toolbar-tools {
+	float: right;
+}
+
 .icons-block + .icons-block {
 	margin-top: 2.76243094%;
 }

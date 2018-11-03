@@ -14,10 +14,11 @@ use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Component\ComponentHelper;
 
-JLoader::register('JLSitemapHelper', __DIR__ . '/helpers/jlsitemap.php');
+$access_key = ComponentHelper::getComponent('com_jlsitemap')->getParams()->get('access_key');
 
-if (!Factory::getUser()->authorise('core.manage', 'com_sitemap'))
+if (empty($access_key) || $access_key != Factory::getApplication()->input->get('access_key'))
 {
 	throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 }

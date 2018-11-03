@@ -18,9 +18,9 @@ extract($displayData);
 /**
  * Layout variables
  * -----------------
- * @var  string  $id        DOM id of the field.
- * @var  string  $name      Name of the input field.
- * @var  string  $link      Base cron link.
+ * @var  string $id   DOM id of the field.
+ * @var  string $name Name of the input field.
+ * @var  string $link Base cron link.
  */
 
 HTMLHelper::_('jquery.framework');

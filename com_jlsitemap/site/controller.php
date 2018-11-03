@@ -10,26 +10,22 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Response\JsonResponse;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 class JLSiteMapController extends BaseController
 {
-	/**
-	 * The default view.
-	 *
-	 * @var string
-	 *
-	 * @since 0.0.1
-	 */
-	protected $default_view = 'home';
 
 	/**
 	 * Method to generate sitemap.xml
 	 *
 	 * @return bool
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	public function generate()
 	{
@@ -40,24 +36,73 @@ class JLSiteMapController extends BaseController
 			{
 				$this->setError($model->getError());
 				$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_FAILURE', Text::_($this->getError())), 'error');
-				$this->setRedirect('index.php?option=com_jlsitemap');
+				$this->setResponse();
 
 				return false;
 			}
 
 			$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_SUCCESS', count($urls->includes),
 				count($urls->excludes), count($urls->all)));
+
+			$this->setResponse(null, array('response' => $urls));
+
+			return true;
 		}
 		catch (Exception $e)
 		{
 			$this->setError($e->getMessage());
 			$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_FAILURE', $this->getError()), 'error');
-			$this->setRedirect('index.php?option=com_jlsitemap');
+			$this->setResponse();
 
 			return false;
 		}
+	}
 
-		$this->setRedirect('index.php?option=com_jlsitemap');
+	/**
+	 * Method to set response
+	 *
+	 * @param string $type Response type
+	 * @param mixed  $data Response data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.1.0
+	 */
+	protected function setResponse($type = null, $data = null)
+	{
+		if (empty($type))
+		{
+			$type = $this->input->get('response', 'redirect');
+		}
+
+		// Json Response
+		if ($type == 'json')
+		{
+			$response = (!empty($data['response'])) ? $data['response'] : '';
+			echo new JsonResponse($response, $this->message, !empty($this->_errors));
+
+			Factory::getApplication()->close();
+
+			return true;
+		}
+
+		// Debug response
+		if ($type == 'debug')
+		{
+			echo '<pre>', print_r($data, true), '</pre>';
+
+			Factory::getApplication()->close();
+
+			return true;
+		}
+
+		// Redirect response
+
+		if (empty($data['redirect']))
+		{
+			$redirect = rtrim(Uri::base(true), '/') . '/';
+		}
+		$this->setRedirect(Route::_($redirect, false));
 
 		return true;
 	}
