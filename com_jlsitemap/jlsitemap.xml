@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sales@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<description>COM_JLSITEMAP_DESCRIPTION</description>
 	<scriptfile>script.php</scriptfile>
 	<files folder="site">
