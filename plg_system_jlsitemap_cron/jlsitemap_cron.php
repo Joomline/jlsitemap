@@ -143,7 +143,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 			Factory::getDbo()->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			// Run generation
-			BaseDatabaseModel::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_jlsitemap/models');
+			BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jlsitemap/models');
 			$model = BaseDatabaseModel::getInstance('Generation', 'JLSitemapModel', array('ignore_request' => true));
 
 			if (!$urls = $model->generate())

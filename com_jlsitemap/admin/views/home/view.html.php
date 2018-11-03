@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class JLSitemapViewHome extends HtmlView
@@ -48,6 +49,7 @@ class JLSitemapViewHome extends HtmlView
 		if ($user->authorise('core.admin', 'com_jlsitemap') || $user->authorise('core.options', 'com_jlsitemap'))
 		{
 			ToolbarHelper::preferences('com_jlsitemap');
+			ToolbarHelper::link(Route::_('index.php?option=com_jlsitemap&task=debug'), Text::_('COM_JLSITEMAP_DEBUG'), 'tools');
 		}
 
 		return parent::display($tpl);

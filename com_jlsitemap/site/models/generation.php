@@ -10,7 +10,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
@@ -20,6 +19,7 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Router\Route;
 
 class JLSitemapModelGeneration extends BaseDatabaseModel
 {
@@ -28,7 +28,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	protected $_xml = null;
 
@@ -37,7 +37,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @var object
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	protected $_urls = null;
 
@@ -46,7 +46,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @var array
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	protected $_menuItems = null;
 
@@ -55,7 +55,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @return bool|object Array if successful, false otherwise and internal error is set.
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	public function generate()
 	{
@@ -82,7 +82,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @return string
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	protected function getXML($rows = array())
 	{
@@ -114,15 +114,13 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @return object
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	protected function getUrls()
 	{
 		if ($this->_urls === null)
 		{
 			// Prepare variables
-			$site   = SiteApplication::getInstance('site');
-			$router = $site->getRouter();
 			$config = ComponentHelper::getParams('com_jlsitemap');
 			$config->set('siteRobots', Factory::getConfig()->get('robots'));
 			$config->set('guestAccess', array_unique(Factory::getUser(0)->getAuthorisedViewLevels()));
@@ -149,12 +147,12 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			foreach ($this->getMenuItems($config) as $menu)
 			{
 				// Prepare url loc and urls arrays key
-				$loc = trim(str_replace('administrator/', '', $router->build($menu->loc)->toString()), '/');
+				$loc = Route::_($menu->loc);
 				$key = (empty($loc)) ? '/' : $loc;
 
 				// Create url Registry
 				$url = new Registry();
-				$url->set('loc', Uri::root() . $loc);
+				$url->set('loc', rtrim(Uri::root(), '/') . $loc);
 				$url->set('changefreq', $menu->changefreq);
 				$url->set('priority', $menu->priority);
 
@@ -185,7 +183,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$item = new Registry($row);
 				if ($loc = $item->get('loc', false))
 				{
-					$loc = trim(str_replace('administrator/', '', $router->build($loc)->toString()), '/');
+					$loc = Route::_($loc);
 					$key = (empty($loc)) ? '/' : $loc;
 
 					// Check menu excludes
@@ -209,7 +207,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 
 					// Create url Registry
 					$url = new Registry();
-					$url->set('loc', Uri::root() . $loc);
+					$url->set('loc', rtrim(Uri::root(), '/'));
 					$url->set('changefreq', $changefreq);
 					$url->set('changefreqPriority', $config->get('changefreqPriority')[$changefreq]);
 					$url->set('priority', $priority);
@@ -264,7 +262,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @return array
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 */
 	protected function getMenuItems($config)
 	{
