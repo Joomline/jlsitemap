@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.8" type="plugin" group="jlsitemap" method="upgrade">
+<extension version="3.9" type="plugin" group="jlsitemap" method="upgrade">
 	<name>PLG_JLSITEMAP_CONTENT</name>
 	<author>Joomline</author>
 	<creationDate>November 2018</creationDate>

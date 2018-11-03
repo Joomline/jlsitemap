@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.8" type="package" method="upgrade">
+<extension version="3.9" type="package" method="upgrade">
 	<name>PKG_JLSITEMAP</name>
 	<packagename>jlsitemap</packagename>
 	<author>Joomline</author>
