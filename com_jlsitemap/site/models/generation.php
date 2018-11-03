@@ -207,7 +207,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 
 					// Create url Registry
 					$url = new Registry();
-					$url->set('loc', rtrim(Uri::root(), '/'));
+					$url->set('loc', rtrim(Uri::root(), '/') . $loc);
 					$url->set('changefreq', $changefreq);
 					$url->set('changefreqPriority', $config->get('changefreqPriority')[$changefreq]);
 					$url->set('priority', $priority);
