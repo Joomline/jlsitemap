@@ -3,12 +3,12 @@
 	<name>PKG_JLSITEMAP</name>
 	<packagename>jlsitemap</packagename>
 	<author>Joomline</author>
-	<creationDate>${DATE}</creationDate>
+	<creationDate>@date@</creationDate>
 	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sales@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
-	<version>${VERSION}</version>
+	<version>@version@</version>
 	<description>PKG_JLSITEMAP_DESCRIPTION</description>
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.pkg_jlsitemap.sys.ini</language>
