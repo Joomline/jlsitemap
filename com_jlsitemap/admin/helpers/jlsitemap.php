@@ -11,12 +11,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Helper\CMSHelper;
+use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
 
-class JLSitemapHelper extends CMSHelper
+class JLSitemapHelper extends ContentHelper
 {
 	/**
 	 * Configure the Linkbar.
