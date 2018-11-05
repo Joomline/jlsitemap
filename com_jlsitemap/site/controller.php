@@ -97,7 +97,6 @@ class JLSiteMapController extends BaseController
 		}
 
 		// Redirect response
-
 		if (empty($data['redirect']))
 		{
 			$redirect = rtrim(Uri::base(true), '/') . '/';
