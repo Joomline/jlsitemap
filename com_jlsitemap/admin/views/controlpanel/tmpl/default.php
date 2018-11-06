@@ -47,7 +47,7 @@ HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('vers
 						<span class="icon-tree-2 large-icon"></span>
 					</div>
 					<div class="title text-error">
-						<?php echo Ticonext::_('COM_JLSITEMAP_ERROR_SITEMAP_NOT_FOUND'); ?>
+						<?php echo Text::_('COM_JLSITEMAP_ERROR_SITEMAP_NOT_FOUND'); ?>
 					</div>
 				</div>
 			<?php endif; ?>
