@@ -28,23 +28,6 @@
 		</field>
 	</fieldset>
 	<fieldset name="filter" label="COM_JLSITEMAP_PARAMS_FILTER">
-		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_MENU"
-			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_DESC"
-			   heading="h3"/>
-		<field name="filter_menu" type="radio"
-			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_MENU_LABEL"
-			   class="btn-group btn-group-yesno">
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
-		<field name="filter_menu_menus" type="menu"
-			   addfieldpath="/administrator/components/com_menus/models/fields"
-			   label="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS"
-			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
-			   hint="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
-			   clientid="0"
-			   multiple="true"
-			   showon="filter_menu:1"/>
 		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_RAW"
 			   description="COM_JLSITEMAP_PARAMS_FILTER_RAW_DESC"
 			   heading="h3"/>
@@ -66,6 +49,23 @@
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_MENU"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_DESC"
+			   heading="h3"/>
+		<field name="filter_menu" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_MENU_LABEL"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_menu_menus" type="menu"
+			   addfieldpath="/administrator/components/com_menus/models/fields"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
+			   hint="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
+			   clientid="0"
+			   multiple="true"
+			   showon="filter_menu:1"/>
 		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_STRPOS"
 			   description="COM_JLSITEMAP_PARAMS_FILTER_STRPOS_DESC"
 			   heading="h3"/>

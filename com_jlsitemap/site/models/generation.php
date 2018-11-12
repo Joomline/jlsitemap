@@ -17,9 +17,9 @@ use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Router\Route;
 
 class JLSitemapModelGeneration extends BaseDatabaseModel
 {
@@ -126,13 +126,15 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	{
 		if ($this->_urls === null)
 		{
-			// Prepare variables
+			// Prepare config
 			$config = ComponentHelper::getParams('com_jlsitemap');
 			$config->set('siteRobots', Factory::getConfig()->get('robots'));
 			$config->set('guestAccess', array_unique(Factory::getUser(0)->getAuthorisedViewLevels()));
 			$config->set('multilanguage', Multilanguage::isEnabled());
 			$config->set('changefreqPriority',
 				array('always' => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4, 'monthly' => 5, 'yearly' => 6, 'never' => 7));
+			$config->set('filterMenus', ($config->get('filter_menu')) ?
+				$config->get('filter_menu_menus', array()) : false);
 
 			// Create urls arrays
 			$all      = array();
@@ -148,8 +150,9 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$includes['/'] = $home;
 
 			// Add menu items to urls arrays
-			$menuHomes    = array();
-			$menuExcludes = array();
+			$menuHomes       = array();
+			$menuExcludes    = array();
+			$filterMenuItems = (is_array($config->get('filterMenus', false))) ? array() : false;
 			foreach ($this->getMenuItems($config) as $menu)
 			{
 				// Prepare url loc and urls arrays key
@@ -170,14 +173,22 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				}
 				if ($menu->exclude && !$menu->home)
 				{
-					$excludes[$key]     = Text::_('COM_JLSITEMAP_EXCLUDE_MENU_' . strtoupper($menu->exclude));
+					$excludes[$key]     = Text::_('COM_JLSITEMAP_EXCLUDE_' . strtoupper($menu->exclude));
 					$menuExcludes[$key] = $menu->exclude;
 				}
 				else
 				{
 					$includes[$key] = $url;
+
+					// Set menu items filter
+					if (!$menu->home && is_array($filterMenuItems))
+					{
+						$filterMenuItems[] = $loc;
+					}
 				}
 			}
+			$config->set('menuHomes', $menuHomes);
+			$config->set('filterMenuItems', (is_array($filterMenuItems) ? array_unique($filterMenuItems) : false));
 
 			// Add urls from plugins
 			$rows = array();
@@ -189,8 +200,9 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$item = new Registry($row);
 				if ($loc = $item->get('loc', false))
 				{
-					$loc = Route::_($loc);
-					$key = (empty($loc)) ? '/' : $loc;
+					$loc  = Route::_($loc);
+					$key  = (empty($loc)) ? '/' : $loc;
+					$home = (in_array($key, $menuHomes));
 
 					// Check menu excludes
 					if (in_array($key, $menuExcludes)) continue;
@@ -222,11 +234,33 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 						$url->set('lastmod', Factory::getDate($lastmod)->toISO8601());
 					}
 
+					// Prepare exclude
+					$exclude = false;
+					if (!$home)
+					{
+						$exclude = $item->get('exclude', false);
+
+						// Filters
+						if (!$exclude && is_array($filterMenuItems))
+						{
+							$excludeByMenu = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_MENU');
+							foreach ($filterMenuItems as $filterMenuItem)
+							{
+								if (mb_stripos($loc, $filterMenuItem, 0, 'UTF-8') !== false)
+								{
+									$excludeByMenu = false;
+									break;
+								}
+							}
+							$exclude = $excludeByMenu;
+						}
+					}
+
 					// Add url to arrays
 					$all[$key] = $url;
-					if ($item->get('exclude', false))
+					if ($exclude)
 					{
-						$excludes[$key] = $item->get('exclude');
+						$excludes[$key] = $exclude;
 
 						// Exclude item if already in array (last item has priority)
 						unset($includes[$key]);
@@ -277,7 +311,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			// Get menu items
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('m.id', 'm.type', 'm.published', 'm.access', 'm.home', 'm.params', 'm.language', 'e.extension_id'))
+				->select(array('m.id', 'm.menutype', 'm.type', 'm.published', 'm.access', 'm.home', 'm.params', 'm.language', 'e.extension_id'))
 				->from($db->quoteName('#__menu', 'm'))
 				->join('LEFT', '#__extensions AS e ON e.extension_id = m.component_id AND e.enabled = 1')
 				->where('m.client_id = 0')
@@ -302,25 +336,33 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				// Prepare exclude attribute
 				$params  = new Registry($row->params);
 				$exclude = false;
-				if (preg_match('/noindex/', $params->get('robots', $config->get('siteRobots'))))
+				if (!$row->home)
 				{
-					$exclude = 'noindex';
-				}
-				if ($row->published != 1)
-				{
-					$exclude = 'published';
-				}
-				if (in_array($row->type, $excludeTypes))
-				{
-					$exclude = 'system_type';
-				}
-				if ($row->type == 'component' && empty($row->extension_id))
-				{
-					$exclude = 'component';
-				}
-				if (!in_array($row->access, $config->get('guestAccess', array())))
-				{
-					$exclude = 'access';
+					if (is_array($config->get('filterMenus', false)) && !empty($config->get('filterMenus')) &&
+						!in_array($row->menutype, $config->get('filterMenus')))
+					{
+						$exclude = 'filter_menu';
+					}
+					if (preg_match('/noindex/', $params->get('robots', $config->get('siteRobots'))))
+					{
+						$exclude = 'menu_noindex';
+					}
+					if ($row->published != 1)
+					{
+						$exclude = 'menu_published';
+					}
+					if (in_array($row->type, $excludeTypes))
+					{
+						$exclude = 'menu_system_type';
+					}
+					if ($row->type == 'component' && empty($row->extension_id))
+					{
+						$exclude = 'menu_component';
+					}
+					if (!in_array($row->access, $config->get('guestAccess', array())))
+					{
+						$exclude = 'menu_access';
+					}
 				}
 
 				// Prepare menu item object
