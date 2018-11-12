@@ -20,6 +20,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 
 class JLSitemapModelGeneration extends BaseDatabaseModel
 {
@@ -69,6 +70,16 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 		{
 			// Get sitemap xml
 			$xml = $this->getXML($urls->includes);
+
+			// Regexp filter
+			$filterRegexp = ComponentHelper::getParams('com_jlsitemap')->get('filter_regexp');
+			if (!empty($filterRegexp))
+			{
+				foreach (ArrayHelper::fromObject($filterRegexp) as $regexp)
+				{
+					$xml = preg_replace($regexp['pattern'], $regexp['replacement'], $xml);
+				}
+			}
 
 			$file = JPATH_ROOT . '/sitemap.xml';
 			if (File::exists($file))
