@@ -27,6 +27,65 @@
 			<option value="1">1</option>
 		</field>
 	</fieldset>
+	<fieldset name="filter" label="COM_JLSITEMAP_PARAMS_FILTER">
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_MENU"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_DESC"
+			   heading="h3"/>
+		<field name="filter_menu" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_MENU_LABEL"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_menu_menus" type="menu"
+			   addfieldpath="/administrator/components/com_menus/models/fields"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
+			   hint="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
+			   clientid="0"
+			   multiple="true"
+			   showon="filter_menu:1"/>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_RAW"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_RAW_DESC"
+			   heading="h3"/>
+		<field name="filter_raw_index" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_RAW_INDEX"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_raw_component" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_RAW_COMPONENT"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_raw_get" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_RAW_GET"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_STRPOS"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_STRPOS_DESC"
+			   heading="h3"/>
+		<field name="filter_strpos" type="textarea"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_STRPOS_LABEL"
+			   rows="5"
+			   class="input-xxlarge"/>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_DESC"
+			   heading="h3"/>
+		<field name="filter_regexp" type="subform"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_LABEL"
+			   multiple="true"
+			   layout="joomla.form.field.subform.repeatable-table">
+			<form>
+				<field name="pattern" type="text" label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_PATTERN"/>
+				<field name="replacement" type="text" label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_REPLACEMENT"/>
+			</form>
+		</field>
+	</fieldset>
 	<fieldset name="permissions"
 			  label="JCONFIG_PERMISSIONS_LABEL"
 			  description="JCONFIG_PERMISSIONS_DESC">
