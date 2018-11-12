@@ -133,10 +133,12 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$config->set('multilanguage', Multilanguage::isEnabled());
 			$config->set('changefreqPriority',
 				array('always' => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4, 'monthly' => 5, 'yearly' => 6, 'never' => 7));
-			$config->set('filterMenus', ($config->get('filter_menu')) ?
-				$config->get('filter_menu_menus', array()) : false);
 
-			// Filter Raw
+			// Prepare menus filter
+			$filterMenus = ($config->get('filter_menu')) ? $config->get('filter_menu_menus', array()) : false;
+			$config->set('filterMenus', $filterMenus);
+
+			// Prepare Raw filter
 			$filterRaw = ($config->get('filter_raw_index') || $config->get('filter_raw_component')
 				|| $config->get('filter_raw_get')) ? array() : false;
 			if ($config->get('filter_raw_index'))
@@ -152,6 +154,22 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$filterRaw[] = '?';
 			}
 			$config->set('filterRaw', $filterRaw);
+
+			// Prepare strpos filter
+			$filterStrpos = false;
+			if (!empty(trim($config->get('filter_strpos'))))
+			{
+				$filterStrpos = preg_split('/\r\n|\r|\n/', $config->get('filter_strpos'));
+				$filterStrpos = array_filter(array_map('trim', $filterStrpos), function ($string) {
+					return !empty($string);
+				});
+
+				if (empty($filterStrpos))
+				{
+					$filterStrpos = false;
+				}
+			}
+			$config->set('filterStrpos', $filterStrpos);
 
 			// Create urls arrays
 			$all      = array();
@@ -256,6 +274,21 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 					if (!$home)
 					{
 						$exclude = $item->get('exclude', false);
+
+						// Filter by strpos
+						if (!$exclude && is_array($filterStrpos))
+						{
+							$excludeByRaw = false;
+							foreach ($filterStrpos as $filter)
+							{
+								if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+								{
+									$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS');
+									break;
+								}
+							}
+							$exclude = $excludeByRaw;
+						}
 
 						// Filter by raw
 						if (!$exclude && is_array($filterRaw))
