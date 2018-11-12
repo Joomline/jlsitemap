@@ -136,6 +136,23 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$config->set('filterMenus', ($config->get('filter_menu')) ?
 				$config->get('filter_menu_menus', array()) : false);
 
+			// Filter Raw
+			$filterRaw = ($config->get('filter_raw_index') || $config->get('filter_raw_component')
+				|| $config->get('filter_raw_get')) ? array() : false;
+			if ($config->get('filter_raw_index'))
+			{
+				$filterRaw[] = 'index.php';
+			}
+			if ($config->get('filter_raw_component'))
+			{
+				$filterRaw[] = 'component/';
+			}
+			if ($config->get('filter_raw_get'))
+			{
+				$filterRaw[] = '?';
+			}
+			$config->set('filterRaw', $filterRaw);
+
 			// Create urls arrays
 			$all      = array();
 			$includes = array();
@@ -240,13 +257,28 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 					{
 						$exclude = $item->get('exclude', false);
 
-						// Filters
+						// Filter by raw
+						if (!$exclude && is_array($filterRaw))
+						{
+							$excludeByRaw = false;
+							foreach ($filterRaw as $filter)
+							{
+								if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+								{
+									$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_RAW');
+									break;
+								}
+							}
+							$exclude = $excludeByRaw;
+						}
+
+						// Filter by menu
 						if (!$exclude && is_array($filterMenuItems))
 						{
 							$excludeByMenu = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_MENU');
-							foreach ($filterMenuItems as $filterMenuItem)
+							foreach ($filterMenuItems as $filter)
 							{
-								if (mb_stripos($loc, $filterMenuItem, 0, 'UTF-8') !== false)
+								if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
 								{
 									$excludeByMenu = false;
 									break;
