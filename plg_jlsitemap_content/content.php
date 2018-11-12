@@ -44,11 +44,13 @@ class plgJLSitemapContent extends CMSPlugin
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('id', 'published', 'access', 'metadata', 'language'))
-				->from($db->quoteName('#__categories'))
-				->where($db->quoteName('extension') . ' = ' . $db->quote('com_content'))
-				->where('published IN (0, 1)')
-				->order($db->escape('lft') . ' ' . $db->escape('asc'));
+				->select(array('c.id', 'c.published', 'c.access', 'c.metadata', 'c.language', 'MAX(a.modified) as modified'))
+				->from($db->quoteName('#__categories', 'c'))
+				->join('LEFT', '#__content AS a ON a.catid = c.id')
+				->where($db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
+				->where('c.published IN (0, 1)')
+				->group('c.id')
+				->order($db->escape('c.lft') . ' ' . $db->escape('asc'));
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
@@ -86,6 +88,7 @@ class plgJLSitemapContent extends CMSPlugin
 				$url->loc        = $loc;
 				$url->changefreq = $changefreq;
 				$url->priority   = $priority;
+				$url->lastmod    = $row->modified;
 				$url->exclude    = ($exclude) ? Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_' . strtoupper($exclude)) : $exclude;
 
 				// Add url to array
@@ -98,9 +101,10 @@ class plgJLSitemapContent extends CMSPlugin
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('a.id', 'a.alias', 'a.state', 'a.publish_up', 'a.publish_down', 'a.access', 'a.metadata', 'a.language'))
+				->select(array('a.id', 'a.alias', 'a.state', 'a.modified', 'a.publish_up', 'a.publish_down', 'a.access',
+					'a.metadata', 'a.language', 'c.id as category_id', 'c.published as  category_published',
+					'c.access as category_access'))
 				->from($db->quoteName('#__content', 'a'))
-				->select(array('c.id as category_id', 'c.published as  category_published', 'c.access as category_access'))
 				->join('LEFT', '#__categories AS c ON c.id = a.catid')
 				->where('a.state IN (0, 1)')
 				->where('c.published IN (0, 1)')
@@ -164,6 +168,7 @@ class plgJLSitemapContent extends CMSPlugin
 				$url->loc        = $loc;
 				$url->changefreq = $changefreq;
 				$url->priority   = $priority;
+				$url->lastmod    = $row->modified;
 				$url->exclude    = ($exclude) ? Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_' . strtoupper($exclude)) : $exclude;
 
 				// Add url to array
