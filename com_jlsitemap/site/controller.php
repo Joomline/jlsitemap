@@ -32,7 +32,8 @@ class JLSiteMapController extends BaseController
 		try
 		{
 			$model = $this->getModel('Generation', 'JLSitemapModel');
-			if (!$urls = $model->generate())
+			$debug = ($this->input->get('response') == 'debug');
+			if (!$urls = $model->generate($debug))
 			{
 				$this->setError($model->getError());
 				$this->setMessage(Text::sprintf('COM_JLSITEMAP_GENERATION_FAILURE', Text::_($this->getError())), 'error');

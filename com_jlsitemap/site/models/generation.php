@@ -53,24 +53,30 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	/**
 	 * Method to generate sitemap.xml
 	 *
+	 * @param bool $debug Debug generation
+	 *
 	 * @return bool|object Array if successful, false otherwise and internal error is set.
 	 *
 	 * @since 1.1.0
 	 */
-	public function generate()
+	public function generate($debug = false)
 	{
 		// Get urs
 		$urls = $this->getUrls();
 
-		// Get sitemap xml
-		$xml = $this->getXML($urls->includes);
-
-		$file = JPATH_ROOT . '/sitemap.xml';
-		if (File::exists($file))
+		// Generate sitemap file
+		if (!$debug)
 		{
-			File::delete($file);
+			// Get sitemap xml
+			$xml = $this->getXML($urls->includes);
+
+			$file = JPATH_ROOT . '/sitemap.xml';
+			if (File::exists($file))
+			{
+				File::delete($file);
+			}
+			File::append($file, $xml);
 		}
-		File::append($file, $xml);
 
 		return $urls;
 	}
