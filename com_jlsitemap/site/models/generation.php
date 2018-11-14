@@ -77,7 +77,10 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			{
 				foreach (ArrayHelper::fromObject($filterRegexp) as $regexp)
 				{
-					$xml = preg_replace($regexp['pattern'], $regexp['replacement'], $xml);
+					if (!empty($regexp['pattern']))
+					{
+						$xml = preg_replace($regexp['pattern'], $regexp['replacement'], $xml);
+					}
 				}
 			}
 
