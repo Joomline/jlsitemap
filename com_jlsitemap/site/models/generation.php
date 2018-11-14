@@ -214,15 +214,53 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$url->set('changefreq', $menu->changefreq);
 				$url->set('priority', $menu->priority);
 
+
+				// Prepare exclude
+				$exclude = false;
+				if (!$menu->home)
+				{
+					$exclude = ($menu->exclude) ? Text::_('COM_JLSITEMAP_EXCLUDE_' . strtoupper($menu->exclude)) : false;
+
+					// Filter by strpos
+					if (!$exclude && is_array($filterStrpos))
+					{
+						$excludeByRaw = false;
+						foreach ($filterStrpos as $filter)
+						{
+							if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+							{
+								$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS');
+								break;
+							}
+						}
+						$exclude = $excludeByRaw;
+					}
+
+					// Filter by raw
+					if (!$exclude && is_array($filterRaw))
+					{
+						$excludeByRaw = false;
+						foreach ($filterRaw as $filter)
+						{
+							if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+							{
+								$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_RAW');
+								break;
+							}
+						}
+						$exclude = $excludeByRaw;
+					}
+				}
+
 				// Add url to arrays
 				$all[$key] = $url;
 				if ($menu->home)
 				{
 					$menuHomes[] = $key;
 				}
-				if ($menu->exclude && !$menu->home)
+				if ($exclude)
 				{
-					$excludes[$key]     = Text::_('COM_JLSITEMAP_EXCLUDE_' . strtoupper($menu->exclude));
+					$excludes[$key]     = $exclude;
 					$menuExcludes[$key] = $menu->exclude;
 				}
 				else
