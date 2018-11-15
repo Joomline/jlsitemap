@@ -456,8 +456,8 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$items         = array();
 			$excludeTypes  = array('alias', 'separator', 'heading', 'url');
 			$excludeStates = array(
-				0  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_UNPUBLISHED'),
-				-2 => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_TRASHED'));
+				0  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_UNPUBLISH'),
+				-2 => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_TRASH'));
 			foreach ($rows as $row)
 			{
 				$params    = new Registry($row->params);
