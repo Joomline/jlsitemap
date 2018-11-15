@@ -140,19 +140,25 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	{
 		if ($this->_urls === null)
 		{
-			// Prepare config
-			$config = ComponentHelper::getParams('com_jlsitemap');
-			$config->set('siteRobots', Factory::getConfig()->get('robots'));
-			$config->set('guestAccess', array_unique(Factory::getUser(0)->getAuthorisedViewLevels()));
-			$config->set('multilanguage', Multilanguage::isEnabled());
-			$config->set('changefreqPriority',
-				array('always' => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4, 'monthly' => 5, 'yearly' => 6, 'never' => 7));
+			$config           = ComponentHelper::getParams('com_jlsitemap');
+			$siteConfig       = Factory::getConfig();
+			$siteSef          = ($siteConfig->get('sef') == 1);
+			$siteRobots       = $siteConfig->get('robots');
+			$guestAccess      = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
+			$multilanguage    = Multilanguage::isEnabled();
+			$changefreqValues = array('always'  => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4,
+			                          'monthly' => 5, 'yearly' => 6, 'never' => 7);
 
 			// Prepare menus filter
 			$filterMenus = ($config->get('filter_menu')) ? $config->get('filter_menu_menus', array()) : false;
-			$config->set('filterMenus', $filterMenus);
 
-			// Prepare Raw filter
+			// Prepare menu items filter;
+			$filterMenuItems = ($filterMenus) ? array() : false;
+
+			// Prepare menu home filter
+			$filterMenuHomes = array();
+
+			// Prepare raw filter
 			$filterRaw = ($config->get('filter_raw_index') || $config->get('filter_raw_component')
 				|| $config->get('filter_raw_get')) ? array() : false;
 			if ($config->get('filter_raw_index'))
@@ -167,7 +173,6 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			{
 				$filterRaw[] = '?';
 			}
-			$config->set('filterRaw', $filterRaw);
 
 			// Prepare strpos filter
 			$filterStrpos = false;
@@ -183,216 +188,222 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 					$filterStrpos = false;
 				}
 			}
-			$config->set('filterStrpos', $filterStrpos);
 
 			// Create urls arrays
 			$all      = array();
 			$includes = array();
 			$excludes = array();
 
-			// Add home page to urls
-			$home = new Registry();
-			$home->set('loc', Uri::root());
-			$home->set('changefreq', $config->get('changefreq', 'weekly'));
-			$home->set('priority', $config->get('priority', '0.5'));
-			$all ['/']     = $home;
-			$includes['/'] = $home;
+			// Add home page
+			$type            = array(Text::_('COM_JLSITEMAP_TYPES_MENU'));
+			$title           = $siteConfig->get('sitename');
+			$link            = ($siteSef) ? rtrim(Uri::root(true), '/') . '/' : 'index.php';
+			$key             = (empty($link)) ? '/' : $link;
+			$loc             = rtrim(Uri::root(), '/') . $link;
+			$changefreq      = $config->get('changefreq', 'weekly');
+			$changefreqValue = $changefreqValues[$changefreq];
+			$priority        = $config->get('priority', '0.5');
+			$exclude         = false;
+
+			$url = new Registry();
+			$url->set('type', $type);
+			$url->set('title', $title);
+			$url->set('link', $link);
+			$url->set('loc', $loc);
+			$url->set('changefreq', $changefreq);
+			$url->set('changefreqValue', $changefreqValue);
+			$url->set('priority', $priority);
+			$url->set('exclude', $exclude);
+
+			$all [$key]        = $url;
+			$includes[$key]    = $url;
+			$filterMenuHomes[] = $key;
 
 			// Add menu items to urls arrays
-			$menuHomes       = array();
-			$menuExcludes    = array();
-			$filterMenuItems = (is_array($config->get('filterMenus', false))) ? array() : false;
-			foreach ($this->getMenuItems($config) as $menu)
+			foreach ($this->getMenuItems($multilanguage, $filterMenus, $siteRobots, $guestAccess) as $item)
 			{
-				// Prepare url loc and urls arrays key
-				$loc = Route::_($menu->loc);
-				$key = (empty($loc)) ? '/' : $loc;
+				$type            = array($item->type);
+				$link            = ($siteSef) ? Route::_($item->loc) : $item->loc;
+				$key             = (empty($link)) ? '/' : $link;
+				$loc             = rtrim(Uri::root(), '/') . $link;
+				$changefreq      = $config->get('changefreq', 'weekly');
+				$changefreqValue = $changefreqValues[$changefreq];
+				$priority        = $config->get('priority', '0.5');
+
+				// Prepare exclude
+				$exclude = array();
+				if (!$item->home)
+				{
+					$exclude = ($item->exclude) ? $item->exclude : array();
+					$exclude = array_merge($exclude, $this->filtering($link, $filterRaw, $filterStrpos));
+
+					foreach ($exclude as &$value)
+					{
+						$value = new Registry($value);
+					}
+				}
 
 				// Create url Registry
 				$url = new Registry();
-				$url->set('loc', rtrim(Uri::root(), '/') . $loc);
-				$url->set('changefreq', $menu->changefreq);
-				$url->set('priority', $menu->priority);
-
-
-				// Prepare exclude
-				$exclude = false;
-				if (!$menu->home)
-				{
-					$exclude = ($menu->exclude) ? Text::_('COM_JLSITEMAP_EXCLUDE_' . strtoupper($menu->exclude)) : false;
-
-					// Filter by strpos
-					if (!$exclude && is_array($filterStrpos))
-					{
-						$excludeByRaw = false;
-						foreach ($filterStrpos as $filter)
-						{
-							if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
-							{
-								$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS');
-								break;
-							}
-						}
-						$exclude = $excludeByRaw;
-					}
-
-					// Filter by raw
-					if (!$exclude && is_array($filterRaw))
-					{
-						$excludeByRaw = false;
-						foreach ($filterRaw as $filter)
-						{
-							if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
-							{
-								$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_RAW');
-								break;
-							}
-						}
-						$exclude = $excludeByRaw;
-					}
-				}
+				$url->set('type', $type);
+				$url->set('title', $item->title);
+				$url->set('link', $link);
+				$url->set('loc', $loc);
+				$url->set('changefreq', $changefreq);
+				$url->set('changefreqValue', $changefreqValue);
+				$url->set('priority', $priority);
+				$url->set('exclude', (!empty($exclude)) ? $exclude : false);
 
 				// Add url to arrays
 				$all[$key] = $url;
-				if ($menu->home)
+				if (!empty($exclude))
 				{
-					$menuHomes[] = $key;
-				}
-				if ($exclude)
-				{
-					$excludes[$key]     = $exclude;
-					$menuExcludes[$key] = $menu->exclude;
+					$excludes[$key] = $url;
 				}
 				else
 				{
 					$includes[$key] = $url;
+				}
 
-					// Set menu items filter
-					if (!$menu->home && is_array($filterMenuItems))
-					{
-						$filterMenuItems[] = $loc;
-					}
+				if ($item->home)
+				{
+					$filterMenuHomes[] = $key;
+				}
+				elseif ($filterMenuItems)
+				{
+					$filterMenuItems[] = $key;
 				}
 			}
-			$config->set('menuHomes', $menuHomes);
-			$config->set('filterMenuItems', (is_array($filterMenuItems) ? array_unique($filterMenuItems) : false));
 
-			// Add urls from plugins
-			$rows = array();
+			// Prepare config
+			$config->set('siteConfig', $siteConfig);
+			$config->set('siteSef', $siteSef);
+			$config->set('siteRobots', $siteRobots);
+			$config->set('guestAccess', $guestAccess);
+			$config->set('multilanguage', $multilanguage);
+			$config->set('changefreqValues', $changefreqValues);
+			$config->set('filterMenus', $filterMenus);
+			$config->set('filterMenuItems', $filterMenuItems);
+			$config->set('filterMenuHomes', $filterMenuHomes);
+			$config->set('filterRaw', $filterRaw);
+			$config->set('filterStrpos', $filterStrpos);
+
+			// Prepare plugins
 			PluginHelper::importPlugin('jlsitemap');
 			$dispatcher = JEventDispatcher::getInstance();
+
+			// Add urls from jlsitemap plugins
+			$rows = array();
 			$dispatcher->trigger('onGetUrls', array(&$rows, &$config));
 			foreach ($rows as $row)
 			{
 				$item = new Registry($row);
-				if ($loc = $item->get('loc', false))
+				if (!$loc = $item->get('loc', false)) continue;
+
+				$type            = array($item->get('type', Text::_('COM_JLSITEMAP_TYPES_UNKNOWN')));
+				$title           = $item->get('title');
+				$link            = ($siteSef) ? Route::_($item->get('loc')) : $item->get('loc');
+				$key             = (empty($link)) ? '/' : $link;
+				$loc             = rtrim(Uri::root(), '/') . $link;
+				$changefreq      = $item->get('changefreq', $config->get('changefreq', 'weekly'));
+				$changefreqValue = $changefreqValues[$changefreq];
+				$priority        = $item->get('priority', $config->get('priority', '0.5'));
+				$lastmod         = ($item->get('lastmod', false)) ?
+					Factory::getDate($item->get('lastmod'))->toUnix() : false;
+
+				// Prepare exclude
+				$exclude = array();
+				if (!in_array($key, $filterMenuHomes))
 				{
-					$loc  = Route::_($loc);
-					$key  = (empty($loc)) ? '/' : $loc;
-					$home = (in_array($key, $menuHomes));
-
-					// Check menu excludes
-					if (in_array($key, $menuExcludes)) continue;
-
-					// Prepare url attributes
-					$changefreq         = $item->get('changefreq', $config->get('changefreq', 'weekly'));
-					$changefreqPriority = $config->get('changefreqPriority')[$changefreq];
-					$priority           = $item->get('priority', $config->get('priority', '0.5'));
-					$lastmod            = $item->get('lastmod', false);
-
-					// Change attributes if url already exist
-					$exist = (isset($all[$key])) ? $all[$key] : false;
-					if ($exist)
+					// Legacy old plugins
+					if (is_string($item->get('exclude')))
 					{
-						$changefreq = ($changefreqPriority < $exist->get('changefreqPriority')) ? $changefreq : $exist->get('changefreq');
-						$priority   = (floatval($priority) > floatval($exist->get('priority'))) ? $priority : $exist->get('priority');
-						$lastmod    = ($lastmod && Factory::getDate($lastmod)->toUnix() > Factory::getDate($exist->get('lastmod'))->toUnix())
-							? $lastmod : $exist->get('lastmod');
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_UNKNOWN'),
+						                   'msg'  => $item->get('exclude', ''));
+					}
+					elseif ($item->get('exclude'))
+					{
+						$exclude = $item->get('exclude');
 					}
 
-					// Create url Registry
-					$url = new Registry();
-					$url->set('loc', rtrim(Uri::root(), '/') . $loc);
-					$url->set('changefreq', $changefreq);
-					$url->set('changefreqPriority', $config->get('changefreqPriority')[$changefreq]);
-					$url->set('priority', $priority);
-					if ($lastmod)
+					$exclude = array_merge($exclude, $this->filtering($link, $filterRaw, $filterStrpos, $filterMenuItems));
+
+					foreach ($exclude as &$value)
 					{
-						$url->set('lastmod', Factory::getDate($lastmod)->toISO8601());
-					}
-
-					// Prepare exclude
-					$exclude = false;
-					if (!$home)
-					{
-						$exclude = $item->get('exclude', false);
-
-						// Filter by strpos
-						if (!$exclude && is_array($filterStrpos))
-						{
-							$excludeByRaw = false;
-							foreach ($filterStrpos as $filter)
-							{
-								if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
-								{
-									$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS');
-									break;
-								}
-							}
-							$exclude = $excludeByRaw;
-						}
-
-						// Filter by raw
-						if (!$exclude && is_array($filterRaw))
-						{
-							$excludeByRaw = false;
-							foreach ($filterRaw as $filter)
-							{
-								if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
-								{
-									$excludeByRaw = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_RAW');
-									break;
-								}
-							}
-							$exclude = $excludeByRaw;
-						}
-
-						// Filter by menu
-						if (!$exclude && is_array($filterMenuItems))
-						{
-							$excludeByMenu = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_MENU');
-							foreach ($filterMenuItems as $filter)
-							{
-								if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
-								{
-									$excludeByMenu = false;
-									break;
-								}
-							}
-							$exclude = $excludeByMenu;
-						}
-					}
-
-					// Add url to arrays
-					$all[$key] = $url;
-					if ($exclude)
-					{
-						$excludes[$key] = $exclude;
-
-						// Exclude item if already in array (last item has priority)
-						unset($includes[$key]);
-					}
-					else
-					{
-						$includes[$key] = $url;
+						$value = new Registry($value);
 					}
 				}
-			}
 
-			// Unset index.php page from arrays
-			unset($all['index.php']);
-			unset($includes['index.php']);
-			unset($excludes['index.php']);
+				// Exist url override
+				if (isset($all[$key]))
+				{
+					$exist = $all[$key];
+					$type  = array_merge($exist->get('type'), $type);
+
+					if (empty($title) && !empty($exist->get('title')))
+					{
+						$title = $exist->get('title');
+					}
+
+					if ($exist->get('changefreqValue') < $changefreqValue)
+					{
+						$changefreq      = $exist->get('changefreq');
+						$changefreqValue = $exist->get('changefreqValue');
+					}
+
+					if (floatval($priority) > floatval($exist->get('priority')))
+					{
+						$priority = $exist->get('priority');
+					}
+
+					if ($exist->get('lastmod', false))
+					{
+						$existLastmod = Factory::getDate($exist->get('lastmod'))->toUnix();
+						if (!$lastmod)
+						{
+							$lastmod = $existLastmod;
+						}
+						elseif ($existLastmod > $lastmod)
+						{
+							$lastmod = $existLastmod;
+						}
+					}
+
+					if ($exist->get('exclude'))
+					{
+						$exclude = array_merge($exist->get('exclude'), $exclude);
+					}
+				}
+
+				// Create url Registry
+				$url = new Registry();
+				$url->set('type', $type);
+				$url->set('title', $title);
+				$url->set('link', $link);
+				$url->set('loc', $loc);
+				$url->set('changefreq', $changefreq);
+				$url->set('changefreqValue', $changefreqValue);
+				$url->set('priority', $priority);
+				$url->set('exclude', (!empty($exclude)) ? $exclude : false);
+				if ($lastmod)
+				{
+					$url->set('lastmod', Factory::getDate($lastmod)->toISO8601());
+				}
+
+				// Add url to arrays
+				$all[$key] = $url;
+				if (!empty($exclude))
+				{
+					$excludes[$key] = $url;
+
+					// Exclude item if already in array (last item has priority)
+					unset($includes[$key]);
+				}
+				else
+				{
+					$includes[$key] = $url;
+				}
+			}
 
 			// Sort urls arrays
 			ksort($all);
@@ -415,80 +426,111 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	/**
 	 * Method to get menu items array
 	 *
-	 * @param Registry $config Component config
+	 * @param bool        $multilanguage Enable multilanguage
+	 * @param array|false $menutypes     Menutypes filter
+	 * @param string      $siteRobots    Site config robots
+	 * @param array       $guestAccess   Guest access levels
 	 *
 	 * @return array
 	 *
 	 * @since 1.1.0
 	 */
-	protected function getMenuItems($config)
+	protected function getMenuItems($multilanguage = false, $menutypes = false, $siteRobots = null, $guestAccess = array())
 	{
 		if ($this->_menuItems === null)
 		{
 			// Get menu items
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('m.id', 'm.menutype', 'm.type', 'm.published', 'm.access', 'm.home', 'm.params', 'm.language', 'e.extension_id'))
+				->select(array('m.id', 'm.menutype', 'm.title', 'm.link', 'm.type', 'm.published', 'm.access', 'm.home', 'm.params', 'm.language',
+					'e.extension_id as component_exist', 'e.enabled as component_enabled', 'e.element as component'))
 				->from($db->quoteName('#__menu', 'm'))
-				->join('LEFT', '#__extensions AS e ON e.extension_id = m.component_id AND e.enabled = 1')
+				->join('LEFT', '#__extensions AS e ON e.extension_id = m.component_id')
 				->where('m.client_id = 0')
 				->where('m.id > 1')
-				->where('m.published IN (0, 1)')
 				->order($db->escape('m.lft') . ' ' . $db->escape('asc'));
 			$db->setQuery($query);
 			$rows = $db->loadObjectList('id');
 
 			// Create menu items array
-			$items        = array();
-			$excludeTypes = array('alias', 'separator', 'heading', 'url');
+			$items         = array();
+			$excludeTypes  = array('alias', 'separator', 'heading', 'url');
+			$excludeStates = array(
+				0  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_UNPUBLISHED'),
+				-2 => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_TRASHED'));
 			foreach ($rows as $row)
 			{
+				$params    = new Registry($row->params);
+				$component = $row->component;
+				if ($row->type == 'component' && empty($row->component))
+				{
+					preg_match("/^index.php\?option=([a-zA-Z\-0-9_]*)/", $row->link, $matches);
+					$component = (!empty($matches[1])) ? $matches[1] : 'unknown';
+				}
+
 				// Prepare loc attribute
 				$loc = 'index.php?Itemid=' . $row->id;
-				if (!empty($row->language) && $row->language !== '*' && $config->get('multilanguage', false))
+				if (!empty($row->language) && $row->language !== '*' && $multilanguage)
 				{
 					$loc .= '&lang=' . $row->language;
 				}
 
 				// Prepare exclude attribute
-				$params  = new Registry($row->params);
-				$exclude = false;
+				$exclude = array();
 				if (!$row->home)
 				{
-					if (is_array($config->get('filterMenus', false)) && !empty($config->get('filterMenus')) &&
-						!in_array($row->menutype, $config->get('filterMenus')))
+					if ($menutypes && !empty($menutypes) && !in_array($row->menutype, $menutypes))
 					{
-						$exclude = 'filter_menu';
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_MENUTYPES'));
+
 					}
-					if (preg_match('/noindex/', $params->get('robots', $config->get('siteRobots'))))
+
+					if (preg_match('/noindex/', $params->get('robots', $siteRobots)))
 					{
-						$exclude = 'menu_noindex';
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_ROBOTS'));
 					}
-					if ($row->published != 1)
+
+					if (isset($excludeStates[$row->published]))
 					{
-						$exclude = 'menu_published';
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => $excludeStates[$row->published]);
 					}
+
 					if (in_array($row->type, $excludeTypes))
 					{
-						$exclude = 'menu_system_type';
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => Text::sprintf('COM_JLSITEMAP_EXCLUDE_MENU_SYSTEM_TYPE', $row->type));
 					}
-					if ($row->type == 'component' && empty($row->extension_id))
+
+					if ($row->type == 'component' && empty($row->component_exist))
 					{
-						$exclude = 'menu_component';
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => Text::sprintf('COM_JLSITEMAP_EXCLUDE_MENU_COMPONENT_EXIST',
+							                   $component));
 					}
-					if (!in_array($row->access, $config->get('guestAccess', array())))
+					elseif ($row->type == 'component' && empty($row->component_enabled))
 					{
-						$exclude = 'menu_access';
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => Text::sprintf('COM_JLSITEMAP_EXCLUDE_MENU_COMPONENT_ENABLED',
+							                   $component));
+					}
+
+					if (!in_array($row->access, $guestAccess))
+					{
+						$exclude[] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
+						                   'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_ACCESS'));
 					}
 				}
 
 				// Prepare menu item object
-				$item             = new stdClass();
-				$item->loc        = $loc;
-				$item->changefreq = $config->get('changefreq', 'weekly');
-				$item->priority   = $config->get('priority', '0.5');
-				$item->home       = $row->home;
-				$item->exclude    = $exclude;
+				$item          = new stdClass();
+				$item->loc     = $loc;
+				$item->type    = Text::_('COM_JLSITEMAP_TYPES_MENU');
+				$item->title   = $row->title;
+				$item->home    = $row->home;
+				$item->exclude = (!empty($exclude)) ? $exclude : false;
 
 				// Add menu item to array
 				$items[] = $item;
@@ -503,23 +545,24 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	/**
 	 * Method to filtering urls
 	 *
-	 * @param string     $url    Url
+	 * @param string     $link   Url
 	 * @param array|bool $raw    Raw filter
 	 * @param array|bool $strpos Strpos filter
 	 * @param array|bool $menu   Menu items filter
 	 *
-	 * @return false|array False if don't exclude. Array in exclude
+	 * @return array Excludes array
 	 *
 	 * @since 1.2.1
 	 */
-	public function filtering($url = null, $raw = false, $strpos = false, $menu = false)
+	public function filtering($link = null, $raw = false, $strpos = false, $menu = false)
 	{
 		$exclude = array();
 
 		// Check empty url
-		if (empty($url))
+		if (empty($link))
 		{
-			$exclude[] = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_NULL');
+			$exclude['filter_null'] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_FILTER'),
+			                                'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_NULL'));
 
 			return $exclude;
 		}
@@ -529,9 +572,10 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 		{
 			foreach ($raw as $filter)
 			{
-				if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+				if (mb_stripos($link, $filter, 0, 'UTF-8') !== false)
 				{
-					$exclude[] = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_RAW');
+					$exclude['filter_raw_' . $filter] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_FILTER'),
+					                                          'msg'  => Text::sprintf('COM_JLSITEMAP_EXCLUDE_FILTER_RAW', $filter));
 					break;
 				}
 			}
@@ -540,11 +584,12 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 		// Filter by strpos
 		if ($strpos && is_array($strpos))
 		{
-			foreach ($filterStrpos as $filter)
+			foreach ($strpos as $filter)
 			{
-				if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+				if (mb_stripos($link, $filter, 0, 'UTF-8') !== false)
 				{
-					$exclude[] = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS');
+					$exclude['filter_strpos_' . $filter] = array('type' => Text::_('COM_JLSITEMAP_EXCLUDE_FILTER'),
+					                                             'msg'  => Text::sprintf('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS', $filter));
 					break;
 				}
 			}
@@ -553,10 +598,10 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 		// Filter by menu
 		if (!$menu && is_array($menu))
 		{
-			$excludeMenu = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_MENU');
+			$excludeMenu = true;
 			foreach ($menu as $filter)
 			{
-				if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+				if (mb_stripos($link, $filter, 0, 'UTF-8') !== false)
 				{
 					$excludeMenu = false;
 					break;
@@ -565,10 +610,12 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 
 			if ($excludeMenu)
 			{
-				$exclude[] = $excludeMenu;
+				$exclude['filter_menu'] = array(
+					'type' => Text::_('COM_JLSITEMAP_EXCLUDE_FILTER'),
+					'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_MENU'));
 			}
 		}
 
-		return (!empty($exclude)) ? $exclude : false;
+		return $exclude;
 	}
 }
