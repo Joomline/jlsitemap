@@ -39,16 +39,25 @@ class plgJLSitemapContent extends CMSPlugin
 	 */
 	public function onGetUrls(&$urls, $config)
 	{
+		$categoryExcludeStates = array(
+			0  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_UNPUBLISH'),
+			-2 => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_TRASH'),
+			2  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ARCHIVE'));
+
+		$articleExcludeStates = array(
+			0  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_UNPUBLISH'),
+			-2 => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_TRASH'),
+			2  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ARCHIVE'));
+
 		// Categories
 		if ($this->params->get('categories_enable', false))
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('c.id', 'c.published', 'c.access', 'c.metadata', 'c.language', 'MAX(a.modified) as modified'))
+				->select(array('c.id', 'c.title', 'c.published', 'c.access', 'c.metadata', 'c.language', 'MAX(a.modified) as modified'))
 				->from($db->quoteName('#__categories', 'c'))
 				->join('LEFT', '#__content AS a ON a.catid = c.id')
 				->where($db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
-				->where('c.published IN (0, 1)')
 				->group('c.id')
 				->order($db->escape('c.lft') . ' ' . $db->escape('asc'));
 			$db->setQuery($query);
@@ -69,30 +78,37 @@ class plgJLSitemapContent extends CMSPlugin
 
 				// Prepare exclude attribute
 				$metadata = new Registry($row->metadata);
-				$exclude  = false;
+				$exclude  = array();
 				if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots'))))
 				{
-					$exclude = 'noindex';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
+					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ROBOTS');
 				}
-				if ($row->published != 1)
+
+				if (isset($categoryExcludeStates[$row->published]))
 				{
-					$exclude = 'published';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
+					                   'msg'  => $categoryExcludeStates[$row->published]);
 				}
+
 				if (!in_array($row->access, $config->get('guestAccess', array())))
 				{
-					$exclude = 'access';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
 				// Prepare ulr object
-				$url             = new stdClass();
-				$url->loc        = $loc;
-				$url->changefreq = $changefreq;
-				$url->priority   = $priority;
-				$url->lastmod    = $row->modified;
-				$url->exclude    = ($exclude) ? Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_' . strtoupper($exclude)) : $exclude;
+				$category             = new stdClass();
+				$category->type       = Text::_('PLG_JLSITEMAP_CONTENT_TYPES_CATEGORY');
+				$category->title      = $row->title;
+				$category->loc        = $loc;
+				$category->changefreq = $changefreq;
+				$category->priority   = $priority;
+				$category->lastmod    = $row->modified;
+				$category->exclude    = (!empty($exclude)) ? $exclude : false;
 
-				// Add url to array
-				$urls[] = $url;
+				// Add category to array
+				$urls[] = $category;
 			}
 		}
 
@@ -101,13 +117,11 @@ class plgJLSitemapContent extends CMSPlugin
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('a.id', 'a.alias', 'a.state', 'a.modified', 'a.publish_up', 'a.publish_down', 'a.access',
+				->select(array('a.id', 'a.title', 'a.alias', 'a.state', 'a.modified', 'a.publish_up', 'a.publish_down', 'a.access',
 					'a.metadata', 'a.language', 'c.id as category_id', 'c.published as  category_published',
 					'c.access as category_access'))
 				->from($db->quoteName('#__content', 'a'))
 				->join('LEFT', '#__categories AS c ON c.id = a.catid')
-				->where('a.state IN (0, 1)')
-				->where('c.published IN (0, 1)')
 				->group('a.id')
 				->order($db->escape('a.ordering') . ' ' . $db->escape('asc'));
 
@@ -132,47 +146,61 @@ class plgJLSitemapContent extends CMSPlugin
 
 				// Prepare exclude attribute
 				$metadata = new Registry($row->metadata);
-
-				$exclude = false;
+				$exclude  = array();
 				if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots'))))
 				{
-					$exclude = 'article_noindex';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
+					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ROBOTS');
 				}
-				if ($row->state != 1)
+
+				if (isset($articleExcludeStates[$row->state]))
 				{
-					$exclude = 'article_state';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
+					                   'msg'  => $articleExcludeStates[$row->state]);
 				}
+
 				if ($row->publish_up == $nullDate || Factory::getDate($row->publish_up)->toUnix() > $nowDate)
 				{
-					$exclude = 'article_publish_up';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
+					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_UP');
 				}
+
 				if ($row->publish_down != $nullDate && Factory::getDate($row->publish_down)->toUnix() < $nowDate)
 				{
-					$exclude = 'article_publish_down';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
+					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_DOWN');
 				}
+
 				if (!in_array($row->access, $config->get('guestAccess', array())))
 				{
-					$exclude = 'article_access';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ACCESS'));
 				}
-				if ($row->category_published != 1)
+
+				if (isset($categoryExcludeStates[$row->category_published]))
 				{
-					$exclude = 'category_published';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
+					                   'msg'  => $categoryExcludeStates[$row->category_published]);
 				}
+
 				if (!in_array($row->category_access, $config->get('guestAccess', array())))
 				{
-					$exclude = 'category_access';
+					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
 				// Prepare ulr object
-				$url             = new stdClass();
-				$url->loc        = $loc;
-				$url->changefreq = $changefreq;
-				$url->priority   = $priority;
-				$url->lastmod    = $row->modified;
-				$url->exclude    = ($exclude) ? Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_' . strtoupper($exclude)) : $exclude;
+				$article             = new stdClass();
+				$article->type       = Text::_('PLG_JLSITEMAP_CONTENT_TYPES_ARTICLE');
+				$article->title      = $row->title;
+				$article->loc        = $loc;
+				$article->changefreq = $changefreq;
+				$article->priority   = $priority;
+				$article->lastmod    = $row->modified;
+				$article->exclude    = (!empty($exclude)) ? $exclude : false;
 
 				// Add url to array
-				$urls[] = $url;
+				$urls[] = $article;
 			}
 		}
 
