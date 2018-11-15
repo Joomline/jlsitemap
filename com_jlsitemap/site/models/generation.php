@@ -499,4 +499,76 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 
 		return $this->_menuItems;
 	}
+
+	/**
+	 * Method to filtering urls
+	 *
+	 * @param string     $url    Url
+	 * @param array|bool $raw    Raw filter
+	 * @param array|bool $strpos Strpos filter
+	 * @param array|bool $menu   Menu items filter
+	 *
+	 * @return false|array False if don't exclude. Array in exclude
+	 *
+	 * @since 1.2.1
+	 */
+	public function filtering($url = null, $raw = false, $strpos = false, $menu = false)
+	{
+		$exclude = array();
+
+		// Check empty url
+		if (empty($url))
+		{
+			$exclude[] = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_NULL');
+
+			return $exclude;
+		}
+
+		// Filter by raw
+		if ($raw && is_array($raw))
+		{
+			foreach ($raw as $filter)
+			{
+				if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+				{
+					$exclude[] = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_RAW');
+					break;
+				}
+			}
+		}
+
+		// Filter by strpos
+		if ($strpos && is_array($strpos))
+		{
+			foreach ($filterStrpos as $filter)
+			{
+				if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+				{
+					$exclude[] = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_STRPOS');
+					break;
+				}
+			}
+		}
+
+		// Filter by menu
+		if (!$menu && is_array($menu))
+		{
+			$excludeMenu = Text::_('COM_JLSITEMAP_EXCLUDE_FILTER_MENU');
+			foreach ($menu as $filter)
+			{
+				if (mb_stripos($loc, $filter, 0, 'UTF-8') !== false)
+				{
+					$excludeMenu = false;
+					break;
+				}
+			}
+
+			if ($excludeMenu)
+			{
+				$exclude[] = $excludeMenu;
+			}
+		}
+
+		return (!empty($exclude)) ? $exclude : false;
+	}
 }
