@@ -90,6 +90,11 @@ class JLSiteMapController extends BaseController
 		// Debug response
 		if ($type == 'debug')
 		{
+			if (!empty($this->_errors))
+			{
+				throw new Exception($this->message);
+			}
+
 			echo '<pre>', print_r($data, true), '</pre>';
 
 			Factory::getApplication()->close();
