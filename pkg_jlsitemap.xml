@@ -17,6 +17,7 @@
 	<files>
 		<folder type="component" id="com_jlsitemap">com_jlsitemap</folder>
 		<folder type="plugin" group="jlsitemap" id="content">plg_jlsitemap_content</folder>
+		<folder type="plugin" group="jlsitemap" id="tags">plg_jlsitemap_tags</folder>
 		<folder type="plugin" group="system" id="jlsitemap_cron">plg_system_jlsitemap_cron</folder>
 	</files>
 	<updateservers>
