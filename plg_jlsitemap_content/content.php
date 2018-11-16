@@ -162,13 +162,13 @@ class plgJLSitemapContent extends CMSPlugin
 				if ($row->publish_up == $nullDate || Factory::getDate($row->publish_up)->toUnix() > $nowDate)
 				{
 					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
-					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_UP');
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_UP'));
 				}
 
 				if ($row->publish_down != $nullDate && Factory::getDate($row->publish_down)->toUnix() < $nowDate)
 				{
 					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
-					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_DOWN');
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_DOWN'));
 				}
 
 				if (!in_array($row->access, $config->get('guestAccess', array())))
