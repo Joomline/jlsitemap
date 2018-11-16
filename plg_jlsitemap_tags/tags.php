@@ -96,7 +96,7 @@ class plgJLSitemapTags extends CMSPlugin
 			}
 			$lastmod = Factory::getDate($lastmod)->toSql();
 
-			// Prepare ulr object
+			// Prepare tag object
 			$tag             = new stdClass();
 			$tag->id         = $row->id;
 			$tag->type       = Text::_('PLG_JLSITEMAP_TAGS_TYPE');

@@ -97,7 +97,7 @@ class plgJLSitemapContent extends CMSPlugin
 					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
-				// Prepare ulr object
+				// Prepare category object
 				$category             = new stdClass();
 				$category->type       = Text::_('PLG_JLSITEMAP_CONTENT_TYPES_CATEGORY');
 				$category->title      = $row->title;
@@ -189,7 +189,7 @@ class plgJLSitemapContent extends CMSPlugin
 					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
-				// Prepare ulr object
+				// Prepare article object
 				$article             = new stdClass();
 				$article->type       = Text::_('PLG_JLSITEMAP_CONTENT_TYPES_ARTICLE');
 				$article->title      = $row->title;
@@ -199,7 +199,7 @@ class plgJLSitemapContent extends CMSPlugin
 				$article->lastmod    = $row->modified;
 				$article->exclude    = (!empty($exclude)) ? $exclude : false;
 
-				// Add url to array
+				// Add article to array
 				$urls[] = $article;
 			}
 		}
