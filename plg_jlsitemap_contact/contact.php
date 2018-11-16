@@ -119,7 +119,7 @@ class plgJLSitemapContact extends CMSPlugin
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
 				->select(array('a.id', 'a.name', 'a.alias', 'a.published', 'a.modified', 'a.publish_up', 'a.publish_down', 'a.access',
-					'a.metadata', 'a.language', 'c.id as category_id', 'c.published as  category_published',
+					'a.metadata', 'a.language', 'c.id as category_id', 'c.published as category_published',
 					'c.access as category_access'))
 				->from($db->quoteName('#__contact_details', 'a'))
 				->join('LEFT', '#__categories AS c ON c.id = a.catid')
