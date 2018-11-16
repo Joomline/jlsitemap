@@ -82,7 +82,7 @@ class plgJLSitemapContact extends CMSPlugin
 				if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots'))))
 				{
 					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY'),
-					                   'msg'  => 'PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY_ROBOTS');
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY_ROBOTS'));
 				}
 
 				if (isset($categoryExcludeStates[$row->published]))
@@ -151,7 +151,7 @@ class plgJLSitemapContact extends CMSPlugin
 				if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots'))))
 				{
 					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT'),
-					                   'msg'  => 'PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_ROBOTS');
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_ROBOTS'));
 				}
 
 				if (isset($contactExcludeStates[$row->published]))

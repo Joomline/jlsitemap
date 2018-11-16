@@ -82,7 +82,7 @@ class plgJLSitemapContent extends CMSPlugin
 				if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots'))))
 				{
 					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
-					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ROBOTS');
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ROBOTS'));
 				}
 
 				if (isset($categoryExcludeStates[$row->published]))
@@ -150,7 +150,7 @@ class plgJLSitemapContent extends CMSPlugin
 				if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots'))))
 				{
 					$exclude[] = array('type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
-					                   'msg'  => 'PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ROBOTS');
+					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ROBOTS'));
 				}
 
 				if (isset($articleExcludeStates[$row->state]))
