@@ -49,8 +49,6 @@ class plgJLSitemapContact extends CMSPlugin
 			-2 => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_TRASH'),
 			2  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_ARCHIVE'));
 
-		echo '<pre>', print_r('xxx', true), '</pre>';
-
 		// Categories
 		if ($this->params->get('categories_enable', false))
 		{
@@ -111,8 +109,6 @@ class plgJLSitemapContact extends CMSPlugin
 
 				// Add category to array
 				$urls[] = $category;
-
-				echo '<pre>', print_r($urls, true), '</pre>';
 			}
 		}
 
