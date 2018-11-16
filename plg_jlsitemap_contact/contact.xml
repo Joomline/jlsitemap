@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.9" type="plugin" group="jlsitemap" method="upgrade">
+	<name>PLG_JLSITEMAP_CONTACT</name>
+	<author>Joomline</author>
+	<creationDate>@date@</creationDate>
+	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>sales@joomline.ru</authorEmail>
+	<authorUrl>https://joomline.ru</authorUrl>
+	<version>@version@</version>
+	<description>PLG_JLSITEMAP_CONTACT_DESCRIPTION</description>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_contact.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_contact.sys.ini</language>
+		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_contact.ini</language>
+		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_contact.sys.ini</language>
+	</languages>
+	<files>
+		<filename plugin="contact">contact.php</filename>
+	</files>
+	<config>
+		<fields name="params">
+			<fieldset name="contacts" label="PLG_JLSITEMAP_CONTACT_PARAMS_CONTACTS">
+				<field name="contacts_enable" type="radio"
+					   label="PLG_JLSITEMAP_CONTACT_PARAMS_ENABLE"
+					   default="1"
+					   class="btn-group btn-group-yesno">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="contacts_changefreq" type="list" default="weekly"
+					   label="PLG_JLSITEMAP_CONTACT_PARAMS_CHANGEFREQ"
+					   showon="contacts_enable:1">
+					<option value="always">always</option>
+					<option value="hourly">hourly</option>
+					<option value="daily">daily</option>
+					<option value="weekly">weekly</option>
+					<option value="monthly">monthly</option>
+					<option value="yearly">yearly</option>
+					<option value="never">never</option>
+				</field>
+				<field name="contacts_priority" type="list"
+					   default="0.5" label="PLG_JLSITEMAP_CONTACT_PARAMS_PRIORITY"
+					   showon="contacts_enable:1">
+					<option value="0.0">0.0</option>
+					<option value="0.1">0.1</option>
+					<option value="0.2">0.2</option>
+					<option value="0.3">0.3</option>
+					<option value="0.4">0.4</option>
+					<option value="0.5">0.5</option>
+					<option value="0.6">0.6</option>
+					<option value="0.7">0.7</option>
+					<option value="0.8">0.8</option>
+					<option value="0.9">0.9</option>
+					<option value="1">1</option>
+				</field>
+			</fieldset>
+			<fieldset name="categories" label="PLG_JLSITEMAP_CONTACT_PARAMS_CATEGORIES">
+				<field name="categories_enable" type="radio"
+					   label="PLG_JLSITEMAP_CONTACT_PARAMS_ENABLE"
+					   default="1"
+					   class="btn-group btn-group-yesno">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="categories_changefreq" type="list" default="weekly"
+					   label="PLG_JLSITEMAP_CONTACT_PARAMS_CHANGEFREQ"
+					   showon="categories_enable:1">
+					<option value="always">always</option>
+					<option value="hourly">hourly</option>
+					<option value="daily">daily</option>
+					<option value="weekly">weekly</option>
+					<option value="monthly">monthly</option>
+					<option value="yearly">yearly</option>
+					<option value="never">never</option>
+				</field>
+				<field name="categories_priority" type="list"
+					   default="0.5" label="PLG_JLSITEMAP_CONTACT_PARAMS_PRIORITY"
+					   showon="categories_enable:1">
+					<option value="0.0">0.0</option>
+					<option value="0.1">0.1</option>
+					<option value="0.2">0.2</option>
+					<option value="0.3">0.3</option>
+					<option value="0.4">0.4</option>
+					<option value="0.5">0.5</option>
+					<option value="0.6">0.6</option>
+					<option value="0.7">0.7</option>
+					<option value="0.8">0.8</option>
+					<option value="0.9">0.9</option>
+					<option value="1">1</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>
