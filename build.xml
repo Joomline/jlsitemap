@@ -1,50 +1,50 @@
 <project name="jlsitemap" default="dist" basedir=".">
- 	<property name="VERSION" value="1.2.0"/>
-	
+	<property name="VERSION" value="1.2.0"/>
+
 	<tstamp>
-        <format property="DATE" pattern="%d.%m.%Y" />
-    </tstamp>
-	
-	<property name="build" value="_build" />
-	<property name="dist" value="_dist" />
-	<property name="filename" value="pkg_jlsitemap_v${VERSION}_j3.9.zip" />
- 	<target name="init" depends="clean">
-		<mkdir dir="${build}" />
-		<mkdir dir="${dist}" />
+		<format property="DATE" pattern="%d.%m.%Y"/>
+	</tstamp>
+
+	<property name="build" value="_build"/>
+	<property name="dist" value="_dist"/>
+	<property name="filename" value="pkg_jlsitemap_v${VERSION}_j3.9.zip"/>
+	<target name="init" depends="clean">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${dist}"/>
 	</target>
-	
-	
+
+
 	<target name="replacemodule">
-         <copy todir="${build}/jlsitemap">
+		<copy todir="${build}/jlsitemap">
 			<fileset dir="./">
-			<exclude name="${dist}"/>
-			<exclude name="${build}"/>
-			<exclude name="build.xml"/>
-			<exclude name="README.md"/>
-			<exclude name="README.ru-RU.md"/>
+				<exclude name="${dist}"/>
+				<exclude name="${build}"/>
+				<exclude name="build.xml"/>
+				<exclude name="README.md"/>
+				<exclude name="README.ru-RU.md"/>
 			</fileset>
-            <filterchain>
-                <replacetokens>
-                    <token key="version" value="${VERSION}" />
-                    <token key="date" value="${DATE}" />
-                </replacetokens>
-            </filterchain>
-        </copy>	
-       
-    </target>
- 	
-	
+			<filterchain>
+				<replacetokens>
+					<token key="version" value="${VERSION}"/>
+					<token key="date" value="${DATE}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+
+	</target>
+
+
 	<target name="dist" depends="init, replacemodule">
 		<zip destfile="${dist}/${filename}">
-			<fileset dir="${build}/" >
-				<include name="**/**" />
+			<fileset dir="${build}/">
+				<include name="**/**"/>
 			</fileset>
 		</zip>
 	</target>
-	
+
 	<target name="clean" description="clean up">
-		<delete dir="${build}" />
-		<delete dir="${dist}" />
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
 	</target>
-	
+
 </project>

@@ -17,7 +17,6 @@ use Joomla\Registry\Registry;
 
 class plgJLSitemapContent extends CMSPlugin
 {
-
 	/**
 	 * Affects constructor behavior. If true, language files will be loaded automatically.
 	 *

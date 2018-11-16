@@ -58,8 +58,9 @@ class com_jlsitemapInstallerScript
 	 */
 	function update()
 	{
-		if (Folder::exists(JPATH_ADMINISTRATOR.'/components/com_jlsitemap/views/home')) {
-			Folder::delete(JPATH_ADMINISTRATOR.'/components/com_jlsitemap/views/home');
+		if (Folder::exists(JPATH_ADMINISTRATOR . '/components/com_jlsitemap/views/home'))
+		{
+			Folder::delete(JPATH_ADMINISTRATOR . '/components/com_jlsitemap/views/home');
 		}
 
 		return true;

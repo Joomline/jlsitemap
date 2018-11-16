@@ -39,7 +39,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	public function display($tpl = null)
 	{
 		// Set title
-		ToolBarHelper::title(Text::_('COM_JLSITEMAP').': '. Text::_('COM_JLSITEMAP_CONTROL_PANEL'), 'tree-2');
+		ToolBarHelper::title(Text::_('COM_JLSITEMAP') . ': ' . Text::_('COM_JLSITEMAP_CONTROL_PANEL'), 'tree-2');
 
 		// Set sidebar
 		JLSitemapHelper::addSubmenu('controlpanel');
