@@ -16,9 +16,30 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Component\ComponentHelper;
 
-$access_key = ComponentHelper::getComponent('com_jlsitemap')->getParams()->get('access_key');
+$app    = Factory::getApplication();
+$access = false;
 
-if (empty($access_key) || $access_key != Factory::getApplication()->input->get('access_key'))
+// Check access key
+$access_key = ComponentHelper::getComponent('com_jlsitemap')->getParams()->get('access_key');
+if (empty($access_key) && $access_key == $app->input->get('access_key'))
+{
+	$access = true;
+}
+
+// Check can manage component
+if (!$access && Factory::getUser()->authorise('core.manage', 'com_jlsitemap'))
+{
+	$access = true;
+}
+
+// Check if server request
+if (!$access && $app->input->server->get('SERVER_ADDR') == $app->input->server->get('REMOTE_ADDR'))
+{
+	$access = true;
+}
+
+// Trow if don't has access
+if (!$access)
 {
 	throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 }

@@ -38,8 +38,7 @@ class JLSiteMapController extends BaseController
 	public function generate()
 	{
 		// Prepare url
-		$url = trim(Uri::root(), '/') . '/index.php?option=com_jlsitemap&task=generate&response=json' .
-			'&access_key=' . $this->getAccessKey();
+		$url = trim(Uri::root(), '/') . '/index.php?option=com_jlsitemap&task=generate&response=json';
 
 		// Get Response
 		$response = new Registry(File::read($url));
@@ -69,7 +68,7 @@ class JLSiteMapController extends BaseController
 	 */
 	public function debug()
 	{
-		$redirect = trim(Uri::root(), '/') . '/index.php?option=com_jlsitemap&task=generate&response=debug' .
+		$redirect = trim(Uri::root(true), '/') . '/index.php?option=com_jlsitemap&task=generate&response=debug' .
 			'&access_key=' . $this->getAccessKey();
 
 		$this->setRedirect($redirect);
