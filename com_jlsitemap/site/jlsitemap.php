@@ -21,7 +21,7 @@ $access = false;
 
 // Check access key
 $access_key = ComponentHelper::getComponent('com_jlsitemap')->getParams()->get('access_key');
-if (empty($access_key) && $access_key == $app->input->get('access_key'))
+if (!empty($access_key) && $access_key == $app->input->get('access_key'))
 {
 	$access = true;
 }
