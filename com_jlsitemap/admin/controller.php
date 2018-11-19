@@ -12,7 +12,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
@@ -37,12 +36,27 @@ class JLSiteMapController extends BaseController
 	 */
 	public function generate()
 	{
-		// Prepare url
-		$url = trim(Uri::root(), '/') . '/index.php?option=com_jlsitemap&task=generate&response=json';
+		$app    = Factory::getApplication();
+		$cookie = 'jlsitemap_generation';
+		$result = $app->input->cookie->get($cookie, false, 'raw');
+
+		// Redirect to site generation
+		if (!$result)
+		{
+			$redirect = trim(Uri::root(true), '/') . '/index.php?option=com_jlsitemap&task=generate&response=admin' .
+				'&access_key=' . $this->getAccessKey();
+
+			$this->setRedirect($redirect);
+
+			return true;
+		}
 
 		// Get Response
-		$response = new Registry(File::read($url));
+		$response = new Registry($result);
 		$message  = $response->get('message');
+
+		$app->input->cookie->set($cookie, '', Factory::getDate('-1 day')->toUnix(), $app->get('cookie_path', '/'),
+			$app->get('cookie_domain'), $app->isSSLConnection());
 
 		// Set error
 		if (!$response->get('success'))

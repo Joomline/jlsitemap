@@ -71,9 +71,28 @@ class JLSiteMapController extends BaseController
 	 */
 	protected function setResponse($type = null, $data = null)
 	{
+		$app = Factory::getApplication();
+
 		if (empty($type))
 		{
 			$type = $this->input->get('response', 'redirect');
+		}
+
+		// Admin response
+		if ($type == 'admin')
+		{
+			$name    = 'jlsitemap_generation';
+			$value   = new JsonResponse('', $this->message, !empty($this->_errors));
+			$expires = Factory::getDate('+1 day')->toUnix();
+
+
+			$app->input->cookie->set($name, $value, $expires, $app->get('cookie_path', '/'),
+				$app->get('cookie_domain'), $app->isSSLConnection());
+
+			$redirect = rtrim(Uri::base(true), '/') . '/administrator/index.php?option=com_jlsitemap&task=generate';
+			$this->setRedirect(Route::_($redirect, false));
+
+			return true;
 		}
 
 		// Json Response
@@ -82,7 +101,7 @@ class JLSiteMapController extends BaseController
 			$response = (!empty($data['response'])) ? $data['response'] : '';
 			echo new JsonResponse($response, $this->message, !empty($this->_errors));
 
-			Factory::getApplication()->close();
+			$app->close();
 
 			return true;
 		}
@@ -97,7 +116,7 @@ class JLSiteMapController extends BaseController
 
 			echo '<pre>', print_r($data, true), '</pre>';
 
-			Factory::getApplication()->close();
+			$app->close();
 
 			return true;
 		}
