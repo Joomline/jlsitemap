@@ -85,8 +85,6 @@ class plgJLSitemapTags extends CMSPlugin
 			}
 
 			// Prepare lastmod attribute
-
-
 			$lastmod = (!empty($row->created_time) && $row->created_time != $nullDate) ?
 				Factory::getDate($row->created_time)->toUnix() : false;
 
@@ -95,7 +93,6 @@ class plgJLSitemapTags extends CMSPlugin
 			{
 				$lastmod = Factory::getDate($row->modified_time)->toUnix();
 			}
-
 
 			if ((!empty($row->tag_date) && $row->tag_date != $nullDate) &&
 				(!$lastmod || Factory::getDate($row->tag_date)->toUnix() > $lastmod))
