@@ -62,6 +62,7 @@ class plgJLSitemapContent extends CMSPlugin
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
+			$nullDate   = $db->getNullDate();
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
 
@@ -96,6 +97,9 @@ class plgJLSitemapContent extends CMSPlugin
 					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
+				// Prepare lastmod attribute
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate) ? $row->modified : false;
+
 				// Prepare category object
 				$category             = new stdClass();
 				$category->type       = Text::_('PLG_JLSITEMAP_CONTENT_TYPES_CATEGORY');
@@ -103,7 +107,7 @@ class plgJLSitemapContent extends CMSPlugin
 				$category->loc        = $loc;
 				$category->changefreq = $changefreq;
 				$category->priority   = $priority;
-				$category->lastmod    = $row->modified;
+				$category->lastmod    = $lastmod;
 				$category->exclude    = (!empty($exclude)) ? $exclude : false;
 
 				// Add category to array
@@ -188,6 +192,9 @@ class plgJLSitemapContent extends CMSPlugin
 					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
+				// Prepare lastmod attribute
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate) ? $row->modified : false;
+
 				// Prepare article object
 				$article             = new stdClass();
 				$article->type       = Text::_('PLG_JLSITEMAP_CONTENT_TYPES_ARTICLE');
@@ -195,7 +202,7 @@ class plgJLSitemapContent extends CMSPlugin
 				$article->loc        = $loc;
 				$article->changefreq = $changefreq;
 				$article->priority   = $priority;
-				$article->lastmod    = $row->modified;
+				$article->lastmod    = $lastmod;
 				$article->exclude    = (!empty($exclude)) ? $exclude : false;
 
 				// Add article to array

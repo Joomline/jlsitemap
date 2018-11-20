@@ -132,7 +132,8 @@ class plgJLSitemapK2 extends CMSPlugin
 				}
 
 				// Prepare lastmod attribute
-				$lastmod = (Factory::getDate($row->modified)->toUnix() > Factory::getDate($row->created)->toUnix()) ?
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate &&
+					Factory::getDate($row->modified)->toUnix() > Factory::getDate($row->created)->toUnix()) ?
 					$row->modified : $row->created;
 
 				// Prepare item object
@@ -167,7 +168,7 @@ class plgJLSitemapK2 extends CMSPlugin
 
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
-
+			
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
 
@@ -237,6 +238,7 @@ class plgJLSitemapK2 extends CMSPlugin
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
+			$nullDate   = $db->getNullDate();
 			$changefreq = $this->params->get('tags_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('tags_priority', $config->get('priority', '0.5'));
 
@@ -254,7 +256,8 @@ class plgJLSitemapK2 extends CMSPlugin
 				}
 
 				// Prepare lastmod attribute
-				$lastmod = (Factory::getDate($row->modified)->toUnix() > Factory::getDate($row->created)->toUnix()) ?
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate &&
+					Factory::getDate($row->modified)->toUnix() > Factory::getDate($row->created)->toUnix()) ?
 					$row->modified : $row->created;
 
 				// Prepare tag object
@@ -286,6 +289,7 @@ class plgJLSitemapK2 extends CMSPlugin
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
+			$nullDate   = $db->getNullDate();
 			$changefreq = $this->params->get('users_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('users_priority', $config->get('priority', '0.5'));
 
@@ -303,7 +307,8 @@ class plgJLSitemapK2 extends CMSPlugin
 				}
 
 				// Prepare lastmod attribute
-				$lastmod = (Factory::getDate($row->modified)->toUnix() > Factory::getDate($row->created)->toUnix()) ?
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate &&
+					Factory::getDate($row->modified)->toUnix() > Factory::getDate($row->created)->toUnix()) ?
 					$row->modified : $row->created;
 
 				// Prepare user object

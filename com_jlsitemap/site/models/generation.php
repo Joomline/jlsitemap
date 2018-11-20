@@ -118,6 +118,11 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				{
 					if (in_array($name, array('loc', 'changefreq', 'priority', 'lastmod')))
 					{
+						if ($name == 'lastmod')
+						{
+							$value = Factory::getDate($value)->toISO8601();
+						}
+
 						$url->addChild($name, $value);
 					}
 				}
@@ -308,7 +313,8 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$changefreq      = $item->get('changefreq', $config->get('changefreq', 'weekly'));
 				$changefreqValue = $changefreqValues[$changefreq];
 				$priority        = $item->get('priority', $config->get('priority', '0.5'));
-				$lastmod         = ($item->get('lastmod', false)) ?
+				$lastmod         = ($item->get('lastmod', false)
+					&& $item->get('lastmod') != Factory::getDbo()->getNullDate()) ?
 					Factory::getDate($item->get('lastmod'))->toUnix() : false;
 
 				// Prepare exclude
@@ -358,14 +364,13 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 
 					if ($exist->get('lastmod', false))
 					{
-						$existLastmod = Factory::getDate($exist->get('lastmod'))->toUnix();
 						if (!$lastmod)
 						{
-							$lastmod = $existLastmod;
+							$lastmod = $exist->get('lastmod');
 						}
-						elseif ($existLastmod > $lastmod)
+						elseif ($exist->get('lastmod') > $lastmod)
 						{
-							$lastmod = $existLastmod;
+							$lastmod = $exist->get('lastmod');
 						}
 					}
 
@@ -387,7 +392,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 				$url->set('exclude', (!empty($exclude)) ? $exclude : false);
 				if ($lastmod)
 				{
-					$url->set('lastmod', Factory::getDate($lastmod)->toISO8601());
+					$url->set('lastmod', $lastmod);
 				}
 
 				// Add url to arrays

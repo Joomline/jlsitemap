@@ -51,6 +51,7 @@ class plgJLSitemapTags extends CMSPlugin
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();
 
+		$nullDate      = $db->getNullDate();
 		$excludeStates = array(
 			0  => Text::_('PLG_JLSITEMAP_TAGS_EXCLUDE_UNPUBLISH'),
 			-2 => Text::_('PLG_JLSITEMAP_TAGS_EXCLUDE_TRASH'),
@@ -84,15 +85,24 @@ class plgJLSitemapTags extends CMSPlugin
 			}
 
 			// Prepare lastmod attribute
-			$lastmod = Factory::getDate($row->created_time)->toUnix();
-			if (Factory::getDate($row->modified_time)->toUnix() > $lastmod)
+
+
+			$lastmod = (!empty($row->created_time) && $row->created_time != $nullDate) ?
+				Factory::getDate($row->created_time)->toUnix() : false;
+
+			if ((!empty($row->modified_time) && $row->modified_time != $nullDate) &&
+				(!$lastmod || Factory::getDate($row->modified_time)->toUnix() > $lastmod))
 			{
 				$lastmod = Factory::getDate($row->modified_time)->toUnix();
 			}
-			if (Factory::getDate($row->tag_date)->toUnix() > $lastmod)
+
+
+			if ((!empty($row->tag_date) && $row->tag_date != $nullDate) &&
+				(!$lastmod || Factory::getDate($row->tag_date)->toUnix() > $lastmod))
 			{
 				$lastmod = Factory::getDate($row->tag_date)->toUnix();
 			}
+
 			$lastmod = Factory::getDate($lastmod)->toSql();
 
 			// Prepare tag object

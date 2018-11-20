@@ -62,6 +62,7 @@ class plgJLSitemapContact extends CMSPlugin
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
+			$nullDate   = $db->getNullDate();
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
 
@@ -96,6 +97,9 @@ class plgJLSitemapContact extends CMSPlugin
 					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
+				// Prepare lastmod attribute
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate) ? $row->modified : false;
+
 				// Prepare category object
 				$category             = new stdClass();
 				$category->type       = Text::_('PLG_JLSITEMAP_CONTACT_TYPES_CATEGORY');
@@ -103,7 +107,7 @@ class plgJLSitemapContact extends CMSPlugin
 				$category->loc        = $loc;
 				$category->changefreq = $changefreq;
 				$category->priority   = $priority;
-				$category->lastmod    = $row->modified;
+				$category->lastmod    = $lastmod;
 				$category->exclude    = (!empty($exclude)) ? $exclude : false;
 
 				// Add category to array
@@ -189,6 +193,9 @@ class plgJLSitemapContact extends CMSPlugin
 					                   'msg'  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY_ACCESS'));
 				}
 
+				// Prepare lastmod attribute
+				$lastmod = (!empty($row->modified) && $row->modified != $nullDate) ? $row->modified : false;
+
 				// Prepare contact object
 				$contact             = new stdClass();
 				$contact->type       = Text::_('PLG_JLSITEMAP_CONTACT_TYPES_CONTACT');
@@ -196,7 +203,7 @@ class plgJLSitemapContact extends CMSPlugin
 				$contact->loc        = $loc;
 				$contact->changefreq = $changefreq;
 				$contact->priority   = $priority;
-				$contact->lastmod    = $row->modified;
+				$contact->lastmod    = $lastmod;
 				$contact->exclude    = (!empty($exclude)) ? $exclude : false;
 
 				// Add contact to array
