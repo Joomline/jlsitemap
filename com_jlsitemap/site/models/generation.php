@@ -293,13 +293,10 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 			$config->set('filterRaw', $filterRaw);
 			$config->set('filterStrpos', $filterStrpos);
 
-			// Prepare plugins
-			PluginHelper::importPlugin('jlsitemap');
-			$dispatcher = JEventDispatcher::getInstance();
-
 			// Add urls from jlsitemap plugins
 			$rows = array();
-			$dispatcher->trigger('onGetUrls', array(&$rows, &$config));
+			PluginHelper::importPlugin('jlsitemap');
+			Factory::getApplication()->triggerEvent('onGetUrls', array(&$rows, &$config));
 			foreach ($rows as $row)
 			{
 				$item = new Registry($row);
