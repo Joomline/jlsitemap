@@ -20,6 +20,7 @@
 		<folder type="plugin" group="jlsitemap" id="contact">plg_jlsitemap_contact</folder>
 		<folder type="plugin" group="jlsitemap" id="content">plg_jlsitemap_content</folder>
 		<folder type="plugin" group="jlsitemap" id="k2">plg_jlsitemap_k2</folder>
+		<folder type="plugin" group="jlsitemap" id="kunena">plg_jlsitemap_kunena</folder>
 		<folder type="plugin" group="jlsitemap" id="tags">plg_jlsitemap_tags</folder>
 		<folder type="plugin" group="system" id="jlsitemap_cron">plg_system_jlsitemap_cron</folder>
 	</files>
