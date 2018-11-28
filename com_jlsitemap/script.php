@@ -78,9 +78,11 @@ class com_jlsitemapInstallerScript
 		// Check destination
 		$path = $root;
 		$dirs = explode('/', $destination);
-		if (count($dirs) > 1)
+		array_pop($dirs);
+
+		if (!empty($dirs))
 		{
-			foreach (array_pop($dirs) as $dir)
+			foreach ($dirs as $i => $dir)
 			{
 				$path .= '/' . $dir;
 				if (!Folder::exists($path))
