@@ -13,7 +13,7 @@
 	flex-wrap: wrap;
 }
 
-#controlPanel .actions {
+#controlPanel .main {
 	flex: 1;
 	max-width: 100%;
 }
@@ -25,22 +25,33 @@
 }
 
 @media (min-width: 768px) {
-	#controlPanel .actions {
+	#controlPanel .main {
 		margin: 0 15px 30px;
 	}
 
 	#controlPanel .sidebar {
-		margin: 0 15px 30px;
+		margin: 0 0 30px 15px;
 		width: 520px;
 	}
 }
 
-#controlPanel .actions .wrapper {
+#controlPanel .main .actions {
 	display: flex;
 	flex-wrap: wrap;
+	margin: 0 -15px;
 }
 
-#controlPanel .actions .action {
+#controlPanel .action,
+#controlPanel .sidebar .wrapper {
+	display: block;
+	color: #666;
+	text-decoration: none;
+	outline: none;
+	background: #fff;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+#controlPanel .action {
 	display: inline-block;
 	box-sizing: border-box;
 	width: 275px;
@@ -48,17 +59,7 @@
 	margin: 0 15px 30px;
 }
 
-#controlPanel .actions .action,
-#controlPanel .sidebar .wrapper {
-	background: #fff;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-	color: #666;
-	display: block;
-	text-decoration: none;
-	outline: none;
-}
-
-#controlPanel .actions a.action:hover, a#controlPanel .actions .action:focus, a#controlPanel .actions .action:active {
+#controlPanel .actions a.action:hover, a#controlPanel .action:focus, a#controlPanel .action:active {
 	background-color: #fff;
 	box-shadow: 0 14px 25px rgba(0, 0, 0, 0.16);
 	color: #666;
@@ -66,7 +67,7 @@
 	outline: none;
 }
 
-#controlPanel .actions .action .title,
+#controlPanel .action .title,
 #controlPanel .sidebar .wrapper .title {
 	display: block;
 	font-size: 16px;
@@ -74,41 +75,86 @@
 	text-align: center;
 }
 
-#controlPanel .actions .action.error .title,
-#controlPanel .actions .action.error .head .icon {
+#controlPanel .action.error .title,
+#controlPanel .action.error .head .icon {
 	color: #f0506e;
 }
 
-#controlPanel .actions .action .head {
+#controlPanel .action .head {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 	height: 135px;
 	color: #666;
 	text-align: center;
 	background: #f0f0f0;
 }
 
-#controlPanel .actions .action.not-active .head {
+#controlPanel .action.not-active .head {
 	opacity: 0.3;
 }
 
-#controlPanel .actions .action.generation .head {
+#controlPanel .action.generation .head {
 	background: #7ac143;
 	color: #fafafa;
 }
 
-#controlPanel .actions .action .head .icon {
+#controlPanel .action .head .icon {
 	display: inline-block;
 	max-height: 80px
 }
 
-#controlPanel .actions .action .head .icon > svg {
+#controlPanel .action .head .icon > svg {
 	stroke: currentcolor;
 	fill: currentcolor;
 	height: 80px;
 }
 
+#controlPanel .action .head .badge {
+	display: inline-block;
+	position: absolute;
+	padding: 5px 10px;
+	top: 0;
+	left: 0;
+	color: #999;
+	font-weight: normal;
+	border-radius: 0;
+	background: #fff;
+}
+
 #system-message-container {
 	width: 100%;
+}
+
+#systemMessages {
+	margin-bottom: 30px;
+}
+
+#systemMessages .message {
+	position: relative;
+	margin: 0 0 15px;
+	padding: 15px 15px 15px 30px;
+	color: #666;
+	font-size: 16px;
+	line-height: 1.2;
+	border-left: 4px solid #DDD;
+	background: #fff;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+#systemMessages .message.notice {
+	border-color: #0074D9;
+}
+
+#systemMessages .message.success {
+	border-color: #2ECC40;
+}
+
+#systemMessages .message.warning {
+	border-color: #FFDC00;
+}
+
+#systemMessages .message.error {
+	border-color: #FF4136;
 }

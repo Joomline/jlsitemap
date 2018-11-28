@@ -10,20 +10,15 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Uri\Uri;
 
-HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('version' => 'auto'));
 ?>
-
 <div id="controlPanel">
-	<div class="actions">
-		<div class="wrapper">
+	<div class="main">
+		<?php echo LayoutHelper::render('components.jlsitemap.admin.messages', $this->messages); ?>
+		<div class="actions">
 			<?php
 			$layout = 'components.jlsitemap.admin.action';
 
@@ -37,22 +32,22 @@ HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('vers
 			));
 
 			// Sitemap
-			if (File::exists(JPATH_ROOT . '/sitemap.xml'))
+			if ($this->sitemap)
 			{
 				echo LayoutHelper::render($layout, array(
 					'class'     => 'sitemap',
-					'url'       => Uri::root() . 'sitemap.xml',
+					'url'       => $this->sitemap->url,
 					'title'     => 'COM_JLSITEMAP_SITEMAP',
 					'icon'      => 'sitemap',
-					'newWindow' => true
+					'newWindow' => true,
+					'badge'      => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC2'))
 				));
 
 				echo LayoutHelper::render($layout, array(
 					'class'     => 'delete',
 					'url'       => 'index.php?option=com_jlsitemap&task=delete',
 					'title'     => 'COM_JLSITEMAP_DELETE',
-					'icon'      => 'delete',
-					'newWindow' => false
+					'icon'      => 'delete'
 				));
 			}
 			else
@@ -74,11 +69,11 @@ HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('vers
 			));
 
 			// Cron
-			if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron'))
+			if ($this->cron)
 			{
 				echo LayoutHelper::render($layout, array(
 					'class'     => 'cron',
-					'url'       => 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id,
+					'url'       => 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $this->cron->id,
 					'title'     => 'COM_JLSITEMAP_CRON',
 					'icon'      => 'cron',
 					'newWindow' => true
@@ -95,15 +90,13 @@ HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('vers
 			));
 
 			// Config
-			$user = Factory::getUser();
-			if ($user->authorise('core.admin', 'com_jlsitemap') || $user->authorise('core.options', 'com_jlsitemap'))
+			if ($this->config)
 			{
 				echo LayoutHelper::render($layout, array(
 					'class'     => 'config',
-					'url'       => 'index.php?option=com_config&view=component&component=com_jlsitemap',
+					'url'       => $this->config,
 					'title'     => 'COM_JLSITEMAP_CONFIG',
-					'icon'      => 'config',
-					'newWindow' => false
+					'icon'      => 'config'
 				));
 			}
 			?>

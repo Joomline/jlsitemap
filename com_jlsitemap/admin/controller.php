@@ -148,7 +148,7 @@ class JLSiteMapController extends BaseController
 		}
 
 		// Delete failed.
-		$this->setMessage(Text::_('COM_JLSITEMAP_DELETE_FAILURE'));
+		$this->setMessage(Text::_('COM_JLSITEMAP_DELETE_FAILURE'), 'error');
 
 		return false;
 	}

@@ -25,6 +25,7 @@
 		<menu>COM_JLSITEMAP</menu>
 		<files folder="admin">
 			<folder>helpers</folder>
+			<folder>layouts</folder>
 			<folder>views</folder>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>

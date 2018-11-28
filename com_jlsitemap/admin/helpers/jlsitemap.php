@@ -42,6 +42,10 @@ class JLSitemapHelper extends ContentHelper
 			JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_SITEMAP'),
 				Uri::root() . 'sitemap.xml',
 				$vName == 'sitemap');
+
+			JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_DELETE'),
+				'index.php?option=com_jlsitemap&task=delete',
+				$vName == 'delete');
 		}
 
 		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_PLUGINS'),

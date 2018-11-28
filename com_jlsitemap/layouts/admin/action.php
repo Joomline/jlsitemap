@@ -5,7 +5,7 @@
  * @author     Joomline - joomline.ru
  * @copyright  Copyright (c) 2010 - 2018 Joomline. All rights reserved.
  * @license    GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
- * @url       https://joomline.ru/
+ * @link       https://joomline.ru/
  */
 
 defined('_JEXEC') or die;
@@ -24,6 +24,7 @@ extract($displayData);
  * @var  string  $title     Action title
  * @var  string  $icon      Action icon
  * @var  boolean $newWindow Open in new window
+ * @var  string  $badge     Badge text
  */
 
 // Prepare variables
@@ -33,6 +34,8 @@ $title     = (!empty($title)) ? Text::_($title) : '';
 $newWindow = (isset($newWindow)) ? $newWindow : false;
 $icon      = (isset($icon) && File::exists(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg')) ?
 	file_get_contents(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg') : false;
+$badge     = (!empty($badge)) ? Text::_($badge) : false;
+
 ?>
 <?php if ($url): ?>
 	<a href="<?php echo $url; ?>"
@@ -41,6 +44,11 @@ $icon      = (isset($icon) && File::exists(JPATH_ROOT . '/media/com_jlsitemap/ic
 			<?php if ($icon): ?>
 				<div class="icon">
 					<?php echo $icon; ?>
+				</div>
+			<?php endif; ?>
+			<?php if ($badge): ?>
+				<div class="badge">
+					<?php echo $badge; ?>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -54,6 +62,11 @@ $icon      = (isset($icon) && File::exists(JPATH_ROOT . '/media/com_jlsitemap/ic
 			<?php if ($icon): ?>
 				<div class="icon">
 					<?php echo $icon; ?>
+				</div>
+			<?php endif; ?>
+			<?php if ($badge): ?>
+				<div class="badge">
+					<?php echo $badge; ?>
 				</div>
 			<?php endif; ?>
 		</div>
