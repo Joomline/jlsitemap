@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Installer\InstallerAdapter;
 
@@ -137,6 +138,12 @@ class com_jlsitemapInstallerScript
 	{
 		// Uninstall layouts
 		$this->uninstallLayouts($parent);
+
+		// Remove sitemap
+		if (File::exists(JPATH_ROOT . '/sitemap.xml'))
+		{
+			File::delete(JPATH_ROOT . '/sitemap.xml');
+		}
 	}
 
 	/**
