@@ -50,25 +50,29 @@ class com_jlsitemapInstallerScript
 		$root   = JPATH_ROOT . '/layouts';
 		$source = $parent->getParent()->getPath('source');
 
+		// Get attributes
 		$attributes = $parent->getParent()->manifest->xpath('layouts');
 		if (!is_array($attributes) || empty($attributes[0])) return;
 
+		// Get destination
 		$destination = (!empty($attributes[0]->attributes()->destination)) ?
 			(string) $attributes[0]->attributes()->destination : false;
 		if (!$destination) return;
 
+		// Remove old layouts
+		if (Folder::exists($root . '/' . trim($destination, '/')))
+		{
+			Folder::delete($root . '/' . trim($destination, '/'));
+		}
+
+		// Get folder
 		$folder = (!empty($attributes[0]->attributes()->folder)) ?
 			(string) $attributes[0]->attributes()->folder : 'layouts';
 		if (!Folder::exists($source . '/' . trim($folder, '/'))) return;
 
+		// Prepare src and dest
 		$src  = $source . '/' . trim($folder, '/');
 		$dest = $root . '/' . trim($destination, '/');
-
-		// Remove old layouts
-		if (Folder::exists($dest))
-		{
-			Folder::delete($dest);
-		}
 
 		// Check destination
 		$path = $root;
@@ -117,6 +121,47 @@ class com_jlsitemapInstallerScript
 			$component->element = 'com_jlsitemap';
 			$component->params  = (string) $params;
 			Factory::getDbo()->updateObject('#__extensions', $component, array('element'));
+		}
+	}
+
+	/**
+	 * This method is called after extension is uninstalled.
+	 *
+	 * @param  InstallerAdapter $parent Parent object calling object.
+	 *
+	 * @return void
+	 *
+	 * @since  1.3.1
+	 */
+	public function uninstall($parent)
+	{
+		// Uninstall layouts
+		$this->uninstallLayouts($parent);
+	}
+
+	/**
+	 * Method to uninstall extension layouts
+	 *
+	 * @param  InstallerAdapter $parent Parent object calling object.
+	 *
+	 * @return void
+	 *
+	 * @since  1.3.1
+	 */
+	protected function uninstallLayouts($parent)
+	{
+		$attributes = $parent->getParent()->manifest->xpath('layouts');
+		if (!is_array($attributes) || empty($attributes[0])) return;
+
+		$destination = (!empty($attributes[0]->attributes()->destination)) ?
+			(string) $attributes[0]->attributes()->destination : false;
+		if (!$destination) return;
+
+		$dest = JPATH_ROOT . '/layouts/' . trim($destination, '/');
+
+		if (Folder::exists($dest))
+		{
+			Folder::delete($dest);
 		}
 	}
 }
