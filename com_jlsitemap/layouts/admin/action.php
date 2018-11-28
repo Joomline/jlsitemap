@@ -32,12 +32,12 @@ $class     = (!empty($class)) ? 'action ' . $class : 'action';
 $title     = (!empty($title)) ? Text::_($title) : '';
 $newWindow = (isset($newWindow)) ? $newWindow : false;
 $icon      = (isset($icon) && File::exists(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg')) ?
-	File::read(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg') : false;
+	file_get_contents(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg') : false;
 ?>
 <?php if ($url): ?>
 	<a href="<?php echo $url; ?>"
 	   class="<?php echo $class; ?>"<?php echo ($newWindow) ? ' target="_blank"' : ''; ?>>
-		<div class="header">
+		<div class="head">
 			<?php if ($icon): ?>
 				<div class="icon">
 					<?php echo $icon; ?>

@@ -55,6 +55,7 @@
 	color: #666;
 	display: block;
 	text-decoration: none;
+	outline: none;
 }
 
 #controlPanel .actions a.action:hover, a#controlPanel .actions .action:focus, a#controlPanel .actions .action:active {
@@ -74,11 +75,11 @@
 }
 
 #controlPanel .actions .action.error .title,
-#controlPanel .actions .action.error .header .icon {
+#controlPanel .actions .action.error .head .icon {
 	color: #f0506e;
 }
 
-#controlPanel .actions .action .header {
+#controlPanel .actions .action .head {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -87,17 +88,17 @@
 	text-align: center;
 }
 
-#controlPanel .actions .action.not-active .header {
+#controlPanel .actions .action.not-active .head {
 	opacity: 0.3;
 }
 
-#controlPanel .actions .action .header .icon {
+#controlPanel .actions .action .head .icon {
 	display: inline-block;
 	color: #333;
 	max-height: 80px
 }
 
-#controlPanel .actions .action .header .icon > svg {
+#controlPanel .actions .action .head .icon > svg {
 	stroke: currentcolor;
 	fill: currentcolor;
 	height: 80px;
