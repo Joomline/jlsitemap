@@ -41,4 +41,5 @@
 	<media destination="com_jlsitemap" folder="media">
 		<folder>css</folder>
 	</media>
+	<layouts destination="components/jlsitemap" folder="layouts"/>
 </extension>

@@ -12,17 +12,91 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Installer\InstallerAdapter;
 
 class com_jlsitemapInstallerScript
 {
 	/**
+	 * Runs right after any installation action.
+	 *
+	 * @param  string           $type   Type of PostFlight action. Possible values are:
+	 * @param  InstallerAdapter $parent Parent object calling object.
+	 *
+	 * @return void
+	 *
+	 * @since  1.3.1
+	 */
+	function postflight($type, $parent)
+	{
+		// Add access key
+		$this->addAccessKey();
+
+		// Install layouts
+		$this->installLayouts($parent);
+	}
+
+	/**
+	 * Method to install/update extension layouts
+	 *
+	 * @param  InstallerAdapter $parent Parent object calling object.
+	 *
+	 * @return void
+	 *
+	 * @since  1.3.1
+	 */
+	protected function installLayouts($parent)
+	{
+		$root   = JPATH_ROOT . '/layouts';
+		$source = $parent->getParent()->getPath('source');
+
+		$attributes = $parent->getParent()->manifest->xpath('layouts');
+		if (!is_array($attributes) || empty($attributes[0])) return;
+
+		$destination = (!empty($attributes[0]->attributes()->destination)) ?
+			(string) $attributes[0]->attributes()->destination : false;
+		if (!$destination) return;
+
+		$folder = (!empty($attributes[0]->attributes()->folder)) ?
+			(string) $attributes[0]->attributes()->folder : 'layouts';
+		if (!Folder::exists($source . '/' . trim($folder, '/'))) return;
+
+		$src  = $source . '/' . trim($folder, '/');
+		$dest = $root . '/' . trim($destination, '/');
+
+		// Remove old layouts
+		if (Folder::exists($dest))
+		{
+			Folder::delete($dest);
+		}
+
+		// Check destination
+		$path = $root;
+		$dirs = explode('/', $destination);
+		if (count($dirs) > 1)
+		{
+			foreach (array_pop($dirs) as $dir)
+			{
+				$path .= '/' . $dir;
+				if (!Folder::exists($path))
+				{
+					Folder::create($path);
+				}
+			}
+		}
+
+		// Move layouts
+		Folder::move($src, $dest);
+	}
+
+	/**
 	 * Method to add access key to component params
 	 *
-	 * @return bool
+	 * @return void
 	 *
-	 * @since  1.1.0
+	 * @since  1.3.1
 	 */
-	function postflight()
+	protected function addAccessKey()
 	{
 		$params = ComponentHelper::getComponent('com_jlsitemap')->getParams();
 		if (empty($params->get('access_key')))
@@ -44,7 +118,5 @@ class com_jlsitemapInstallerScript
 			$component->params  = (string) $params;
 			Factory::getDbo()->updateObject('#__extensions', $component, array('element'));
 		}
-
-		return true;
 	}
 }
