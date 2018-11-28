@@ -10,88 +10,109 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('version' => 'auto'));
 ?>
 
-<div class="row-fluid">
-	<div class="span8">
-		<div class="icons-block">
-			<a class="item" href="<?php echo Route::_('index.php?option=com_jlsitemap&task=generate'); ?>">
-				<div class="img">
-					<span class="icon-play large-icon"></span>
-				</div>
-				<div class="title">
-					<?php echo Text::_('COM_JLSITEMAP_GENERATION'); ?>
-				</div>
-			</a>
+<div id="controlPanel">
+	<div class="actions">
+		<div class="wrapper">
+			<?php
+			$layout = 'components.jlsitemap.admin.action';
 
-			<?php if (File::exists(JPATH_ROOT . '/sitemap.xml')): ?>
-				<a class="item" href="<?php echo Uri::root() . 'sitemap.xml'; ?>" target="_blank">
-					<div class="img">
-						<span class="icon-tree-2 large-icon"></span>
-					</div>
-					<div class="title">
-						<?php echo Text::_('COM_JLSITEMAP_SITEMAP'); ?>
-					</div>
-				</a>
-			<?php else: ?>
-				<div class="item not-active">
-					<div class="img">
-						<span class="icon-tree-2 large-icon"></span>
-					</div>
-					<div class="title text-error">
-						<?php echo Text::_('COM_JLSITEMAP_ERROR_SITEMAP_NOT_FOUND'); ?>
-					</div>
-				</div>
-			<?php endif; ?>
+			// Generation
+			echo LayoutHelper::render($layout, array(
+				'class'     => 'generation',
+				'url'       => 'index.php?option=com_jlsitemap&task=generate',
+				'title'     => 'COM_JLSITEMAP_GENERATION',
+				'icon'      => 'generation',
+				'newWindow' => false
+			));
 
-			<a class="item" href="<?php echo Route::_('index.php?option=com_plugins&filter[folder]=jlsitemap'); ?>"
-			   target="_blank">
-				<div class="img">
-					<span class="icon-power-cord large-icon"></span>
-				</div>
-				<div class="title">
-					<?php echo Text::_('COM_JLSITEMAP_PLUGINS'); ?>
-				</div>
-			</a>
+			// Sitemap
+			if (File::exists(JPATH_ROOT . '/sitemap.xml'))
+			{
+				echo LayoutHelper::render($layout, array(
+					'class'     => 'sitemap',
+					'url'       => Uri::root() . 'sitemap.xml',
+					'title'     => 'COM_JLSITEMAP_SITEMAP',
+					'icon'      => 'sitemap',
+					'newWindow' => true
+				));
 
-			<?php if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron')): ?>
-				<a class="item" target="_blank"
-				   href="<?php echo Route::_('index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id); ?>">
-					<div class="img">
-						<span class="icon-clock large-icon"></span>
-					</div>
-					<div class="title">
-						<?php echo Text::_('COM_JLSITEMAP_CRON'); ?>
-					</div>
-				</a>
-			<?php endif; ?>
+				echo LayoutHelper::render($layout, array(
+					'class'     => 'delete error',
+					'url'       => 'index.php?option=com_jlsitemap&task=delete',
+					'title'     => 'COM_JLSITEMAP_DELETE',
+					'icon'      => 'delete',
+					'newWindow' => false
+				));
+			}
+			else
+			{
+				echo LayoutHelper::render($layout, array(
+					'class' => 'no-sitemap not-active error',
+					'title' => 'COM_JLSITEMAP_ERROR_SITEMAP_NOT_FOUND',
+					'icon'  => 'sitemap',
+				));
+			}
 
-			<a class="item"
-			   href="<?php echo Route::_('index.php?option=com_config&view=component&component=com_jlsitemap'); ?>">
-				<div class="img">
-					<span class="icon-options large-icon"></span>
-				</div>
-				<div class="title">
-					<?php echo Text::_('COM_JLSITEMAP_CONFIG'); ?>
-				</div>
-			</a>
+			// Plugins
+			echo LayoutHelper::render($layout, array(
+				'class'     => 'plugins',
+				'url'       => 'index.php?option=com_plugins&filter[folder]=jlsitemap',
+				'title'     => 'COM_JLSITEMAP_PLUGINS',
+				'icon'      => 'plugins',
+				'newWindow' => true
+			));
 
+			// Cron
+			if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron'))
+			{
+				echo LayoutHelper::render($layout, array(
+					'class'     => 'cron',
+					'url'       => 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id,
+					'title'     => 'COM_JLSITEMAP_CRON',
+					'icon'      => 'cron',
+					'newWindow' => true
+				));
+			}
+
+			// Debug
+			echo LayoutHelper::render($layout, array(
+				'class'     => 'debug',
+				'url'       => 'index.php?option=com_jlsitemap&task=debug',
+				'title'     => 'COM_JLSITEMAP_DEBUG',
+				'icon'      => 'debug',
+				'newWindow' => true
+			));
+
+			// Config
+			$user = Factory::getUser();
+			if ($user->authorise('core.admin', 'com_jlsitemap') || $user->authorise('core.options', 'com_jlsitemap'))
+			{
+				echo LayoutHelper::render($layout, array(
+					'class'     => 'config',
+					'url'       => 'index.php?option=com_config&view=component&component=com_jlsitemap',
+					'title'     => 'COM_JLSITEMAP_CONFIG',
+					'icon'      => 'config',
+					'newWindow' => false
+				));
+			}
+			?>
 		</div>
 	</div>
-	<div class="span4">
-		<div class="row-fluid sidebar">
-			<div class="wrapper">
-				<div class="title">
-					<?php echo Text::_('COM_JLSITEMAP_ADMIN_TEXT'); ?>
-				</div>
+	<div class="sidebar">
+		<div class="wrapper">
+			<div class="title">
+				<?php echo Text::_('COM_JLSITEMAP_ADMIN_TEXT'); ?>
 			</div>
 		</div>
 	</div>

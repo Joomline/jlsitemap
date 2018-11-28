@@ -40,6 +40,7 @@
 	</administration>
 	<media destination="com_jlsitemap" folder="media">
 		<folder>css</folder>
+		<folder>icons</folder>
 	</media>
 	<layouts destination="components/jlsitemap" folder="layouts"/>
 </extension>
