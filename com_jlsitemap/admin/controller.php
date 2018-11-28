@@ -131,7 +131,7 @@ class JLSiteMapController extends BaseController
 	 *
 	 * @return bool
 	 *
-	 * @since 1.3.1
+	 * @since 1.4.0
 	 */
 	public function delete()
 	{

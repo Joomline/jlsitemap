@@ -22,7 +22,7 @@ class plgJLSitemapTags extends CMSPlugin
 	 *
 	 * @var boolean
 	 *
-	 * @since 1.2.1
+	 * @since 1.3.0
 	 */
 	protected $autoloadLanguage = true;
 
@@ -34,7 +34,7 @@ class plgJLSitemapTags extends CMSPlugin
 	 *
 	 * @return array Urls array with attributes
 	 *
-	 * @since 1.2.1
+	 * @since 1.3.0
 	 */
 	public function onGetUrls(&$urls, $config)
 	{

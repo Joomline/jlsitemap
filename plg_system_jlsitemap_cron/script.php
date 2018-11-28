@@ -45,7 +45,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since 1.3.1
+	 * @since 1.4.0
 	 */
 	protected function enablePlugin($parent)
 	{
@@ -67,7 +67,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	protected function installLayouts($parent)
 	{
@@ -141,7 +141,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	protected function uninstallLayouts($parent)
 	{

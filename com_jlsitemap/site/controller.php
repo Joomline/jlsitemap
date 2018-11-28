@@ -142,7 +142,7 @@ class JLSiteMapController extends BaseController
 	 *
 	 * @return  boolean  False if no redirect exists.
 	 *
-	 * @since   1.2.1
+	 * @since   1.3.0
 	 */
 	public function redirect()
 	{

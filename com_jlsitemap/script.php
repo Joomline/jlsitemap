@@ -26,7 +26,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	function postflight($type, $parent)
 	{
@@ -44,7 +44,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	protected function installLayouts($parent)
 	{
@@ -101,7 +101,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	protected function addAccessKey()
 	{
@@ -134,7 +134,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	public function uninstall($parent)
 	{
@@ -155,7 +155,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @return void
 	 *
-	 * @since  1.3.1
+	 * @since  1.4.0
 	 */
 	protected function uninstallLayouts($parent)
 	{

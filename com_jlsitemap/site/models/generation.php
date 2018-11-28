@@ -554,7 +554,7 @@ class JLSitemapModelGeneration extends BaseDatabaseModel
 	 *
 	 * @return array Excludes array
 	 *
-	 * @since 1.2.1
+	 * @since 1.3.0
 	 */
 	public function filtering($link = null, $raw = false, $strpos = false, $menu = false)
 	{
