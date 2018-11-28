@@ -48,7 +48,7 @@ HTMLHelper::_('stylesheet', 'media/com_jlsitemap/css/admin.min.css', array('vers
 				));
 
 				echo LayoutHelper::render($layout, array(
-					'class'     => 'delete error',
+					'class'     => 'delete',
 					'url'       => 'index.php?option=com_jlsitemap&task=delete',
 					'title'     => 'COM_JLSITEMAP_DELETE',
 					'icon'      => 'delete',

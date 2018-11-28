@@ -83,18 +83,23 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: #f0f0f0;
-	height: 105px;
+	height: 135px;
+	color: #666;
 	text-align: center;
+	background: #f0f0f0;
 }
 
 #controlPanel .actions .action.not-active .head {
 	opacity: 0.3;
 }
 
+#controlPanel .actions .action.generation .head {
+	background: #7ac143;
+	color: #fafafa;
+}
+
 #controlPanel .actions .action .head .icon {
 	display: inline-block;
-	color: #333;
 	max-height: 80px
 }
 
