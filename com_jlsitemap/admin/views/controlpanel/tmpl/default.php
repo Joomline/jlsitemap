@@ -14,6 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
+HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' => 'auto'));
 ?>
 <div id="controlPanel">
 	<div class="main">
@@ -40,14 +41,14 @@ use Joomla\CMS\Layout\LayoutHelper;
 					'title'     => 'COM_JLSITEMAP_SITEMAP',
 					'icon'      => 'sitemap',
 					'newWindow' => true,
-					'badge'      => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC2'))
+					'badge'     => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC2'))
 				));
 
 				echo LayoutHelper::render($layout, array(
-					'class'     => 'delete',
-					'url'       => 'index.php?option=com_jlsitemap&task=delete',
-					'title'     => 'COM_JLSITEMAP_DELETE',
-					'icon'      => 'delete'
+					'class' => 'delete',
+					'url'   => 'index.php?option=com_jlsitemap&task=delete',
+					'title' => 'COM_JLSITEMAP_DELETE',
+					'icon'  => 'delete'
 				));
 			}
 			else
@@ -93,10 +94,10 @@ use Joomla\CMS\Layout\LayoutHelper;
 			if ($this->config)
 			{
 				echo LayoutHelper::render($layout, array(
-					'class'     => 'config',
-					'url'       => $this->config,
-					'title'     => 'COM_JLSITEMAP_CONFIG',
-					'icon'      => 'config'
+					'class' => 'config',
+					'url'   => $this->config,
+					'title' => 'COM_JLSITEMAP_CONFIG',
+					'icon'  => 'config'
 				));
 			}
 			?>
