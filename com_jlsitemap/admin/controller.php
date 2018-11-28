@@ -12,7 +12,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
@@ -121,5 +124,32 @@ class JLSiteMapController extends BaseController
 		}
 
 		return $access_key;
+	}
+
+	/**
+	 * Method to delete sitemap
+	 *
+	 * @return bool
+	 *
+	 * @since 1.3.1
+	 */
+	public function delete()
+	{
+		$this->setRedirect(Route::_('index.php?option=com_jlsitemap&view=controlpanel', false));
+
+		$file = JPATH_ROOT . '/sitemap.xml';
+
+		// Delete succeeded.
+		if (!File::exists($file) || File::delete($file))
+		{
+			$this->setMessage(Text::_('COM_JLSITEMAP_DELETE_SUCCESS'));
+
+			return true;
+		}
+
+		// Delete failed.
+		$this->setMessage(Text::_('COM_JLSITEMAP_DELETE_FAILURE'));
+
+		return false;
 	}
 }
