@@ -50,7 +50,7 @@ $icon      = (isset($icon) && File::exists(JPATH_ROOT . '/media/com_jlsitemap/ic
 	</a>
 <?php else: ?>
 	<div class="<?php echo $class; ?>">
-		<div class="header">
+		<div class="head">
 			<?php if ($icon): ?>
 				<div class="icon">
 					<?php echo $icon; ?>
