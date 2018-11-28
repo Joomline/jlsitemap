@@ -19,7 +19,6 @@
 	<files>
 		<filename plugin="jlsitemap_cron">jlsitemap_cron.php</filename>
 		<folder>fields</folder>
-		<folder>layouts</folder>
 	</files>
 	<config>
 		<fields name="params" addfieldpath="/plugins/system/jlsitemap_cron/fields">
@@ -78,4 +77,5 @@
 		<folder>css</folder>
 		<folder>js</folder>
 	</media>
+	<layouts destination="plugins/system/jlsitemap_cron" folder="layouts"/>
 </extension>
