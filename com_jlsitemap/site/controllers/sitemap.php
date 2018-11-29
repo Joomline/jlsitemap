@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Uri\Uri;
@@ -94,7 +95,13 @@ class JLSiteMapControllerSitemap extends BaseController
 		// Debug
 		if ($debug)
 		{
-			echo '<pre>', print_r($result, true), '</pre>';
+			if ($error)
+			{
+				throw new Exception($error);
+			}
+
+			echo LayoutHelper::render('components.jlsitemap.site.debug', $result);
+
 			$app->close();
 
 			return (!$error);
