@@ -29,7 +29,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	{
 		$app      = Factory::getApplication();
 		$debug    = (!empty($app->input->get('debug')));
-		$model    = $this->getModel('Generation', 'JLSitemapModel');
+		$model    = $this->getModel('Sitemap', 'JLSitemapModel');
 		$error    = (!$result = $model->generate($debug)) ? $model->getError() : false;
 		$includes = (!$error) ? count($result->includes) : 0;
 		$excludes = (!$error) ? count($result->excludes) : 0;
@@ -86,6 +86,14 @@ class JLSiteMapControllerSitemap extends BaseController
 				Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_FAILURE', Text::_($error));
 
 			echo new JsonResponse(array('includes' => $includes, 'excludes' => $excludes), $message, $error);;
+			$app->close();
+
+			return (!$error);
+		}
+
+		// Debug
+		if ($debug)
+		{
 			$app->close();
 
 			return (!$error);

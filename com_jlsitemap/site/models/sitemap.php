@@ -22,7 +22,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
-class JLSitemapModelGeneration extends BaseDatabaseModel
+class JLSitemapModelSitemap extends BaseDatabaseModel
 {
 	/**
 	 * Sitemap xml
