@@ -29,7 +29,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	{
 		$app      = Factory::getApplication();
 		$debug    = (!empty($app->input->get('debug')));
-		$model    = $this->getModel('Sitemap', 'JLSitemapModel');
+		$model    = $this->getModel();
 		$error    = (!$result = $model->generate($debug)) ? $model->getError() : false;
 		$includes = (!$error) ? count($result->includes) : 0;
 		$excludes = (!$error) ? count($result->excludes) : 0;
@@ -94,11 +94,93 @@ class JLSiteMapControllerSitemap extends BaseController
 		// Debug
 		if ($debug)
 		{
+			echo '<pre>', print_r($result, true), '</pre>';
 			$app->close();
 
 			return (!$error);
 		}
 
 		return (!$error);
+	}
+
+	/**
+	 * Method to generate sitemap
+	 *
+	 * @return bool
+	 *
+	 * @since 1.4.1
+	 */
+	public function delete()
+	{
+		$app   = Factory::getApplication();
+		$model = $this->getModel();
+		$error = ($model->delete()) ? $model->getError() : false;
+
+		// Set messages
+		if (!$debug && !empty($app->input->get('messages')))
+		{
+			if ($error)
+			{
+				$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_DELETE_FAILURE', Text::_($error)), 'error');
+			}
+			else
+			{
+				$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS'));
+			}
+		}
+
+		// Set cookies
+		if (!$debug && !empty($app->input->get('cookies')))
+		{
+			$name    = 'jlsitemap_delete';
+			$message = (!$error) ? Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS') :
+				Text::sprintf('COM_JLSITEMAP_SITEMAP_DELETE_FAILURE', Text::_($error));
+			$value   = new JsonResponse('', $message, $error);
+			$expires = Factory::getDate('+1 day')->toUnix();
+
+			$app->input->cookie->set($name, $value, $expires, $app->get('cookie_path', '/'),
+				$app->get('cookie_domain'), $app->isSSLConnection());
+		}
+
+		// Redirect
+		if (!$debug && !empty($app->input->get('redirect')))
+		{
+			$url = (!empty($this->input->get('return', null, 'base64'))) ?
+				base64_decode($this->input->get('return', null, 'base64')) : Uri::root(true);
+
+			$app->redirect(str_replace('&amp;', '&', $url));
+
+			return (!$error);
+		}
+
+		// Json response
+		if ($app->input->get('response') == 'json')
+		{
+			$message = (!$error) ? Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS') :
+				Text::sprintf('COM_JLSITEMAP_SITEMAP_DELETE_FAILURE', Text::_($error));
+
+			echo new JsonResponse('', $message, $error);;
+			$app->close();
+
+			return (!$error);
+		}
+
+		return (!$error);
+	}
+
+	/**
+	 * Method to get a model object, loading it if required.
+	 *
+	 * @param   string $name   The model name. Optional.
+	 * @param   string $prefix The class prefix. Optional.
+	 * @param   array  $config Configuration array for model. Optional.
+	 *
+	 * @return  \Joomla\CMS\MVC\Model\BaseDatabaseModel|boolean  Model object on success; otherwise false on failure.
+	 *
+	 * @since   1.4.1
+	 */
+	public function getModel($name = 'Sitemap', $prefix = 'JLSitemapModel', $config = array())
+	{
+		return parent::getModel($name, $prefix, $config);
 	}
 }

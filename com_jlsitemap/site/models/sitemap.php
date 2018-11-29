@@ -620,4 +620,18 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 		return $exclude;
 	}
+
+	/**
+	 * Method to delete sitemap
+	 *
+	 * @return bool
+	 *
+	 * @since 1.4.1
+	 */
+	public function delete()
+	{
+		$file = JPATH_ROOT . '/sitemap.xml';
+
+		return (!File::exists($file) || File::delete($file));
+	}
 }

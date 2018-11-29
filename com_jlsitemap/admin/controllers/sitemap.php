@@ -20,7 +20,7 @@ use Joomla\Registry\Registry;
 class JLSiteMapControllerSitemap extends BaseController
 {
 	/**
-	 * Method to generate sitemap.xml
+	 * Method to generate sitemap
 	 *
 	 * @return bool
 	 *
@@ -92,6 +92,63 @@ class JLSiteMapControllerSitemap extends BaseController
 				Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_EXCLUDES', $excludes), 'warning');
 		}
 
+		$this->setRedirect('index.php?option=com_jlsitemap');
+
+		return true;
+	}
+
+	/**
+	 * Method to delete sitemap
+	 *
+	 * @return bool
+	 *
+	 * @since 1.4.1
+	 */
+	public function delete()
+	{
+		$app    = Factory::getApplication();
+		$cookie = 'jlsitemap_delete';
+		$result = $app->input->cookie->get($cookie, false, 'raw');
+
+		// Redirect to site controller
+		if (!$result)
+		{
+			// Prepare redirect
+			$redirect = array(
+				'option'     => 'com_jlsitemap',
+				'task'       => 'sitemap.delete',
+				'access_key' => $this->getAccessKey(),
+				'messages'   => 0,
+				'cookies'    => 1,
+				'redirect'   => 1,
+				'return'     => base64_encode(Route::_('index.php?option=com_jlsitemap&task=sitemap.delete'))
+			);
+
+			$app->redirect(trim(Uri::root(true), '/') . '/index.php?' . http_build_query($redirect));
+
+			return true;
+		}
+
+		// Get Response
+		$response = new Registry($result);
+		$message  = $response->get('message');
+
+		// Remove cookie
+		$app->input->cookie->set($cookie, '', Factory::getDate('-1 day')->toUnix(), $app->get('cookie_path', '/'),
+			$app->get('cookie_domain'), $app->isSSLConnection());
+
+		// Set error
+		if (!$response->get('success'))
+		{
+			$this->setError($message);
+			$this->setMessage($message, 'error');
+			$this->setRedirect('index.php?option=com_jlsitemap');
+
+			return false;
+		}
+
+		// Set success
+		$this->setMessage($message);
 		$this->setRedirect('index.php?option=com_jlsitemap');
 
 		return true;
