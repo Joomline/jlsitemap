@@ -11,8 +11,8 @@
 	<description>COM_JLSITEMAP_DESCRIPTION</description>
 	<scriptfile>script.php</scriptfile>
 	<files folder="site">
+		<folder>controllers</folder>
 		<folder>models</folder>
-		<filename>controller.php</filename>
 		<filename>jlsitemap.php</filename>
 	</files>
 	<languages folder="site">
@@ -24,6 +24,7 @@
 	<administration>
 		<menu>COM_JLSITEMAP</menu>
 		<files folder="admin">
+			<folder>controllers</folder>
 			<folder>helpers</folder>
 			<folder>layouts</folder>
 			<folder>views</folder>

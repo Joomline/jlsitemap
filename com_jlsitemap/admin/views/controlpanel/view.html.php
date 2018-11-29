@@ -17,11 +17,12 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
 
 class JLSitemapViewControlPanel extends HtmlView
 {
 	/**
-	 * The sidebar html
+	 * Sidebar html
 	 *
 	 * @var string
 	 *
@@ -30,7 +31,16 @@ class JLSitemapViewControlPanel extends HtmlView
 	protected $sidebar;
 
 	/**
-	 * The sitemap info
+	 * Generate url
+	 *
+	 * @var string
+	 *
+	 * @since 1.4.1
+	 */
+	protected $generate = 'index.php?option=com_jlsitemap&task=sitemap.generate';
+
+	/**
+	 * Sitemap info object
 	 *
 	 * @var false|object
 	 *
@@ -39,7 +49,16 @@ class JLSitemapViewControlPanel extends HtmlView
 	protected $sitemap = false;
 
 	/**
-	 * The cron plugin
+	 * Plugins url
+	 *
+	 * @var string
+	 *
+	 * @since 1.4.1
+	 */
+	protected $plugins = 'index.php?option=com_plugins&filter[folder]=jlsitemap';
+
+	/**
+	 * Cron plugin
 	 *
 	 * @var false|object
 	 *
@@ -48,7 +67,25 @@ class JLSitemapViewControlPanel extends HtmlView
 	protected $cron = false;
 
 	/**
-	 * The config link
+	 * Debug url
+	 *
+	 * @var string
+	 *
+	 * @since 1.4.1
+	 */
+	protected $debug = 'index.php?option=com_jlsitemap&task=sitemap.generate&debug=1';
+
+	/**
+	 * Delete url
+	 *
+	 * @var string
+	 *
+	 * @since 1.4.1
+	 */
+	protected $delete = 'index.php?option=com_jlsitemap&task=sitemap.delete';
+
+	/**
+	 * Config link
 	 *
 	 * @var false|object
 	 *
@@ -57,7 +94,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	protected $config = false;
 
 	/**
-	 * The system message
+	 * System messages
 	 *
 	 * @var false|array
 	 *
@@ -98,6 +135,10 @@ class JLSitemapViewControlPanel extends HtmlView
 		// Set cron
 		if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron'))
 		{
+			$cron->url     = 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id;
+			$cron->params  = new Registry($cron->params);
+			$cron->last_run = $cron->params->get('last_run', false);
+
 			$this->cron = $cron;
 		}
 

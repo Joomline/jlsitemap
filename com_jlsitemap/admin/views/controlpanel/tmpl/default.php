@@ -26,7 +26,7 @@ HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' 
 			// Generation
 			echo LayoutHelper::render($layout, array(
 				'class'     => 'generation',
-				'url'       => 'index.php?option=com_jlsitemap&task=generate',
+				'url'       => $this->generate,
 				'title'     => 'COM_JLSITEMAP_GENERATION',
 				'icon'      => 'generation',
 				'newWindow' => false
@@ -46,8 +46,8 @@ HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' 
 
 				echo LayoutHelper::render($layout, array(
 					'class' => 'delete',
-					'url'   => 'index.php?option=com_jlsitemap&task=delete',
-					'title' => 'COM_JLSITEMAP_DELETE',
+					'url'   => $this->delete,
+					'title' => 'COM_JLSITEMAP_SITEMAP_DELETE',
 					'icon'  => 'delete'
 				));
 			}
@@ -63,7 +63,7 @@ HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' 
 			// Plugins
 			echo LayoutHelper::render($layout, array(
 				'class'     => 'plugins',
-				'url'       => 'index.php?option=com_plugins&filter[folder]=jlsitemap',
+				'url'       => $this->plugins,
 				'title'     => 'COM_JLSITEMAP_PLUGINS',
 				'icon'      => 'plugins',
 				'newWindow' => true
@@ -74,17 +74,19 @@ HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' 
 			{
 				echo LayoutHelper::render($layout, array(
 					'class'     => 'cron',
-					'url'       => 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $this->cron->id,
+					'url'       => $this->cron->url,
 					'title'     => 'COM_JLSITEMAP_CRON',
 					'icon'      => 'cron',
-					'newWindow' => true
+					'newWindow' => true,
+					'badge'     => ($this->cron->last_run) ?
+						HTMLHelper::_('date', $this->cron->last_run, Text::_('DATE_FORMAT_LC6')) : false
 				));
 			}
 
 			// Debug
 			echo LayoutHelper::render($layout, array(
 				'class'     => 'debug',
-				'url'       => 'index.php?option=com_jlsitemap&task=debug',
+				'url'       => $this->debug,
 				'title'     => 'COM_JLSITEMAP_DEBUG',
 				'icon'      => 'debug',
 				'newWindow' => true

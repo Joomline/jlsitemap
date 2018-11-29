@@ -34,7 +34,7 @@ class JLSitemapHelper extends ContentHelper
 			$vName == 'controlpanel');
 
 		JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_GENERATION'),
-			'index.php?option=com_jlsitemap&task=generate',
+			'index.php?option=com_jlsitemap&task=sitemap.generate',
 			$vName == 'generation');
 
 		if (File::exists(JPATH_ROOT . '/sitemap.xml'))
@@ -43,7 +43,7 @@ class JLSitemapHelper extends ContentHelper
 				Uri::root() . 'sitemap.xml',
 				$vName == 'sitemap');
 
-			JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_DELETE'),
+			JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_SITEMAP_DELETE'),
 				'index.php?option=com_jlsitemap&task=delete',
 				$vName == 'delete');
 		}
