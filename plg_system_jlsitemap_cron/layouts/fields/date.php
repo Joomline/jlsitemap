@@ -24,7 +24,7 @@ extract($displayData);
  * @var  string $value Value attribute of the field.
  */
 
-$date = (empty($value)) ? Text::_('JNEVER') : HTMLHelper::_('date', $value, Text::_('DATE_FORMAT_LC2')) .
+$date = (empty($value)) ? Text::_('JNEVER') : HTMLHelper::_('date', $value, Text::_('DATE_FORMAT_LC6')) .
 	' (' . Factory::getConfig()->get('offset') . ')'
 ?>
 <div data-input-date="<?php echo $id; ?>">

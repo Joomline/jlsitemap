@@ -41,7 +41,7 @@ HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' 
 					'title'     => 'COM_JLSITEMAP_SITEMAP',
 					'icon'      => 'sitemap',
 					'newWindow' => true,
-					'badge'     => HTMLHelper::_('date', $this->sitemap->date, 'd.m.y H:i')
+					'badge'     => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC6'))
 				));
 
 				echo LayoutHelper::render($layout, array(
