@@ -18,22 +18,12 @@
 	max-width: 100%;
 }
 
-#controlPanel .sidebar {
-	display: inline-block;
-	box-sizing: border-box;
-	max-width: 100%;
-}
-
 @media (min-width: 768px) {
 	#controlPanel .main {
 		margin: 0 15px 30px;
 	}
-
-	#controlPanel .sidebar {
-		margin: 0 0 30px 15px;
-		width: 520px;
-	}
 }
+
 
 #controlPanel .main .actions {
 	display: flex;
@@ -41,8 +31,7 @@
 	margin: 0 -15px;
 }
 
-#controlPanel .action,
-#controlPanel .sidebar .wrapper {
+#controlPanel .main .action {
 	display: block;
 	color: #666;
 	text-decoration: none;
@@ -51,7 +40,7 @@
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-#controlPanel .action {
+#controlPanel .main .action {
 	display: inline-block;
 	box-sizing: border-box;
 	width: 275px;
@@ -59,7 +48,7 @@
 	margin: 0 15px 30px;
 }
 
-#controlPanel .actions a.action:hover, a#controlPanel .action:focus, a#controlPanel .action:active {
+#controlPanel .main .actions a.action:hover, a#controlPanel .main .action:focus, a#controlPanel .main .action:active {
 	background-color: #fff;
 	box-shadow: 0 14px 25px rgba(0, 0, 0, 0.16);
 	color: #666;
@@ -67,20 +56,19 @@
 	outline: none;
 }
 
-#controlPanel .action .title,
-#controlPanel .sidebar .wrapper .title {
+#controlPanel .main .action .title {
 	display: block;
 	font-size: 16px;
 	padding: 10px;
 	text-align: center;
 }
 
-#controlPanel .action.error .title,
-#controlPanel .action.error .head .icon {
+#controlPanel .main .action.error .title,
+#controlPanel .main .action.error .head .icon {
 	color: #f0506e;
 }
 
-#controlPanel .action .head {
+#controlPanel .main .action .head {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -91,36 +79,72 @@
 	background: #f0f0f0;
 }
 
-#controlPanel .action.not-active .head {
+#controlPanel .main .action.not-active .head {
 	opacity: 0.3;
 }
 
-#controlPanel .action.generation .head {
+#controlPanel .main .action.generation .head {
 	background: #7ac143;
 	color: #fafafa;
 }
 
-#controlPanel .action .head .icon {
+#controlPanel .main .action .head .icon {
 	display: inline-block;
 	max-height: 80px
 }
 
-#controlPanel .action .head .icon > svg {
+#controlPanel .main .action .head .icon > svg {
 	stroke: currentcolor;
 	fill: currentcolor;
 	height: 80px;
 }
 
-#controlPanel .action .head .badge {
+#controlPanel .main .action .head .badge {
 	display: inline-block;
 	position: absolute;
 	padding: 5px 10px;
 	top: 0;
-	left: 0;
+	right: 0;
 	color: #999;
+	font-size: 14px;
 	font-weight: normal;
 	border-radius: 0;
 	background: #fff;
+}
+
+#controlPanel .sidebar {
+	display: inline-block;
+	box-sizing: border-box;
+	max-width: 100%;
+}
+
+@media (min-width: 768px) {
+	#controlPanel .sidebar {
+		margin: 0 0 30px 15px;
+		width: 520px;
+	}
+}
+
+#controlPanel .sidebar .wrapper {
+	display: block;
+	padding: 20px 20px 0;
+	font-size: 16px;
+	text-align: center;
+	background: #fff;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+#controlPanel .sidebar .wrapper h3 {
+	font-size: 20px;
+	margin-top: 30px;
+}
+
+#controlPanel .sidebar .wrapper h3:first-child {
+	margin-top: 0;
+}
+
+#controlPanel .sidebar .wrapper iframe {
+	margin-top: 10px;
 }
 
 #system-message-container {
