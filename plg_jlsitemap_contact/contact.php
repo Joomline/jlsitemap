@@ -48,6 +48,8 @@ class plgJLSitemapContact extends CMSPlugin
 			-2 => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_TRASH'),
 			2  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_ARCHIVE'));
 
+		$multilanguage = $config->get('multilanguage');
+
 		// Categories
 		if ($this->params->get('categories_enable', false))
 		{
@@ -59,6 +61,15 @@ class plgJLSitemapContact extends CMSPlugin
 				->where($db->quoteName('c.extension') . ' = ' . $db->quote('com_contact'))
 				->group('c.id')
 				->order($db->escape('c.lft') . ' ' . $db->escape('asc'));
+
+			// Join over associations
+			if ($multilanguage)
+			{
+				$query->select('assoc.key as association')
+					->join('LEFT', '#__associations AS assoc ON assoc.id = c.id AND assoc.context = ' .
+						$db->quote('com_categories.item'));
+			}
+
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
@@ -66,12 +77,14 @@ class plgJLSitemapContact extends CMSPlugin
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
 
-			// Add categories to urls array
+			// Add categories to arrays
+			$categories = array();
+			$alternates = array();
 			foreach ($rows as $row)
 			{
 				// Prepare loc attribute
 				$loc = 'index.php?option=com_contact&view=category&id=' . $row->id;
-				if (!empty($row->language) && $row->language !== '*' && $config->get('multilanguage'))
+				if (!empty($row->language) && $row->language !== '*' && $multilanguage)
 				{
 					$loc .= '&lang=' . $row->language;
 				}
@@ -109,16 +122,39 @@ class plgJLSitemapContact extends CMSPlugin
 				$category->priority   = $priority;
 				$category->lastmod    = $lastmod;
 				$category->exclude    = (!empty($exclude)) ? $exclude : false;
+				$category->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
 				// Add category to array
-				$urls[] = $category;
+				$categories[] = $category;
+
+				// Add category to alternates array
+				if ($multilanguage && !empty($row->association) && empty($exclude))
+				{
+					if (!isset($alternates[$row->association]))
+					{
+						$alternates[$row->association] = array();
+					}
+
+					$alternates[$row->association][$row->language] = $loc;
+				};
 			}
+
+			// Add alternates to categories
+			if (!empty($alternates))
+			{
+				foreach ($categories as &$category)
+				{
+					$category->alternates = ($category->alternates) ? $alternates[$category->alternates] : false;
+				}
+			}
+
+			// Add categories to urls
+			$urls = array_merge($urls, $categories);
 		}
 
 		// Contacts
 		if ($this->params->get('contacts_enable', false))
 		{
-
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
 				->select(array('a.id', 'a.name', 'a.alias', 'a.published', 'a.modified', 'a.publish_up', 'a.publish_down', 'a.access',
@@ -129,6 +165,14 @@ class plgJLSitemapContact extends CMSPlugin
 				->group('a.id')
 				->order($db->escape('a.ordering') . ' ' . $db->escape('asc'));
 
+			// Join over associations
+			if ($multilanguage)
+			{
+				$query->select('assoc.key as association')
+					->join('LEFT', '#__associations AS assoc ON assoc.id = a.id AND assoc.context = ' .
+						$db->quote('com_contact.item'));
+			}
+
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
@@ -137,7 +181,9 @@ class plgJLSitemapContact extends CMSPlugin
 			$changefreq = $this->params->get('contacts_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('contacts_priority', $config->get('priority', '0.5'));
 
-			// Add contacts to urls array
+			// Add contacts to arrays
+			$contacts   = array();
+			$alternates = array();
 			foreach ($rows as $row)
 			{
 				// Prepare loc attribute
@@ -205,10 +251,34 @@ class plgJLSitemapContact extends CMSPlugin
 				$contact->priority   = $priority;
 				$contact->lastmod    = $lastmod;
 				$contact->exclude    = (!empty($exclude)) ? $exclude : false;
+				$contact->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
 				// Add contact to array
-				$urls[] = $contact;
+				$contacts[] = $contact;
+
+				// Add contact to alternates array
+				if ($multilanguage && !empty($row->association) && empty($exclude))
+				{
+					if (!isset($alternates[$row->association]))
+					{
+						$alternates[$row->association] = array();
+					}
+
+					$alternates[$row->association][$row->language] = $loc;
+				};
 			}
+
+			// Add alternates to contacts
+			if (!empty($alternates))
+			{
+				foreach ($contacts as &$contact)
+				{
+					$contact->alternates = ($contact->alternates) ? $alternates[$contact->alternates] : false;
+				}
+			}
+
+			// Add contacts to urls
+			$urls = array_merge($urls, $contacts);
 		}
 
 		return $urls;
