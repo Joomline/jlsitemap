@@ -191,7 +191,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$siteRobots       = $siteConfig->get('robots');
 			$guestAccess      = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
 			$multilanguage    = Multilanguage::isEnabled();
-			$defaultLanguage  = Factory::getLanguage()->getDefault();
+			$defaultLanguage  = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
 			$changefreqValues = array('always'  => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4,
 			                          'monthly' => 5, 'yearly' => 6, 'never' => 7);
 
@@ -351,6 +351,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$config->set('siteRobots', $siteRobots);
 			$config->set('guestAccess', $guestAccess);
 			$config->set('multilanguage', $multilanguage);
+			$config->set('defaultLanguage', $defaultLanguage);
 			$config->set('changefreqValues', $changefreqValues);
 			$config->set('filterMenus', $filterMenus);
 			$config->set('filterMenuItems', $filterMenuItems);
