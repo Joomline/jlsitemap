@@ -109,26 +109,66 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		if ($this->_xml === null)
 		{
 			$rows = (empty($rows)) ? $this->getUrls()->includes : $rows;
-			$xml  = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>');
 
+			// Create sitemap
+			$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
+				. '<urlset'
+				. ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+				. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+				. ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"'
+				. ' xmlns:xhtml="http://www.w3.org/1999/xhtml"'
+				. ' xhtml="http://www.w3.org/1999/xhtml"'
+				. '/>');
+
+			// Add urls
 			foreach ($rows as $row)
 			{
-				$url = $xml->addChild('url');
-				foreach ($row->toArray() as $name => $value)
+				if ($loc = $row->get('loc', false))
 				{
-					if (in_array($name, array('loc', 'changefreq', 'priority', 'lastmod')))
+					$url = $sitemap->addChild('url');
+
+					// Loc
+					$url->addChild('loc', $loc);
+
+					// Changefreq
+					if ($changefreq = $row->get('changefreq', false))
 					{
-						if ($name == 'lastmod')
+						$url->addChild('changefreq', $changefreq);
+					}
+
+					// Priority
+					if ($priority = $row->get('priority', false))
+					{
+						$url->addChild('priority', $row->get('priority'));
+					}
+
+					// Lastmod
+					if ($lastmod = $row->get('lastmod', false))
+					{
+						$url->addChild('lastmod', Factory::getDate($lastmod)->toISO8601());
+					}
+
+					// Alternates
+					if ($alternates = $row->get('alternates', false))
+					{
+						// Add x-default
+						if (!isset($alternates['x-default']) && isset($alternates[Factory::getLanguage()->getDefault()]))
 						{
-							$value = Factory::getDate($value)->toISO8601();
+							$alternates['x-default'] = $alternates[Factory::getLanguage()->getDefault()];
 						}
 
-						$url->addChild($name, $value);
+						foreach ($alternates as $lang => $href)
+						{
+							$alternate = $url->addChild('xhtml:link', '', 'xhtml');
+							$alternate->addAttribute('rel', 'alternate');
+							$alternate->addAttribute('hreflang', $lang);
+							$alternate->addAttribute('href', $href);
+						}
 					}
 				}
 			}
 
-			$this->_xml = $xml->asXML();
+			$this->_xml = $sitemap->asXML();
 		}
 
 		return $this->_xml;
@@ -151,6 +191,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$siteRobots       = $siteConfig->get('robots');
 			$guestAccess      = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
 			$multilanguage    = Multilanguage::isEnabled();
+			$defaultLanguage  = Factory::getLanguage()->getDefault();
 			$changefreqValues = array('always'  => 1, 'hourly' => 2, 'daily' => 3, 'weekly' => 4,
 			                          'monthly' => 5, 'yearly' => 6, 'never' => 7);
 
@@ -248,6 +289,29 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 					}
 				}
 
+				// Prepare alternates
+				$alternates = array();
+				if (is_array($item->alternates))
+				{
+					foreach ($item->alternates as $lang => $href)
+					{
+						$href = ($siteSef) ? Route::_($href) : $href;
+						if (empty($href))
+						{
+							$href = '/';
+						}
+						if (!isset($excludes[$href]) && empty($this->filtering($href, $filterRaw, $filterStrpos)))
+						{
+							$alternates[$lang] = rtrim(Uri::root(), '/') . $href;
+						}
+					}
+
+					if (!empty($alternates) && !isset($alternates['x-default']) && isset($alternates[$defaultLanguage]))
+					{
+						$alternates['x-default'] = $alternates[$defaultLanguage];
+					}
+				}
+
 				// Create url Registry
 				$url = new Registry();
 				$url->set('type', $type);
@@ -258,6 +322,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$url->set('changefreqValue', $changefreqValue);
 				$url->set('priority', $priority);
 				$url->set('exclude', (!empty($exclude)) ? $exclude : false);
+				$url->set('alternates', (!empty($alternates)) ? $alternates : false);
 
 				// Add url to arrays
 				$all[$key] = $url;
@@ -337,6 +402,29 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 					}
 				}
 
+				// Prepare alternates
+				$alternates = array();
+				if ($item->get('alternates', false))
+				{
+					foreach ($item->get('alternates') as $lang => $href)
+					{
+						$href = ($siteSef) ? Route::_($href) : $href;
+						if (empty($href))
+						{
+							$href = '/';
+						}
+						if (!isset($excludes[$href]) && empty($this->filtering($href, $filterRaw, $filterStrpos)))
+						{
+							$alternates[$lang] = rtrim(Uri::root(), '/') . $href;
+						}
+					}
+
+					if (!empty($alternates) && !isset($alternates['x-default']) && isset($alternates[$defaultLanguage]))
+					{
+						$alternates['x-default'] = $alternates[$defaultLanguage];
+					}
+				}
+
 				// Exist url override
 				if (isset($all[$key]))
 				{
@@ -375,6 +463,11 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 					{
 						$exclude = array_merge($exist->get('exclude'), $exclude);
 					}
+
+					if (is_array($exist->get('alternates')))
+					{
+						$alternates = $alternates + $exist->get('alternates');
+					}
 				}
 
 				// Create url Registry
@@ -387,10 +480,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$url->set('changefreqValue', $changefreqValue);
 				$url->set('priority', $priority);
 				$url->set('exclude', (!empty($exclude)) ? $exclude : false);
-				if ($lastmod)
-				{
-					$url->set('lastmod', $lastmod);
-				}
+				$url->set('lastmod', $lastmod);
+				$url->set('alternates', (!empty($alternates)) ? $alternates : false);
 
 				// Add url to arrays
 				$all[$key] = $url;
@@ -451,11 +542,21 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				->where('m.client_id = 0')
 				->where('m.id > 1')
 				->order($db->escape('m.lft') . ' ' . $db->escape('asc'));
+
+			// Join over associations
+			if ($multilanguage)
+			{
+				$query->select('assoc.key as association')
+					->join('LEFT', '#__associations AS assoc ON assoc.id = m.id AND assoc.context = ' .
+						$db->quote('com_menus.item'));
+			}
+
 			$db->setQuery($query);
 			$rows = $db->loadObjectList('id');
 
 			// Create menu items array
 			$items         = array();
+			$alternates    = array();
 			$excludeTypes  = array('alias', 'separator', 'heading', 'url');
 			$excludeStates = array(
 				0  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_UNPUBLISH'),
@@ -527,15 +628,36 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				}
 
 				// Prepare menu item object
-				$item          = new stdClass();
-				$item->loc     = $loc;
-				$item->type    = Text::_('COM_JLSITEMAP_TYPES_MENU');
-				$item->title   = $row->title;
-				$item->home    = $row->home;
-				$item->exclude = (!empty($exclude)) ? $exclude : false;
+				$item             = new stdClass();
+				$item->loc        = $loc;
+				$item->type       = Text::_('COM_JLSITEMAP_TYPES_MENU');
+				$item->title      = $row->title;
+				$item->home       = $row->home;
+				$item->exclude    = (!empty($exclude)) ? $exclude : false;
+				$item->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
 				// Add menu item to array
 				$items[] = $item;
+
+				// Add menu items to alternates array
+				if ($multilanguage && !empty($row->association) && empty($exclude))
+				{
+					if (!isset($alternates[$row->association]))
+					{
+						$alternates[$row->association] = array();
+					}
+
+					$alternates[$row->association][$row->language] = $loc;
+				};
+			}
+
+			// Add alternates to menu items
+			if (!empty($alternates))
+			{
+				foreach ($items as &$item)
+				{
+					$item->alternates = ($item->alternates) ? $alternates[$item->alternates] : false;
+				}
 			}
 
 			$this->_menuItems = $items;

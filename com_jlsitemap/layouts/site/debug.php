@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 
 if (!$displayData) return;
@@ -19,6 +20,7 @@ $result   = $displayData;
 $includes = (is_array($result->includes)) ? $result->includes : array();
 $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 
+$multilanguage = Multilanguage::isEnabled();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo Factory::getLanguage()->getTag(); ?>">
@@ -67,6 +69,7 @@ $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 			font-weight: normal;
 			color: #999;
 			text-transform: uppercase;
+			white-space: nowrap;
 		}
 
 		table td {
@@ -120,6 +123,11 @@ $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 			margin-top: 30px;
 		}
 
+		table tbody .type {
+			white-space: nowrap;
+		}
+
+		#includes .alternate,
 		#excludes .reason {
 			margin-bottom: 6px;
 		}
@@ -152,6 +160,11 @@ $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 					<th><?php echo Text::_('COM_JLSITEMAP_SITEMAP_DEBUG_TYPE'); ?></th>
 					<th><?php echo Text::_('COM_JLSITEMAP_SITEMAP_DEBUG_CHANGEFREQ'); ?></th>
 					<th><?php echo Text::_('COM_JLSITEMAP_SITEMAP_DEBUG_PRIORITY'); ?></th>
+					<?php if ($multilanguage): ?>
+						<th>
+							<?php echo Text::_('COM_JLSITEMAP_SITEMAP_DEBUG_ALTERNATES'); ?>
+						</th>
+					<?php endif; ?>
 					<th><?php echo Text::_('COM_JLSITEMAP_SITEMAP_DEBUG_LINK'); ?></th>
 				</tr>
 				</thead>
@@ -163,7 +176,7 @@ $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 						<td>
 							<?php echo $include->get('title', ''); ?>
 						</td>
-						<td>
+						<td class="type">
 							<?php echo implode('<br/>', $include->get('type', array())); ?>
 						</td>
 
@@ -173,6 +186,19 @@ $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 						<td>
 							<?php echo $include->get('priority', ''); ?>
 						</td>
+						<?php if ($multilanguage): ?>
+							<td>
+								<?php if (is_array($include->get('alternates', false))): ?>
+									<?php foreach ($include->get('alternates') as $lang => $loc): ?>
+										<div class="alternate">
+											<a href="<?php echo $loc; ?>" target="_blank">
+												<?php echo $lang; ?>
+											</a>
+										</div>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</td>
+						<?php endif; ?>
 						<td>
 							<?php if ($include->get('link', false)): ?>
 								<a href="<?php echo $include->get('loc', '/'); ?>" target="_blank">
@@ -208,7 +234,7 @@ $excludes = (is_array($result->excludes)) ? $result->excludes : array();
 						<td>
 							<?php echo $exclude->get('title', ''); ?>
 						</td>
-						<td>
+						<td class="type">
 							<?php echo implode('<br/>', $exclude->get('type', array())); ?>
 						</td>
 						<td>

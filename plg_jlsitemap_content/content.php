@@ -48,6 +48,8 @@ class plgJLSitemapContent extends CMSPlugin
 			-2 => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_TRASH'),
 			2  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ARCHIVE'));
 
+		$multilanguage = $config->get('multilanguage');
+
 		// Categories
 		if ($this->params->get('categories_enable', false))
 		{
@@ -59,6 +61,15 @@ class plgJLSitemapContent extends CMSPlugin
 				->where($db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
 				->group('c.id')
 				->order($db->escape('c.lft') . ' ' . $db->escape('asc'));
+
+			// Join over associations
+			if ($multilanguage)
+			{
+				$query->select('assoc.key as association')
+					->join('LEFT', '#__associations AS assoc ON assoc.id = c.id AND assoc.context = ' .
+						$db->quote('com_categories.item'));
+			}
+
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
@@ -66,12 +77,14 @@ class plgJLSitemapContent extends CMSPlugin
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
 
-			// Add categories to urls array
+			// Add categories to arrays
+			$categories = array();
+			$alternates = array();
 			foreach ($rows as $row)
 			{
 				// Prepare loc attribute
 				$loc = 'index.php?option=com_content&view=category&id=' . $row->id;
-				if (!empty($row->language) && $row->language !== '*' && $config->get('multilanguage'))
+				if (!empty($row->language) && $row->language !== '*' && $multilanguage)
 				{
 					$loc .= '&lang=' . $row->language;
 				}
@@ -109,10 +122,34 @@ class plgJLSitemapContent extends CMSPlugin
 				$category->priority   = $priority;
 				$category->lastmod    = $lastmod;
 				$category->exclude    = (!empty($exclude)) ? $exclude : false;
+				$category->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
 				// Add category to array
-				$urls[] = $category;
+				$categories[] = $category;
+
+				// Add category to alternates array
+				if ($multilanguage && !empty($row->association) && empty($exclude))
+				{
+					if (!isset($alternates[$row->association]))
+					{
+						$alternates[$row->association] = array();
+					}
+
+					$alternates[$row->association][$row->language] = $loc;
+				};
 			}
+
+			// Add alternates to categories
+			if (!empty($alternates))
+			{
+				foreach ($categories as &$category)
+				{
+					$category->alternates = ($category->alternates) ? $alternates[$category->alternates] : false;
+				}
+			}
+
+			// Add categories to urls
+			$urls = array_merge($urls, $categories);
 		}
 
 		// Articles
@@ -128,6 +165,14 @@ class plgJLSitemapContent extends CMSPlugin
 				->group('a.id')
 				->order($db->escape('a.ordering') . ' ' . $db->escape('asc'));
 
+			// Join over associations
+			if ($multilanguage)
+			{
+				$query->select('assoc.key as association')
+					->join('LEFT', '#__associations AS assoc ON assoc.id = a.id AND assoc.context = ' .
+						$db->quote('com_content.item'));
+			}
+
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
 
@@ -136,13 +181,15 @@ class plgJLSitemapContent extends CMSPlugin
 			$changefreq = $this->params->get('articles_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('articles_priority', $config->get('priority', '0.5'));
 
-			// Add articles to urls array
+			// Add articles to urls arrays
+			$articles   = array();
+			$alternates = array();
 			foreach ($rows as $row)
 			{
 				// Prepare loc attribute
 				$slug = ($row->alias) ? ($row->id . ':' . $row->alias) : $row->id;
 				$loc  = 'index.php?option=com_content&view=article&id=' . $slug . '&catid=' . $row->category_id;
-				if (!empty($row->language) && $row->language !== '*' && $config->get('multilanguage'))
+				if (!empty($row->language) && $row->language !== '*' && $multilanguage)
 				{
 					$loc .= '&lang=' . $row->language;
 				}
@@ -204,10 +251,34 @@ class plgJLSitemapContent extends CMSPlugin
 				$article->priority   = $priority;
 				$article->lastmod    = $lastmod;
 				$article->exclude    = (!empty($exclude)) ? $exclude : false;
+				$article->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
 				// Add article to array
-				$urls[] = $article;
+				$articles[] = $article;
+
+				// Add article to alternates array
+				if ($multilanguage && !empty($row->association) && empty($exclude))
+				{
+					if (!isset($alternates[$row->association]))
+					{
+						$alternates[$row->association] = array();
+					}
+
+					$alternates[$row->association][$row->language] = $loc;
+				};
 			}
+
+			// Add alternates to categories
+			if (!empty($alternates))
+			{
+				foreach ($articles as &$article)
+				{
+					$article->alternates = ($article->alternates) ? $alternates[$article->alternates] : false;
+				}
+			}
+
+			// Add articles to urs
+			$urls = array_merge($urls, $articles);
 		}
 
 		return $urls;
