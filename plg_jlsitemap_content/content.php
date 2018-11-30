@@ -268,7 +268,7 @@ class plgJLSitemapContent extends CMSPlugin
 				};
 			}
 
-			// Add alternates to categories
+			// Add alternates to articles
 			if (!empty($alternates))
 			{
 				foreach ($articles as &$article)
@@ -277,7 +277,7 @@ class plgJLSitemapContent extends CMSPlugin
 				}
 			}
 
-			// Add articles to urs
+			// Add articles to urls
 			$urls = array_merge($urls, $articles);
 		}
 
