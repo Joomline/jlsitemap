@@ -199,7 +199,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$filterMenus = ($config->get('filter_menu')) ? $config->get('filter_menu_menus', array()) : false;
 
 			// Prepare menu items filter;
-			$filterMenuItems = ($filterMenus) ? array() : false;
+			$filterMenuItems = (is_array($filterMenus)) ? array() : false;
 
 			// Prepare menu home filter
 			$filterMenuHomes = array();
@@ -339,7 +339,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				{
 					$filterMenuHomes[] = $key;
 				}
-				elseif ($filterMenuItems)
+				elseif (is_array($filterMenuItems) && empty($exclude))
 				{
 					$filterMenuItems[] = $key;
 				}
@@ -721,7 +721,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		}
 
 		// Filter by menu
-		if (!$menu && is_array($menu))
+		if (is_array($menu))
 		{
 			$excludeMenu = true;
 			foreach ($menu as $filter)
