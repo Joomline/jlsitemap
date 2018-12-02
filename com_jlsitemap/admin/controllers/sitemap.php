@@ -81,7 +81,6 @@ class JLSiteMapControllerSitemap extends BaseController
 		}
 
 		// Set success
-		$app->enqueueMessage($message);
 		$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS'));
 		$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION') . ': ' .
 			Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_INCLUDES', $includes), 'notice');
