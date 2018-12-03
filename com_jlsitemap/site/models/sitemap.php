@@ -565,6 +565,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			foreach ($rows as $row)
 			{
 				$params    = new Registry($row->params);
+				$home      = ($row->home && !isset($excludeStates[$row->published]));
 				$component = $row->component;
 				if ($row->type == 'component' && empty($row->component))
 				{
@@ -581,7 +582,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 				// Prepare exclude attribute
 				$exclude = array();
-				if (!$row->home)
+				if (!$home)
 				{
 					if ($menutypes && !empty($menutypes) && !in_array($row->menutype, $menutypes))
 					{
@@ -633,7 +634,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$item->loc        = $loc;
 				$item->type       = Text::_('COM_JLSITEMAP_TYPES_MENU');
 				$item->title      = $row->title;
-				$item->home       = $row->home;
+				$item->home       = $home;
 				$item->exclude    = (!empty($exclude)) ? $exclude : false;
 				$item->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
