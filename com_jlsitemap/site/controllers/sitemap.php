@@ -86,7 +86,7 @@ class JLSiteMapControllerSitemap extends BaseController
 			$message = (!$error) ? Text::_('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS') :
 				Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_FAILURE', Text::_($error));
 
-			echo new JsonResponse(array('includes' => $includes, 'excludes' => $excludes), $message, $error);;
+			echo new JsonResponse($result, $message, $error);;
 			$app->close();
 
 			return (!$error);
