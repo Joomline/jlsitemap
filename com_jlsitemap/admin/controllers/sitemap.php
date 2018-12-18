@@ -127,7 +127,8 @@ class JLSiteMapControllerSitemap extends BaseController
 
 		// Get Response
 		$response = new Registry($result);
-		$message  = $response->get('message');
+		$message  = ($response->get('success'))? Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS') :
+			Text::_('COM_JLSITEMAP_SITEMAP_DELETE_FAILURE');
 
 		// Remove cookie
 		$app->input->cookie->set($cookie, '', Factory::getDate('-1 day')->toUnix(), $app->get('cookie_path', '/'),
