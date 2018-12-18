@@ -21,7 +21,7 @@ class JFormFieldDate extends FormField
 	 *
 	 * @since 1.0.1
 	 */
-	protected $type = 'key';
+	protected $type = 'date';
 
 	/**
 	 * Name of the layout being used to render the field
