@@ -10,7 +10,10 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\LanguageHelper;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -28,6 +31,10 @@ class JLSiteMapControllerSitemap extends BaseController
 	 */
 	public function generate()
 	{
+		// Check language
+		$this->checkLanguage();
+
+		// Prepare variables
 		$app      = Factory::getApplication();
 		$debug    = (!empty($app->input->get('debug')));
 		$model    = $this->getModel();
@@ -186,5 +193,27 @@ class JLSiteMapControllerSitemap extends BaseController
 	public function getModel($name = 'Sitemap', $prefix = 'JLSitemapModel', $config = array())
 	{
 		return parent::getModel($name, $prefix, $config);
+	}
+
+	/**
+	 * Method to check current language
+	 *
+	 * @since 1.5.1
+	 */
+	protected function checkLanguage()
+	{
+		if (Multilanguage::isEnabled())
+		{
+			$currentTag = Factory::getLanguage()->getTag();
+			$defaultTag = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+			$languages  = LanguageHelper::getLanguages('lang_code');
+			$defaultSef = (!empty($languages[$defaultTag])) ? $languages[$defaultTag]->sef : false;
+			if ($currentTag !== $defaultTag && $defaultSef)
+			{
+				$uri = Factory::getUri();
+				$uri->setVar('lang', 'en');
+				Factory::getApplication()->redirect($uri->toString());
+			}
+		}
 	}
 }
