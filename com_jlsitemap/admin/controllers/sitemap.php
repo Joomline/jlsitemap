@@ -63,6 +63,7 @@ class JLSiteMapControllerSitemap extends BaseController
 		$response = new Registry($result);
 		$message  = $response->get('message');
 		$data     = new Registry($response->get('data'));
+		$all      = $data->get('all', 0);
 		$includes = $data->get('includes', 0);
 		$excludes = $data->get('excludes', 0);
 
@@ -81,15 +82,11 @@ class JLSiteMapControllerSitemap extends BaseController
 		}
 
 		// Set success
-		$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS'));
-		$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION') . ': ' .
-			Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_INCLUDES', $includes), 'notice');
-
-		if (!empty($excludes))
-		{
-			$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION') . ': ' .
-				Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_EXCLUDES', $excludes), 'warning');
-		}
+		$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS', $all));
+		$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_EXCLUDES', $excludes),
+			'warning');
+		$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_INCLUDES', $includes),
+			'notice');
 
 		$this->setRedirect('index.php?option=com_jlsitemap');
 

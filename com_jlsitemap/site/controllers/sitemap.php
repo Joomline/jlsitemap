@@ -32,6 +32,7 @@ class JLSiteMapControllerSitemap extends BaseController
 		$debug    = (!empty($app->input->get('debug')));
 		$model    = $this->getModel();
 		$error    = (!$result = $model->generate($debug)) ? $model->getError() : false;
+		$all      = (!$error) ? count($result->all) : 0;
 		$includes = (!$error) ? count($result->includes) : 0;
 		$excludes = (!$error) ? count($result->excludes) : 0;
 
@@ -44,15 +45,11 @@ class JLSiteMapControllerSitemap extends BaseController
 			}
 			else
 			{
-				$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS'));
-				$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION') . ': ' .
-					Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_INCLUDES', $includes), 'notice');
-
-				if (!empty($excludes))
-				{
-					$app->enqueueMessage(Text::_('COM_JLSITEMAP_SITEMAP_GENERATION') . ': ' .
-						Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_EXCLUDES', $excludes), 'warning');
-				}
+				$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS', $all));
+				$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_EXCLUDES', $excludes),
+					'warning');
+				$app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_INCLUDES', $includes),
+					'notice');
 			}
 		}
 
@@ -60,9 +57,9 @@ class JLSiteMapControllerSitemap extends BaseController
 		if (!$debug && !empty($app->input->get('cookies')))
 		{
 			$name    = 'jlsitemap_generation';
-			$message = (!$error) ? Text::_('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS') :
+			$message = (!$error) ? Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS', $all) :
 				Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_FAILURE', Text::_($error));
-			$value   = new JsonResponse(array('includes' => $includes, 'excludes' => $excludes), $message, $error);
+			$value   = new JsonResponse(array('all' => $all, 'includes' => $includes, 'excludes' => $excludes), $message, $error);
 			$expires = Factory::getDate('+1 day')->toUnix();
 
 			$app->input->cookie->set($name, $value, $expires, $app->get('cookie_path', '/'),
