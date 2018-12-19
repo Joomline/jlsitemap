@@ -35,14 +35,28 @@ HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' 
 			// Sitemap
 			if ($this->sitemap)
 			{
-				echo LayoutHelper::render($layout, array(
-					'class'     => 'sitemap',
-					'url'       => $this->sitemap->url,
-					'title'     => 'COM_JLSITEMAP_SITEMAP',
-					'icon'      => 'sitemap',
-					'newWindow' => true,
-					'badge'     => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC6'))
-				));
+				if (!$this->sitemap->unidentified)
+				{
+					echo LayoutHelper::render($layout, array(
+						'class'     => 'sitemap',
+						'url'       => $this->sitemap->url,
+						'title'     => 'COM_JLSITEMAP_SITEMAP',
+						'icon'      => 'sitemap',
+						'newWindow' => true,
+						'badge'     => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC6'))
+					));
+				}
+				else
+				{
+					echo LayoutHelper::render($layout, array(
+						'class'     => 'unidentified-sitemap error',
+						'url'       => $this->sitemap->url,
+						'title'     => 'COM_JLSITEMAP_ERROR_SITEMAP_UNIDENTIFIED',
+						'icon'      => 'sitemap',
+						'newWindow' => true,
+						'badge'     => HTMLHelper::_('date', $this->sitemap->date, Text::_('DATE_FORMAT_LC6'))
+					));
+				}
 
 				echo LayoutHelper::render($layout, array(
 					'class' => 'delete',

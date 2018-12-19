@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
@@ -21,6 +22,15 @@ use Joomla\Registry\Registry;
 
 class JLSitemapViewControlPanel extends HtmlView
 {
+	/**
+	 * Component params
+	 *
+	 * @var Registry;
+	 *
+	 * @since 1.5.1
+	 */
+	protected $params;
+
 	/**
 	 * Sidebar html
 	 *
@@ -116,6 +126,9 @@ class JLSitemapViewControlPanel extends HtmlView
 		// Set title
 		ToolBarHelper::title(Text::_('COM_JLSITEMAP') . ': ' . Text::_('COM_JLSITEMAP_CONTROL_PANEL'), 'tree-2');
 
+		// Set params
+		$this->params = ComponentHelper::getParams('com_jlsitemap');
+
 		// Set sidebar
 		JLSitemapHelper::addSubmenu('controlpanel');
 		$this->sidebar = JHtmlSidebar::render();
@@ -123,11 +136,12 @@ class JLSitemapViewControlPanel extends HtmlView
 		// Set sitemap
 		if (File::exists(JPATH_ROOT . '/sitemap.xml'))
 		{
-			$sitemap       = new stdClass();
-			$sitemap->file = 'sitemap.xml';
-			$sitemap->path = JPATH_ROOT . '/' . $sitemap->file;
-			$sitemap->url  = Uri::root() . $sitemap->file;
-			$sitemap->date = stat($sitemap->path)['mtime'];
+			$sitemap               = new stdClass();
+			$sitemap->file         = 'sitemap.xml';
+			$sitemap->path         = JPATH_ROOT . '/' . $sitemap->file;
+			$sitemap->url          = Uri::root() . $sitemap->file;
+			$sitemap->date         = stat($sitemap->path)['mtime'];
+			$sitemap->unidentified = ($sitemap->date != $this->params->get('sitemap_date'));
 
 			$this->sitemap = $sitemap;
 		}
@@ -135,8 +149,8 @@ class JLSitemapViewControlPanel extends HtmlView
 		// Set cron
 		if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron'))
 		{
-			$cron->url     = 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id;
-			$cron->params  = new Registry($cron->params);
+			$cron->url      = 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id;
+			$cron->params   = new Registry($cron->params);
 			$cron->last_run = $cron->params->get('last_run', false);
 
 			$this->cron = $cron;

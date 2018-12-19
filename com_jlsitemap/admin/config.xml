@@ -2,6 +2,7 @@
 <config>
 	<fieldset name="global" label="JGLOBAL_FIELDSET_OPTIONS">
 		<field name="access_key" type="hidden" readonly="true"/>
+		<field name="sitemap_date" type="hidden" readonly="true"/>
 		<field name="changefreq" type="list" default="weekly"
 			   label="COM_JLSITEMAP_PARAMS_CHANGEFREQ">
 			<option value="always">always</option>

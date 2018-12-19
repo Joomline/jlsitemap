@@ -84,12 +84,21 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				}
 			}
 
+			// Create sitemap file
 			$file = JPATH_ROOT . '/sitemap.xml';
 			if (File::exists($file))
 			{
 				File::delete($file);
 			}
 			File::append($file, $xml);
+
+			// Save sitemap date
+			$component          = new stdClass();
+			$component->element = 'com_jlsitemap';
+			$component->params  = ComponentHelper::getParams('com_jlsitemap');
+			$component->params->set('sitemap_date', stat($file)['mtime']);
+			$component->params = $component->params->toString();
+			$this->getDbo()->updateObject('#__extensions', $component, array('element'));
 		}
 
 		return $urls;
