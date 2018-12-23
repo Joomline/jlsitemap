@@ -41,7 +41,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 		{
 			$app  = Factory::getApplication();
 			$mode = $this->params->get('client_mode', 'all');
-			if ($mode == 'all' || ($mode == 'admin' && $app->isAdmin()) || ($mode == 'site' && $app->isSite()))
+			if ($mode == 'all' || ($mode == 'admin' && $app->isClient('administrator')) || ($mode == 'site' && $app->isClient('site')))
 			{
 				// Set params
 				$site   = SiteApplication::getInstance('site');
