@@ -141,7 +141,7 @@ class JLSitemapViewControlPanel extends HtmlView
 			$sitemap->path         = JPATH_ROOT . '/' . $sitemap->file;
 			$sitemap->url          = Uri::root() . $sitemap->file;
 			$sitemap->date         = stat($sitemap->path)['mtime'];
-			$sitemap->unidentified = ($sitemap->date != $this->params->get('sitemap_date'));
+			$sitemap->unidentified = (floor($sitemap->date / 60000) != floor($this->params->get('sitemap_date') / 60000));
 
 			$this->sitemap = $sitemap;
 		}
