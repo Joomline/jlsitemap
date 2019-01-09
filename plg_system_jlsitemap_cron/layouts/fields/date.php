@@ -29,5 +29,5 @@ $date = (empty($value)) ? Text::_('JNEVER') : HTMLHelper::_('date', $value, Text
 ?>
 <div data-input-date="<?php echo $id; ?>">
 	<input type="text" value="<?php echo $date; ?>" readonly>
-	<input id="<?php echo $id; ?>" type="hidden" value="<?php echo $value; ?>" readonly>
+	<input id="<?php echo $id; ?>" type="hidden" name="<?php echo $name; ?>" value="<?php echo $value; ?>" readonly>
 </div>
