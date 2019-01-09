@@ -168,7 +168,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 						foreach ($alternates as $lang => $href)
 						{
-							$alternate = $url->addChild('xhtml:link', '', 'xhtml');
+							$alternate = $url->addChild('xhtml:link', '', 'http://www.w3.org/1999/xhtml');
 							$alternate->addAttribute('rel', 'alternate');
 							$alternate->addAttribute('hreflang', $lang);
 							$alternate->addAttribute('href', $href);
