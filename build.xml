@@ -1,10 +1,8 @@
 <project name="jlsitemap" default="dist" basedir=".">
 	<property name="VERSION" value="1.5.1"/>
-
 	<tstamp>
 		<format property="DATE" pattern="%d.%m.%Y"/>
 	</tstamp>
-
 	<property name="build" value="_build"/>
 	<property name="dist" value="_dist"/>
 	<property name="filename" value="pkg_jlsitemap_v${VERSION}_j3.9.zip"/>
@@ -12,8 +10,6 @@
 		<mkdir dir="${build}"/>
 		<mkdir dir="${dist}"/>
 	</target>
-
-
 	<target name="replacemodule">
 		<copy todir="${build}/jlsitemap">
 			<fileset dir="./">
@@ -30,10 +26,7 @@
 				</replacetokens>
 			</filterchain>
 		</copy>
-
 	</target>
-
-
 	<target name="dist" depends="init, replacemodule">
 		<zip destfile="${dist}/${filename}">
 			<fileset dir="${build}/">
@@ -41,10 +34,8 @@
 			</fileset>
 		</zip>
 	</target>
-
 	<target name="clean" description="clean up">
 		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
 	</target>
-
 </project>

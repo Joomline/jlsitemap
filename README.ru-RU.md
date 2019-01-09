@@ -5,5 +5,5 @@
 
 **Поддерживаемые версии Joomla:** 3.9.0  и более поздние версии  
 **Прочесть на других языках:**
-[English](https://github.com/Joomline/jlsitemap/blob/master/README.md), 
+[English](https://github.com/Joomline/jlsitemap/blob/master/README.md),
 [Русский](https://github.com/Joomline/jlsitemap/blob/master/README.ru-RU.md).

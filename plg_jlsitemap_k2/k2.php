@@ -168,7 +168,7 @@ class plgJLSitemapK2 extends CMSPlugin
 
 			$db->setQuery($query);
 			$rows = $db->loadObjectList();
-			
+
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
 

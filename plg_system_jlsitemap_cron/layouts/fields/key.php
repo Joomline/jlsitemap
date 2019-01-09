@@ -28,6 +28,6 @@ HTMLHelper::_('script', 'media/plg_system_jlsitemap_cron/js/key.min.js', array('
 
 ?>
 <div class="input-append" data-input-key="<?php echo $id; ?>">
-	<input id="<?php echo $id; ?>" name="<?php echo $name; ?>" type="text" value="<?php echo $value; ?>">
+	<input id="<?php echo $id; ?>" type="text" name="<?php echo $name; ?>" value="<?php echo $value; ?>">
 	<a class="btn generate"><?php echo Text::_('PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_KEY_GENERATE'); ?></a>
 </div>

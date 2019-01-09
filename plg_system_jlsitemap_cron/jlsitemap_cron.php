@@ -109,7 +109,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 			//  Prepare json response
 			if ($app->input->get('format', 'raw') == 'json')
 			{
-				$success = explode('<br />', $success);
+				$success = explode('<br>', $success);
 			}
 
 			return $success;
