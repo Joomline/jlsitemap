@@ -28,6 +28,6 @@ $date = (empty($value)) ? Text::_('JNEVER') : HTMLHelper::_('date', $value, Text
 	' (' . Factory::getConfig()->get('offset') . ')'
 ?>
 <div data-input-date="<?php echo $id; ?>">
-	<input type="text" readonly value="<?php echo $date; ?>">
-	<input id="<?php echo $id; ?>" type="hidden" readonly value="<?php echo $value; ?>">
+	<input type="text" value="<?php echo $date; ?>" readonly>
+	<input id="<?php echo $id; ?>" type="hidden" value="<?php echo $value; ?>" readonly>
 </div>

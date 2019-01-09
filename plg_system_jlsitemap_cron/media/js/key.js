@@ -23,8 +23,7 @@
 
 				if (keyEnable_val === 1 && clientEnable_val === 0) {
 					$(input).attr('required', 'true');
-				}
-				else {
+				} else {
 					$(input).removeAttr('required');
 				}
 			}

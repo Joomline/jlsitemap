@@ -24,7 +24,6 @@
 	}
 }
 
-
 #controlPanel .main .actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -37,7 +36,7 @@
 	text-decoration: none;
 	outline: none;
 	background: #fff;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
 }
 
 #controlPanel .main .action {
@@ -48,9 +47,11 @@
 	margin: 0 15px 30px;
 }
 
-#controlPanel .main .actions a.action:hover, a#controlPanel .main .action:focus, a#controlPanel .main .action:active {
+#controlPanel .main .actions a.action:hover,
+a#controlPanel .main .action:focus,
+a#controlPanel .main .action:active {
 	background-color: #fff;
-	box-shadow: 0 14px 25px rgba(0, 0, 0, 0.16);
+	box-shadow: 0 14px 25px rgba(0, 0, 0, .16);
 	color: #666;
 	text-decoration: none;
 	outline: none;
@@ -93,7 +94,7 @@
 	max-height: 80px
 }
 
-#controlPanel .main .action .head .icon > svg {
+#controlPanel .main .action .head .icon>svg {
 	stroke: currentcolor;
 	fill: currentcolor;
 	height: 80px;
@@ -131,7 +132,7 @@
 	font-size: 16px;
 	text-align: center;
 	background: #fff;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
 }
 
 #controlPanel .sidebar .wrapper h3 {
@@ -162,13 +163,13 @@
 	color: #666;
 	font-size: 16px;
 	line-height: 1.5;
-	border-left: 4px solid #DDD;
+	border-left: 4px solid #ddd;
 	background: #fff;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
 }
 
 #systemMessages .message.notice {
-	border-color: #0074D9;
+	border-color: #0074d9;
 }
 
 #systemMessages .message.success {
@@ -176,9 +177,9 @@
 }
 
 #systemMessages .message.warning {
-	border-color: #FFDC00;
+	border-color: #ffdc00;
 }
 
 #systemMessages .message.error {
-	border-color: #FF4136;
+	border-color: #ff4136;
 }

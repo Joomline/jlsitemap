@@ -15,8 +15,7 @@ try {
 		xhr.send();
 		if (xhr.status !== 200) {
 			console.error('Sitemap cron error:' + xhr.status + ': ' + xhr.statusText);
-		}
-		else {
+		} else {
 			console.debug('Sitemap cron success');
 		}
 	});

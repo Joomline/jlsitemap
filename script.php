@@ -64,7 +64,7 @@ class pkg_jlsitemapInstallerScript
 			return false;
 		}
 
-		// Check joomla version
+		// Check Joomla version
 		if (!$jversion->isCompatible($this->minimumJoomla))
 		{
 			$app->enqueueMessage(Text::sprintf('PKG_JLSITEMAP_ERROR_COMPATIBLE_JOOMLA',
