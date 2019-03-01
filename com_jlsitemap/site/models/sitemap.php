@@ -667,7 +667,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			{
 				foreach ($items as &$item)
 				{
-					$item->alternates = ($item->alternates) ? $alternates[$item->alternates] : false;
+					$item->alternates = ($item->alternates && !empty($alternates[$item->alternates])) ? $alternates[$item->alternates] : false;
 				}
 			}
 
