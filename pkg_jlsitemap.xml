@@ -22,6 +22,7 @@
 		<folder type="plugin" group="jlsitemap" id="k2">plg_jlsitemap_k2</folder>
 		<folder type="plugin" group="jlsitemap" id="kunena">plg_jlsitemap_kunena</folder>
 		<folder type="plugin" group="jlsitemap" id="tags">plg_jlsitemap_tags</folder>
+		<folder type="plugin" group="jlsitemap" id="virtuemart">plg_jlsitemap_virtuemart</folder>
 		<folder type="plugin" group="system" id="jlsitemap_cron">plg_system_jlsitemap_cron</folder>
 	</files>
 	<updateservers>
