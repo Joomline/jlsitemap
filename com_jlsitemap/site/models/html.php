@@ -132,7 +132,7 @@ class JLSitemapModelHTML extends ListModel
 	 *
 	 * @return  integer  Number of rows for query.
 	 *
-	 * @since   3.0
+	 * @since   1.6.0
 	 */
 	protected function _getListCount($query)
 	{
