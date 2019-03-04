@@ -52,7 +52,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	protected $_menuItems = null;
 
 	/**
-	 * Method to generate sitemap.xml
+	 * Method to generate sitemap
 	 *
 	 * @param bool $debug Debug generation
 	 *
@@ -430,7 +430,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 					Factory::getDate($item->get('lastmod'))->toUnix() : false;
 
 				// Prepare title
-				if ($menus[$key])
+				if (!empty($menus[$key]))
 				{
 					$title = $menus[$key]->get('title');
 				}

@@ -3,6 +3,12 @@
 	<fieldset name="global" label="JGLOBAL_FIELDSET_OPTIONS">
 		<field name="access_key" type="hidden" readonly="true"/>
 		<field name="sitemap_date" type="hidden" readonly="true"/>
+		<field name="sef_advanced" type="hidden" default="1"/>
+		<field name="html_limit" type="number"
+			   label="COM_JLSITEMAP_PARAMS_HTML_LIMIT"
+			   description="COM_JLSITEMAP_PARAMS_HTML_LIMIT_DESC"
+			   min="1"
+			   default="200"/>
 		<field name="changefreq" type="list" default="weekly"
 			   label="COM_JLSITEMAP_PARAMS_CHANGEFREQ">
 			<option value="always">always</option>

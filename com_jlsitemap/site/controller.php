@@ -10,11 +10,16 @@
 
 defined('_JEXEC') or die;
 
-JLoader::register('JLSitemapHelperRoute', JPATH_SITE . '/components/com_jlsitemap/helpers/route.php');
-
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 
-$controller = BaseController::getInstance('JLSitemap');
-$controller->execute(Factory::getApplication()->input->get('task'));
-$controller->redirect();
+class JLSiteMapController extends BaseController
+{
+	/**
+	 * The default view.
+	 *
+	 * @var string
+	 *
+	 * @since 1.6.0
+	 */
+	protected $default_view = 'html';
+}

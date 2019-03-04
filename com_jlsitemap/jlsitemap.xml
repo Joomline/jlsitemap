@@ -12,7 +12,11 @@
 	<scriptfile>script.php</scriptfile>
 	<files folder="site">
 		<folder>controllers</folder>
+		<folder>helpers</folder>
 		<folder>models</folder>
+		<folder>views</folder>
+		<filename>controller.php</filename>
+		<filename>router.php</filename>
 		<filename>jlsitemap.php</filename>
 	</files>
 	<languages folder="site">

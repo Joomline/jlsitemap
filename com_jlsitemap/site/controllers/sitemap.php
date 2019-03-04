@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\LanguageHelper;
@@ -31,6 +32,9 @@ class JLSiteMapControllerSitemap extends BaseController
 	 */
 	public function generate()
 	{
+		// Check access
+		$this->checkAccess();
+
 		// Check language
 		$this->checkLanguage();
 
@@ -214,6 +218,42 @@ class JLSiteMapControllerSitemap extends BaseController
 				$uri->setVar('lang', 'en');
 				Factory::getApplication()->redirect($uri->toString());
 			}
+		}
+	}
+
+	/**
+	 * Method to check access
+	 *
+	 * @since 1.6.0
+	 */
+	protected function checkAccess()
+	{
+		$app    = Factory::getApplication();
+		$access = false;
+
+		// Check access key
+		$access_key = ComponentHelper::getComponent('com_jlsitemap')->getParams()->get('access_key');
+		if (!empty($access_key) && $access_key == $app->input->get('access_key'))
+		{
+			$access = true;
+		}
+
+		// Check can manage component
+		if (!$access && Factory::getUser()->authorise('core.manage', 'com_jlsitemap'))
+		{
+			$access = true;
+		}
+
+		// Check if server request
+		if (!$access && $app->input->server->get('SERVER_ADDR') == $app->input->server->get('REMOTE_ADDR'))
+		{
+			$access = true;
+		}
+
+		// Trow if don't has access
+		if (!$access)
+		{
+			throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 		}
 	}
 }
