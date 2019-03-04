@@ -71,6 +71,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			// Get sitemap xml
 			$xml = $this->getXML($urls->includes);
 
+			// Get sitemap json
+			$json = $this->getJSON($urls->includes);
+
 			// Regexp filter
 			$filterRegexp = ComponentHelper::getParams('com_jlsitemap')->get('filter_regexp');
 			if (!empty($filterRegexp))
@@ -84,13 +87,21 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				}
 			}
 
-			// Create sitemap file
+			// Create sitemap xml file
 			$file = JPATH_ROOT . '/sitemap.xml';
 			if (File::exists($file))
 			{
 				File::delete($file);
 			}
 			File::append($file, $xml);
+
+			// Create sitemap json file
+			$file = JPATH_ROOT . '/sitemap.json';
+			if (File::exists($file))
+			{
+				File::delete($file);
+			}
+			File::append($file, $json);
 
 			// Save sitemap date
 			$component          = new stdClass();
@@ -105,7 +116,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	}
 
 	/**
-	 * Method to get sitemap xml sting
+	 * Method to get sitemap xml string
 	 *
 	 * @param array $rows Include urls array
 	 *
@@ -181,6 +192,26 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		}
 
 		return $this->_xml;
+	}
+
+	/**
+	 * Method to get sitemap json string
+	 *
+	 * @param array $rows Include urls array
+	 *
+	 * @return string
+	 *
+	 * @since 1.6.0
+	 */
+	protected function getJSON($rows = array())
+	{
+		foreach ($rows as &$row)
+		{
+			$row = $row->toObject();
+		}
+		$registry = new Registry($rows);
+
+		return $registry->toString('json', array('bitmask' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 	}
 
 	/**
