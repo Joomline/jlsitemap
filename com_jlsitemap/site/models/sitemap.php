@@ -248,6 +248,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$all      = array();
 			$includes = array();
 			$excludes = array();
+			$menus    = array();
 
 			// Add home page
 			$type            = array(Text::_('COM_JLSITEMAP_TYPES_MENU'));
@@ -343,6 +344,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				{
 					$includes[$key] = $url;
 				}
+				$menus[$key] = $url;
 
 				if ($item->home)
 				{
@@ -388,6 +390,12 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$lastmod         = ($item->get('lastmod', false)
 					&& $item->get('lastmod') != Factory::getDbo()->getNullDate()) ?
 					Factory::getDate($item->get('lastmod'))->toUnix() : false;
+
+				// Prepare title
+				if ($menus[$key])
+				{
+					$title = $menus[$key]->get('title');
+				}
 
 				// Prepare exclude
 				$exclude = array();
@@ -582,6 +590,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 					$component = (!empty($matches[1])) ? $matches[1] : 'unknown';
 				}
 
+				// Prepare title attribute
+				$title = ($params->get('page_title', false)) ? $params->get('page_title') : $row->title;
+
 				// Prepare loc attribute
 				$loc = 'index.php?Itemid=' . $row->id;
 				if (!empty($row->language) && $row->language !== '*' && $multilanguage)
@@ -642,7 +653,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$item             = new stdClass();
 				$item->loc        = $loc;
 				$item->type       = Text::_('COM_JLSITEMAP_TYPES_MENU');
-				$item->title      = $row->title;
+				$item->title      = $title;
 				$item->home       = $home;
 				$item->exclude    = (!empty($exclude)) ? $exclude : false;
 				$item->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
@@ -667,7 +678,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			{
 				foreach ($items as &$item)
 				{
-					$item->alternates = ($item->alternates && !empty($alternates[$item->alternates])) ? $alternates[$item->alternates] : false;
+					$item->alternates = ($item->alternates && !empty($alternates[$item->alternates])) ?
+						$alternates[$item->alternates] : false;
 				}
 			}
 
