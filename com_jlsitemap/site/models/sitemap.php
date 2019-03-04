@@ -254,9 +254,10 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			// Add home page
 			$type            = array(Text::_('COM_JLSITEMAP_TYPES_MENU'));
 			$title           = $siteConfig->get('sitename');
-			$link            = ($siteSef) ? $siteRoot . '/' : $siteRoot . '/index.php';
+			$link            = ($siteSef) ? '/' : '/index.php';
+			$level           = count(explode('/', $link)) - 1;
 			$key             = (empty($link)) ? '/' : $link;
-			$loc             = rtrim(Uri::root(), '/') . $link;
+			$loc             = $siteRoot . $link;
 			$changefreq      = $config->get('changefreq', 'weekly');
 			$changefreqValue = $changefreqValues[$changefreq];
 			$priority        = $config->get('priority', '0.5');
@@ -266,6 +267,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$url->set('type', $type);
 			$url->set('title', $title);
 			$url->set('link', $link);
+			$url->set('level', ($level > 0) ? $level : 1);
 			$url->set('loc', $loc);
 			$url->set('changefreq', $changefreq);
 			$url->set('changefreqValue', $changefreqValue);
@@ -281,6 +283,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			{
 				$type            = array($item->type);
 				$link            = ($siteSef) ? Route::_($item->loc) : $item->loc;
+				$level           = count(explode('/', $link)) - 1;
 				$key             = (empty($link)) ? '/' : $link;
 				$loc             = $siteRoot . $link;
 				$changefreq      = $config->get('changefreq', 'weekly');
@@ -328,6 +331,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$url->set('type', $type);
 				$url->set('title', $item->title);
 				$url->set('link', $link);
+				$url->set('level', ($level > 0) ? $level : 1);
 				$url->set('loc', $loc);
 				$url->set('changefreq', $changefreq);
 				$url->set('changefreqValue', $changefreqValue);
@@ -384,6 +388,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$type            = array($item->get('type', Text::_('COM_JLSITEMAP_TYPES_UNKNOWN')));
 				$title           = $item->get('title');
 				$link            = ($siteSef) ? Route::_($item->get('loc')) : $item->get('loc');
+				$level           = count(explode('/', $link)) - 1;
 				$key             = (empty($link)) ? '/' : $link;
 				$loc             = $siteRoot . $link;
 				$changefreq      = $item->get('changefreq', $config->get('changefreq', 'weekly'));
@@ -495,6 +500,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$url->set('type', $type);
 				$url->set('title', $title);
 				$url->set('link', $link);
+				$url->set('level', ($level > 0) ? $level : 1);
 				$url->set('loc', $loc);
 				$url->set('changefreq', $changefreq);
 				$url->set('changefreqValue', $changefreqValue);
