@@ -198,6 +198,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$siteConfig       = Factory::getConfig();
 			$siteSef          = ($siteConfig->get('sef') == 1);
 			$siteRobots       = $siteConfig->get('robots');
+			$siteRoot         = Uri::getInstance()->toString(array('scheme', 'host', 'port'));
 			$guestAccess      = array_unique(Factory::getUser(0)->getAuthorisedViewLevels());
 			$multilanguage    = Multilanguage::isEnabled();
 			$defaultLanguage  = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
@@ -253,7 +254,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			// Add home page
 			$type            = array(Text::_('COM_JLSITEMAP_TYPES_MENU'));
 			$title           = $siteConfig->get('sitename');
-			$link            = ($siteSef) ? rtrim(Uri::root(true), '/') . '/' : 'index.php';
+			$link            = ($siteSef) ? $siteRoot . '/' : $siteRoot . '/index.php';
 			$key             = (empty($link)) ? '/' : $link;
 			$loc             = rtrim(Uri::root(), '/') . $link;
 			$changefreq      = $config->get('changefreq', 'weekly');
@@ -281,7 +282,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$type            = array($item->type);
 				$link            = ($siteSef) ? Route::_($item->loc) : $item->loc;
 				$key             = (empty($link)) ? '/' : $link;
-				$loc             = rtrim(Uri::root(), '/') . $link;
+				$loc             = $siteRoot . $link;
 				$changefreq      = $config->get('changefreq', 'weekly');
 				$changefreqValue = $changefreqValues[$changefreq];
 				$priority        = $config->get('priority', '0.5');
@@ -360,6 +361,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$config->set('siteConfig', $siteConfig);
 			$config->set('siteSef', $siteSef);
 			$config->set('siteRobots', $siteRobots);
+			$config->set('siteRoot', $siteRoot);
 			$config->set('guestAccess', $guestAccess);
 			$config->set('multilanguage', $multilanguage);
 			$config->set('defaultLanguage', $defaultLanguage);
@@ -383,7 +385,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$title           = $item->get('title');
 				$link            = ($siteSef) ? Route::_($item->get('loc')) : $item->get('loc');
 				$key             = (empty($link)) ? '/' : $link;
-				$loc             = rtrim(Uri::root(), '/') . $link;
+				$loc             = $siteRoot . $link;
 				$changefreq      = $item->get('changefreq', $config->get('changefreq', 'weekly'));
 				$changefreqValue = $changefreqValues[$changefreq];
 				$priority        = $item->get('priority', $config->get('priority', '0.5'));
