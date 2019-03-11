@@ -154,4 +154,21 @@ class com_jlsitemapInstallerScript
 			Folder::delete($dest);
 		}
 	}
+
+	/**
+	 * Method to remove forgot model
+	 *
+	 * @return bool
+	 *
+	 * @since  1.6.0
+	 */
+	function update()
+	{
+		if (File::exists(JPATH_SITE . '/components/com_jlsitemap/models/generation.php'))
+		{
+			File::delete(JPATH_SITE . '/components/com_jlsitemap/models/generation.php');
+		}
+
+		return true;
+	}
 }
