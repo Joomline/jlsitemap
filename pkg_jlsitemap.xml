@@ -27,7 +27,7 @@
 	</files>
 	<updateservers>
 		<server type="extension" priority="1" name="Joomline">
-			https://joomline.net/ru/update.html?extension_id=2.xml
+			https://joomline.net/update.html?extension_id=2.xml
 		</server>
 	</updateservers>
 </extension>
