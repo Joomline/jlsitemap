@@ -792,7 +792,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$patterns = array(
 					'/^' . $filter . '\//',
 					'/^' . $filter . '$/',
-					'/^' . $filter . '\./',
+					'/^' . $filter . '\.html/',
 				);
 				foreach ($patterns as $pattern)
 				{
