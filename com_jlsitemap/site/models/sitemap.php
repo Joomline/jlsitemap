@@ -54,7 +54,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to generate sitemap
 	 *
-	 * @param bool $debug Debug generation
+	 * @param   bool  $debug  Debug generation
 	 *
 	 * @return bool|object Array if successful, false otherwise and internal error is set.
 	 *
@@ -118,7 +118,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to get sitemap xml string
 	 *
-	 * @param array $rows Include urls array
+	 * @param   array  $rows  Include urls array
 	 *
 	 * @return string
 	 *
@@ -197,7 +197,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to get sitemap json string
 	 *
-	 * @param array $rows Include urls array
+	 * @param   array  $rows  Include urls array
 	 *
 	 * @return string
 	 *
@@ -576,10 +576,10 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to get menu items array
 	 *
-	 * @param bool        $multilanguage Enable multilanguage
-	 * @param array|false $menutypes     Menutypes filter
-	 * @param string      $siteRobots    Site config robots
-	 * @param array       $guestAccess   Guest access levels
+	 * @param   bool         $multilanguage  Enable multilanguage
+	 * @param   array|false  $menutypes      Menutypes filter
+	 * @param   string       $siteRobots     Site config robots
+	 * @param   array        $guestAccess    Guest access levels
 	 *
 	 * @return array
 	 *
@@ -731,10 +731,10 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to filtering urls
 	 *
-	 * @param string     $link   Url
-	 * @param array|bool $raw    Raw filter
-	 * @param array|bool $strpos Strpos filter
-	 * @param array|bool $menu   Menu items filter
+	 * @param   string      $link    Url
+	 * @param   array|bool  $raw     Raw filter
+	 * @param   array|bool  $strpos  Strpos filter
+	 * @param   array|bool  $menu    Menu items filter
 	 *
 	 * @return array Excludes array
 	 *
@@ -787,9 +787,23 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$excludeMenu = true;
 			foreach ($menu as $filter)
 			{
-				if (mb_stripos($link, $filter, 0, 'UTF-8') !== false)
+				$filter   = str_replace(array('.html'), '', $filter);
+				$filter   = str_replace(array('/'), '\/', $filter);
+				$patterns = array(
+					'/^' . $filter . '\//',
+					'/^' . $filter . '$/',
+					'/^' . $filter . '\./',
+				);
+				foreach ($patterns as $pattern)
 				{
-					$excludeMenu = false;
+					if (preg_match($pattern, $link))
+					{
+						$excludeMenu = false;
+						break;
+					}
+				}
+				if (!$excludeMenu)
+				{
 					break;
 				}
 			}
