@@ -56,6 +56,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @param   bool  $debug  Debug generation
 	 *
+	 * @throws  Exception
+	 *
 	 * @return bool|object Array if successful, false otherwise and internal error is set.
 	 *
 	 * @since 1.1.0
@@ -119,6 +121,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 * Method to get sitemap xml string
 	 *
 	 * @param   array  $rows  Include urls array
+	 *
+	 * @throws  Exception
 	 *
 	 * @return string
 	 *
@@ -217,7 +221,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to get sitemap urls array
 	 *
-	 * @return object
+	 * @throws  Exception
+	 *
+	 * @return  object
 	 *
 	 * @since 1.1.0
 	 */
@@ -415,17 +421,24 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			{
 				$item = new Registry($row);
 				if (!$loc = $item->get('loc', false)) continue;
-
-				$type            = array($item->get('type', Text::_('COM_JLSITEMAP_TYPES_UNKNOWN')));
-				$title           = $item->get('title');
-				$link            = ($siteSef) ? Route::_($item->get('loc')) : $item->get('loc');
-				$level           = count(explode('/', $link)) - 1;
-				$key             = (empty($link)) ? '/' : $link;
-				$loc             = $siteRoot . $link;
-				$changefreq      = $item->get('changefreq', $config->get('changefreq', 'weekly'));
+				$type       = array($item->get('type', Text::_('COM_JLSITEMAP_TYPES_UNKNOWN')));
+				$title      = $item->get('title');
+				$link       = ($siteSef && !$item->get('noRoute', false)) ? Route::_($item->get('loc')) : $item->get('loc');
+				$level      = count(explode('/', $link)) - 1;
+				$key        = (empty($link)) ? '/' : $link;
+				$loc        = $siteRoot . $link;
+				$changefreq = $item->get('changefreq', $config->get('changefreq', 'weekly'));
+				if (empty($changefreq))
+				{
+					$changefreq = $config->get('changefreq', 'weekly');
+				}
 				$changefreqValue = $changefreqValues[$changefreq];
 				$priority        = $item->get('priority', $config->get('priority', '0.5'));
-				$lastmod         = ($item->get('lastmod', false)
+				if (empty($priority))
+				{
+					$priority = $config->get('priority', '0.5');
+				}
+				$lastmod = ($item->get('lastmod', false)
 					&& $item->get('lastmod') != Factory::getDbo()->getNullDate()) ?
 					Factory::getDate($item->get('lastmod'))->toUnix() : false;
 
