@@ -48,5 +48,8 @@
 		<folder>css</folder>
 		<folder>icons</folder>
 	</media>
-	<layouts destination="components/jlsitemap" folder="layouts"/>
+	<layouts destination="components/jlsitemap" folder="layouts">
+		<folder>admin</folder>
+		<folder>site</folder>
+	</layouts>
 </extension>

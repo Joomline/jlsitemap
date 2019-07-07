@@ -12,15 +12,19 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Installer\InstallerAdapter;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 
 class com_jlsitemapInstallerScript
 {
 	/**
 	 * Runs right after any installation action.
 	 *
-	 * @param  string           $type   Type of PostFlight action. Possible values are:
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   string            $type    Type of PostFlight action. Possible values are:
+	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
 	 * @return void
 	 *
@@ -31,67 +35,60 @@ class com_jlsitemapInstallerScript
 		// Add access key
 		$this->addAccessKey();
 
-		// Install layouts
-		$this->installLayouts($parent);
+		// Parse layouts
+		$this->parseLayouts($parent->getParent()->getManifest()->layouts, $parent->getParent());
 	}
 
 	/**
-	 * Method to install/update extension layouts
+	 * Method to parse through a layout element of the installation manifest and take appropriate action.
 	 *
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   SimpleXMLElement  $element    The XML node to process.
+	 * @param   Installer         $installer  Installer calling object.
 	 *
-	 * @return void
+	 * @return  boolean     True on success
 	 *
-	 * @since  1.4.0
+	 * @since  1.6.2
 	 */
-	protected function installLayouts($parent)
+	public function parseLayouts(SimpleXMLElement $element, $installer)
 	{
-		$root   = JPATH_ROOT . '/layouts';
-		$source = $parent->getParent()->getPath('source');
-
-		// Get attributes
-		$attributes = $parent->getParent()->manifest->xpath('layouts');
-		if (!is_array($attributes) || empty($attributes[0])) return;
+		if (!$element || !count($element->children()))
+		{
+			return false;
+		}
 
 		// Get destination
-		$destination = (!empty($attributes[0]->attributes()->destination)) ?
-			(string) $attributes[0]->attributes()->destination : false;
-		if (!$destination) return;
+		$folder      = ((string) $element->attributes()->destination) ? '/' . $element->attributes()->destination : null;
+		$destination = Path::clean(JPATH_ROOT . '/layouts' . $folder);
 
-		// Remove old layouts
-		if (Folder::exists($root . '/' . trim($destination, '/')))
+		// Get source
+		$folder = (string) $element->attributes()->folder;
+		$source = ($folder && file_exists($installer->getPath('source') . '/' . $folder)) ?
+			$installer->getPath('source') . '/' . $folder : $installer->getPath('source');
+
+		// Prepare files
+		$copyFiles = array();
+		foreach ($element->children() as $file)
 		{
-			Folder::delete($root . '/' . trim($destination, '/'));
-		}
+			$path['src']  = Path::clean($source . '/' . $file);
+			$path['dest'] = Path::clean($destination . '/' . $file);
 
-		// Get folder
-		$folder = (!empty($attributes[0]->attributes()->folder)) ?
-			(string) $attributes[0]->attributes()->folder : 'layouts';
-		if (!Folder::exists($source . '/' . trim($folder, '/'))) return;
-
-		// Prepare src and dest
-		$src  = $source . '/' . trim($folder, '/');
-		$dest = $root . '/' . trim($destination, '/');
-
-		// Check destination
-		$path = $root;
-		$dirs = explode('/', $destination);
-		array_pop($dirs);
-
-		if (!empty($dirs))
-		{
-			foreach ($dirs as $i => $dir)
+			// Is this path a file or folder?
+			$path['type'] = $file->getName() === 'folder' ? 'folder' : 'file';
+			if (basename($path['dest']) !== $path['dest'])
 			{
-				$path .= '/' . $dir;
-				if (!Folder::exists($path))
+				$newdir = dirname($path['dest']);
+				if (!Folder::create($newdir))
 				{
-					Folder::create($path);
+					Log::add(Text::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir), Log::WARNING, 'jerror');
+
+					return false;
 				}
 			}
+
+			$copyFiles[] = $path;
 		}
 
-		// Move layouts
-		Folder::move($src, $dest);
+		return $installer->copyFiles($copyFiles);
 	}
 
 	/**
@@ -111,7 +108,7 @@ class com_jlsitemapInstallerScript
 	/**
 	 * This method is called after extension is uninstalled.
 	 *
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
 	 * @return void
 	 *
@@ -119,56 +116,73 @@ class com_jlsitemapInstallerScript
 	 */
 	public function uninstall($parent)
 	{
-		// Uninstall layouts
-		$this->uninstallLayouts($parent);
+		// Remove layouts
+		$this->removeLayouts($parent->getParent()->getManifest()->layouts);
 
-		// Remove sitemap
-		if (File::exists(JPATH_ROOT . '/sitemap.xml'))
+		// Remove sitemap files
+		$files = array(
+			JPATH_ROOT . '/sitemap.xml',
+			JPATH_ROOT . '/sitemap.json',
+		);
+		foreach ($files as $file)
 		{
-			File::delete(JPATH_ROOT . '/sitemap.xml');
+			if (File::exists($file))
+			{
+				File::delete($file);
+			}
 		}
 	}
 
 	/**
-	 * Method to uninstall extension layouts
+	 * Method to parse through a layouts element of the installation manifest and remove the files that were installed.
 	 *
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   SimpleXMLElement  $element  The XML node to process.
 	 *
-	 * @return void
+	 * @return  boolean     True on success
 	 *
-	 * @since  1.4.0
+	 * @since  1.6.2
 	 */
-	protected function uninstallLayouts($parent)
+	protected function removeLayouts(SimpleXMLElement $element)
 	{
-		$attributes = $parent->getParent()->manifest->xpath('layouts');
-		if (!is_array($attributes) || empty($attributes[0])) return;
-
-		$destination = (!empty($attributes[0]->attributes()->destination)) ?
-			(string) $attributes[0]->attributes()->destination : false;
-		if (!$destination) return;
-
-		$dest = JPATH_ROOT . '/layouts/' . trim($destination, '/');
-
-		if (Folder::exists($dest))
+		if (!$element || !count($element->children()))
 		{
-			Folder::delete($dest);
-		}
-	}
-
-	/**
-	 * Method to remove forgot model
-	 *
-	 * @return bool
-	 *
-	 * @since  1.6.0
-	 */
-	function update()
-	{
-		if (File::exists(JPATH_SITE . '/components/com_jlsitemap/models/generation.php'))
-		{
-			File::delete(JPATH_SITE . '/components/com_jlsitemap/models/generation.php');
+			return false;
 		}
 
-		return true;
+		// Get the array of file nodes to process
+		$files = $element->children();
+
+		// Get source
+		$folder = ((string) $element->attributes()->destination) ? '/' . $element->attributes()->destination : null;
+		$source = Path::clean(JPATH_ROOT . '/layouts' . $folder);
+
+		// Process each file in the $files array (children of $tagName).
+		foreach ($files as $file)
+		{
+			$path = $source . '/' . $file;
+
+			// Actually delete the files/folders
+			if (is_dir($path))
+			{
+				$val = Folder::delete($path);
+			}
+			else
+			{
+				$val = File::delete($path);
+			}
+
+			if ($val === false)
+			{
+				Log::add('Failed to delete ' . $path, Log::WARNING, 'jerror');
+				$retval = false;
+			}
+		}
+
+		if (!empty($folder))
+		{
+			Folder::delete($source);
+		}
+
+		return $retval;
 	}
 }
