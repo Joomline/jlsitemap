@@ -104,14 +104,6 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				File::delete($file);
 			}
 			File::append($file, $json);
-
-			// Save sitemap date
-			$component          = new stdClass();
-			$component->element = 'com_jlsitemap';
-			$component->params  = ComponentHelper::getParams('com_jlsitemap');
-			$component->params->set('sitemap_date', stat($file)['mtime']);
-			$component->params = $component->params->toString();
-			$this->getDbo()->updateObject('#__extensions', $component, array('element'));
 		}
 
 		return $urls;
@@ -193,6 +185,10 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			}
 
 			$this->_xml = $sitemap->asXML();
+
+			// Add date comment to sitemap
+			$date    = '<!-- JLSitemap ' . Factory::getDate()->toSql() . ' -->';
+			$this->_xml = str_replace('<urlset', $date . PHP_EOL . '<urlset', $this->_xml);
 		}
 
 		return $this->_xml;

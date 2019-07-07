@@ -115,7 +115,9 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Execute and display a template script.
 	 *
-	 * @param   string $tpl The name of the template file to parse; automatically searches through the template paths.
+	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 *
+	 * @throws  Exception
 	 *
 	 * @return mixed A string if successful, otherwise an Error object.
 	 *
@@ -140,9 +142,14 @@ class JLSitemapViewControlPanel extends HtmlView
 			$sitemap->file         = 'sitemap.xml';
 			$sitemap->path         = JPATH_ROOT . '/' . $sitemap->file;
 			$sitemap->url          = Uri::root() . $sitemap->file;
-			$sitemap->date         = stat($sitemap->path)['mtime'];
-			$sitemap->unidentified = (floor($sitemap->date / 60000) != floor($this->params->get('sitemap_date') / 60000));
-
+			$sitemap->date         = '';
+			$sitemap->unidentified = true;
+			if (preg_match('/<!-- JLSitemap (.*) -->/', file_get_contents($sitemap->path), $matches))
+			{
+				$sitemap->date         = $matches[1];
+				$sitemap->unidentified = false;
+			}
+			
 			$this->sitemap = $sitemap;
 		}
 
