@@ -158,7 +158,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 		// Process each file in the $files array (children of $tagName).
 		foreach ($files as $file)
 		{
-			$path = $source . '/' . $file;
+			$path = Path::clean($source . '/' . $file);
 
 			// Actually delete the files/folders
 			if (is_dir($path))
