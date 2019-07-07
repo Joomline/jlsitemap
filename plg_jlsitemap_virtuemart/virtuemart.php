@@ -29,8 +29,8 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 	/**
 	 * Method to get urls array
 	 *
-	 * @param array    $urls   Urls array
-	 * @param Registry $config Component config
+	 * @param   array     $urls    Urls array
+	 * @param   Registry  $config  Component config
 	 *
 	 * @return array Urls array with attributes
 	 *
@@ -49,18 +49,41 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 		// Add config
 		JLoader::register('VmConfig', JPATH_ROOT . '/administrator/components/com_virtuemart/helpers/config.php');
 
-		$db                 = Factory::getDbo();
-		$defaultLanguage    = VmConfig::get('vmDefLang');
-		$defaultLanguageKey = str_replace('-', '_', strtolower($defaultLanguage));
-		$activeLanguages    = VmConfig::get('active_languages');
-		$multilanguage      = ($config->get('multilanguage') && !empty($activeLanguages));
-		$languages          = array($defaultLanguageKey => $defaultLanguage);
+		$db = Factory::getDbo();
+
+		// Get default language
+		if ($defaultLanguage = VmConfig::get('vmDefLang'))
+		{
+			$defaultLanguageKey = str_replace('-', '_', strtolower($defaultLanguage));
+		}
+		else
+		{
+			$defaultLanguage    = Factory::getLanguage()->getTag();
+			$defaultLanguageKey = str_replace('-', '_', strtolower($defaultLanguage));;
+		}
+		$languages = (!empty($defaultLanguage) && !empty($defaultLanguageKey)) ?
+			array($defaultLanguageKey => $defaultLanguage) : array();
+
+		// Get other languages
+		$activeLanguages = VmConfig::get('active_languages');
+		$multilanguage   = ($config->get('multilanguage') && !empty($activeLanguages));
 		if ($multilanguage)
 		{
 			foreach ($activeLanguages as $language)
 			{
-				$languages[str_replace('-', '_', strtolower($language))] = $language;
+				$key = str_replace('-', '_', strtolower($language));
+				if (!empty($key) && !empty($language))
+				{
+					$languages[$key] = $language;
+				}
+
 			}
+		}
+
+		// Check languages
+		if (empty($languages))
+		{
+			return $urls;
 		}
 
 		// Get products
