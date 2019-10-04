@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
@@ -62,11 +63,12 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		// Generate sitemap file
 		if (!$debug)
 		{
-			$params = ComponentHelper::getParams('com_jlsitemap');
+			$params   = ComponentHelper::getParams('com_jlsitemap');
+			$xmlLimit = (int) $params->get('xml_limit', 50000);
 
 			// Generate xml
-			$xml = (count($urls->includes) <= $params->get('xml_limit', 50000)) ?
-				$this->generateSingleXML($urls->includes) : $this->generateMultiXML($urls->includes);
+			$xml = (count($urls->includes) <= $xmlLimit) ? $this->generateSingleXML($urls->includes)
+				: $this->generateMultiXML($urls->includes, $xmlLimit);
 
 			// Generate json
 			$json = $this->generateJSON($urls->includes);
@@ -102,19 +104,75 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to generate multi sitemap.
 	 *
-	 * @param   array  $rows  Include urls array
+	 * @param   array  $rows      Include urls array
+	 * @param   int    $xmlLimit  Limit in xml file
 	 *
-	 * @throws Exception
+	 * @throws  Exception
 	 *
 	 * @return bool True on success, False on failure.
 	 *
 	 * @since  1.7
 	 */
-	protected function generateMultiXML($rows = array())
+	protected function generateMultiXML($rows = array(), $xmlLimit = 50000)
 	{
-		exit('222');
+		// Clean old files
+		$files = Folder::files(JPATH_ROOT, 'sitemap_[0-9]*\.xml', false, true,);
+		foreach ($files as $file)
+		{
+			File::delete($file);
+		}
 
-		return true;
+		// Generate files
+		$i        = 0;
+		$t        = 0;
+		$f        = 0;
+		$total    = count($rows);
+		$includes = array();
+		foreach ($rows as $row)
+		{
+			$includes[] = $row;
+			$i++;
+			$t++;
+
+			if ($i === $xmlLimit || $t === $total)
+			{
+				$f++;
+
+				$xml  = $this->filterRegexp($this->getXML($rows));
+				$file = Path::clean(JPATH_ROOT . '/sitemap_' . $f . '.xml');
+				File::append($file, $xml);
+
+				// Reset
+				$i        = 0;
+				$includes = array();
+			}
+		}
+
+		// Main sitemap
+		$root    = rtrim(Uri::root(), '/');
+		$date    = Factory::getDate()->toSql();
+		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
+			. '<!-- JLSitemap ' . $date . ' -->'
+			. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" />');
+		for ($i = 1; $i <= $f; $i++)
+		{
+			$child = $sitemap->addChild('sitemap');
+			$child->addChild('loc', $root . '/sitemap_' . $i . '.xml');
+			$child->addChild('lastmod', $date);
+		}
+		$xml = $sitemap->asXML();
+
+		// Filter regexp
+		$xml = $this->filterRegexp($xml);
+
+		// Put to file
+		$file = Path::clean(JPATH_ROOT . '/sitemap.xml');
+		if (File::exists($file))
+		{
+			File::delete($file);
+		}
+
+		return File::append($file, $xml);
 	}
 
 	/**
@@ -134,6 +192,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 		// Create sitemap
 		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
+			. '<!-- JLSitemap ' . Factory::getDate()->toSql() . ' -->'
 			. '<urlset'
 			. ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
 			. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
@@ -190,10 +249,6 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			}
 		}
 		$xml = $sitemap->asXML();
-
-		// Add date comment to sitemap
-		$date = '<!-- JLSitemap ' . Factory::getDate()->toSql() . ' -->';
-		$xml  = str_replace('<urlset', $date . PHP_EOL . '<urlset', $xml);
 
 		return $xml;
 	}
