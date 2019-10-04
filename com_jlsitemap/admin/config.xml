@@ -8,6 +8,11 @@
 			   description="COM_JLSITEMAP_PARAMS_HTML_LIMIT_DESC"
 			   min="1"
 			   default="200"/>
+		<field name="xml_limit" type="number"
+			   label="COM_JLSITEMAP_PARAMS_XML_LIMIT"
+			   description="COM_JLSITEMAP_PARAMS_XML_LIMIT_DESC"
+			   min="1"
+			   default="50000"/>
 		<field name="changefreq" type="list" default="weekly"
 			   label="COM_JLSITEMAP_PARAMS_CHANGEFREQ">
 			<option value="always">always</option>
