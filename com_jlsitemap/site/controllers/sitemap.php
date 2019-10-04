@@ -26,6 +26,8 @@ class JLSiteMapControllerSitemap extends BaseController
 	/**
 	 * Method to generate sitemap
 	 *
+	 * @throws  Exception
+	 *
 	 * @return bool
 	 *
 	 * @since 1.4.1
@@ -121,6 +123,8 @@ class JLSiteMapControllerSitemap extends BaseController
 	/**
 	 * Method to generate sitemap
 	 *
+	 * @throws  Exception
+	 *
 	 * @return bool
 	 *
 	 * @since 1.4.1
@@ -128,6 +132,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	public function delete()
 	{
 		$app   = Factory::getApplication();
+		$debug = (!empty($app->input->get('debug')));
 		$model = $this->getModel();
 		$error = ($model->delete()) ? $model->getError() : false;
 
@@ -186,9 +191,9 @@ class JLSiteMapControllerSitemap extends BaseController
 	/**
 	 * Method to get a model object, loading it if required.
 	 *
-	 * @param   string $name   The model name. Optional.
-	 * @param   string $prefix The class prefix. Optional.
-	 * @param   array  $config Configuration array for model. Optional.
+	 * @param   string  $name    The model name. Optional.
+	 * @param   string  $prefix  The class prefix. Optional.
+	 * @param   array   $config  Configuration array for model. Optional.
 	 *
 	 * @return  \Joomla\CMS\MVC\Model\BaseDatabaseModel|boolean  Model object on success; otherwise false on failure.
 	 *
@@ -223,6 +228,8 @@ class JLSiteMapControllerSitemap extends BaseController
 
 	/**
 	 * Method to check access
+	 *
+	 * @throws  Exception
 	 *
 	 * @since 1.6.0
 	 */

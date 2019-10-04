@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -24,15 +25,6 @@ use Joomla\Utilities\ArrayHelper;
 
 class JLSitemapModelSitemap extends BaseDatabaseModel
 {
-	/**
-	 * Sitemap xml
-	 *
-	 * @var string
-	 *
-	 * @since 1.1.0
-	 */
-	protected $_xml = null;
-
 	/**
 	 * Object with urls array
 	 *
@@ -70,43 +62,59 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		// Generate sitemap file
 		if (!$debug)
 		{
-			// Get sitemap xml
-			$xml = $this->getXML($urls->includes);
+			$params = ComponentHelper::getParams('com_jlsitemap');
 
-			// Get sitemap json
-			$json = $this->getJSON($urls->includes);
+			// Generate xml
+			$xml = (count($urls->includes) <= $params->get('xml_limit', 50000)) ?
+				$this->generateSingleXML($urls->includes) : $this->generateMultiXML($urls->includes);
 
-			// Regexp filter
-			$filterRegexp = ComponentHelper::getParams('com_jlsitemap')->get('filter_regexp');
-			if (!empty($filterRegexp))
-			{
-				foreach (ArrayHelper::fromObject($filterRegexp) as $regexp)
-				{
-					if (!empty($regexp['pattern']))
-					{
-						$xml = preg_replace($regexp['pattern'], $regexp['replacement'], $xml);
-					}
-				}
-			}
-
-			// Create sitemap xml file
-			$file = JPATH_ROOT . '/sitemap.xml';
-			if (File::exists($file))
-			{
-				File::delete($file);
-			}
-			File::append($file, $xml);
-
-			// Create sitemap json file
-			$file = JPATH_ROOT . '/sitemap.json';
-			if (File::exists($file))
-			{
-				File::delete($file);
-			}
-			File::append($file, $json);
+			// Generate json
+			$json = $this->generateJSON($urls->includes);
 		}
 
 		return $urls;
+	}
+
+	/**
+	 * Method to generate single sitemap.
+	 *
+	 * @param   array  $rows  Include urls array
+	 *
+	 * @throws Exception
+	 *
+	 * @return bool
+	 *
+	 * @since  1.7
+	 */
+	protected function generateSingleXML($rows = array())
+	{
+		$xml  = $this->filterRegexp($this->getXML($rows));
+		$file = Path::clean(JPATH_ROOT . '/sitemap.xml');
+
+		if (File::exists($file))
+		{
+			File::delete($file);
+		}
+
+		return File::append($file, $xml);
+	}
+
+	/**
+	 * Method to generate multi sitemap.
+	 *
+	 * @param   array  $rows  Include urls array
+	 *
+	 * @throws Exception
+	 *
+	 * @return bool True on success, False on failure.
+	 *
+	 * @since  1.7
+	 */
+	protected function generateMultiXML($rows = array())
+	{
+		exit('222');
+
+		return true;
 	}
 
 	/**
@@ -122,80 +130,76 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 */
 	protected function getXML($rows = array())
 	{
-		if ($this->_xml === null)
+		$rows = (empty($rows)) ? $this->getUrls()->includes : $rows;
+
+		// Create sitemap
+		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
+			. '<urlset'
+			. ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+			. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+			. ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"'
+			. ' xmlns:xhtml="http://www.w3.org/1999/xhtml"'
+			. ' xhtml="http://www.w3.org/1999/xhtml"'
+			. '/>');
+
+		// Add urls
+		foreach ($rows as $row)
 		{
-			$rows = (empty($rows)) ? $this->getUrls()->includes : $rows;
-
-			// Create sitemap
-			$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
-				. '<urlset'
-				. ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
-				. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-				. ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"'
-				. ' xmlns:xhtml="http://www.w3.org/1999/xhtml"'
-				. ' xhtml="http://www.w3.org/1999/xhtml"'
-				. '/>');
-
-			// Add urls
-			foreach ($rows as $row)
+			if ($loc = $row->get('loc', false))
 			{
-				if ($loc = $row->get('loc', false))
+				$url = $sitemap->addChild('url');
+
+				// Loc
+				$url->addChild('loc', $loc);
+
+				// Changefreq
+				if ($changefreq = $row->get('changefreq', false))
 				{
-					$url = $sitemap->addChild('url');
+					$url->addChild('changefreq', $changefreq);
+				}
 
-					// Loc
-					$url->addChild('loc', $loc);
+				// Priority
+				if ($priority = $row->get('priority', false))
+				{
+					$url->addChild('priority', $row->get('priority'));
+				}
 
-					// Changefreq
-					if ($changefreq = $row->get('changefreq', false))
+				// Lastmod
+				if ($lastmod = $row->get('lastmod', false))
+				{
+					$url->addChild('lastmod', Factory::getDate($lastmod)->toISO8601());
+				}
+
+				// Alternates
+				if ($alternates = $row->get('alternates', false))
+				{
+					// Add x-default
+					if (!isset($alternates['x-default']) && isset($alternates[Factory::getLanguage()->getDefault()]))
 					{
-						$url->addChild('changefreq', $changefreq);
+						$alternates['x-default'] = $alternates[Factory::getLanguage()->getDefault()];
 					}
 
-					// Priority
-					if ($priority = $row->get('priority', false))
+					foreach ($alternates as $lang => $href)
 					{
-						$url->addChild('priority', $row->get('priority'));
-					}
-
-					// Lastmod
-					if ($lastmod = $row->get('lastmod', false))
-					{
-						$url->addChild('lastmod', Factory::getDate($lastmod)->toISO8601());
-					}
-
-					// Alternates
-					if ($alternates = $row->get('alternates', false))
-					{
-						// Add x-default
-						if (!isset($alternates['x-default']) && isset($alternates[Factory::getLanguage()->getDefault()]))
-						{
-							$alternates['x-default'] = $alternates[Factory::getLanguage()->getDefault()];
-						}
-
-						foreach ($alternates as $lang => $href)
-						{
-							$alternate = $url->addChild('xhtml:link', '', 'http://www.w3.org/1999/xhtml');
-							$alternate->addAttribute('rel', 'alternate');
-							$alternate->addAttribute('hreflang', $lang);
-							$alternate->addAttribute('href', $href);
-						}
+						$alternate = $url->addChild('xhtml:link', '', 'http://www.w3.org/1999/xhtml');
+						$alternate->addAttribute('rel', 'alternate');
+						$alternate->addAttribute('hreflang', $lang);
+						$alternate->addAttribute('href', $href);
 					}
 				}
 			}
-
-			$this->_xml = $sitemap->asXML();
-
-			// Add date comment to sitemap
-			$date    = '<!-- JLSitemap ' . Factory::getDate()->toSql() . ' -->';
-			$this->_xml = str_replace('<urlset', $date . PHP_EOL . '<urlset', $this->_xml);
 		}
+		$xml = $sitemap->asXML();
 
-		return $this->_xml;
+		// Add date comment to sitemap
+		$date = '<!-- JLSitemap ' . Factory::getDate()->toSql() . ' -->';
+		$xml  = str_replace('<urlset', $date . PHP_EOL . '<urlset', $xml);
+
+		return $xml;
 	}
 
 	/**
-	 * Method to get sitemap json string
+	 * Method to create json sitemap
 	 *
 	 * @param   array  $rows  Include urls array
 	 *
@@ -203,15 +207,27 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since 1.6.0
 	 */
-	protected function getJSON($rows = array())
+	protected function generateJSON($rows = array())
 	{
+		// Get json
 		foreach ($rows as &$row)
 		{
 			$row = $row->toObject();
 		}
 		$registry = new Registry($rows);
+		$json     = $registry->toString('json', array('bitmask' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
-		return $registry->toString('json', array('bitmask' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+		// Filter regexp
+		$json = $this->filterRegexp($json);
+
+		// Create sitemap json file
+		$file = JPATH_ROOT . '/sitemap.json';
+		if (File::exists($file))
+		{
+			File::delete($file);
+		}
+
+		return File::append($file, $json);
 	}
 
 	/**
@@ -826,6 +842,35 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		}
 
 		return $exclude;
+	}
+
+	/**
+	 * Method to filtering sitemap string via regexp
+	 *
+	 * @param   string  $string  Sitemap string
+	 *
+	 * @return string Sitemap string.
+	 *
+	 * @since 1.7
+	 */
+	protected function filterRegexp($string = '')
+	{
+		if (empty($string)) return $string;
+
+		// Regexp filter
+		$filterRegexp = ComponentHelper::getParams('com_jlsitemap')->get('filter_regexp');
+		if (!empty($filterRegexp))
+		{
+			foreach (ArrayHelper::fromObject($filterRegexp) as $regexp)
+			{
+				if (!empty($regexp['pattern']))
+				{
+					$string = preg_replace($regexp['pattern'], $regexp['replacement'], $string);
+				}
+			}
+		}
+
+		return $string;
 	}
 
 	/**

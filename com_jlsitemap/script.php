@@ -69,6 +69,7 @@ class com_jlsitemapInstallerScript
 		$copyFiles = array();
 		foreach ($element->children() as $file)
 		{
+			$path         = array();
 			$path['src']  = Path::clean($source . '/' . $file);
 			$path['dest'] = Path::clean($destination . '/' . $file);
 
