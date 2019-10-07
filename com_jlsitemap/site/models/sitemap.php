@@ -150,15 +150,15 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 		// Main sitemap
 		$root    = rtrim(Uri::root(), '/');
-		$date    = Factory::getDate()->toSql();
+		$date    = Factory::getDate();
 		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
-			. '<!-- JLSitemap ' . $date . ' -->'
+			. '<!-- JLSitemap ' . $date->toSql() . ' -->'
 			. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" />');
 		for ($i = 1; $i <= $f; $i++)
 		{
 			$child = $sitemap->addChild('sitemap');
 			$child->addChild('loc', $root . '/sitemap_' . $i . '.xml');
-			$child->addChild('lastmod', $date);
+			$child->addChild('lastmod', $date->toISO8601());
 		}
 		$xml = $sitemap->asXML();
 
