@@ -116,7 +116,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	protected function generateMultiXML($rows = array(), $xmlLimit = 50000)
 	{
 		// Clean old files
-		$files = Folder::files(JPATH_ROOT, 'sitemap_[0-9]*\.xml', false, true,);
+		$files = Folder::files(JPATH_ROOT, 'sitemap_[0-9]*\.xml', false, true);
 		foreach ($files as $file)
 		{
 			File::delete($file);
