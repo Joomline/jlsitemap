@@ -276,7 +276,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		$json = $this->filterRegexp($json);
 
 		// Create sitemap json file
-		$file = JPATH_ROOT . '/sitemap.json';
+		$file = Path::clean(JPATH_ROOT . '/sitemap.json');
 		if (File::exists($file))
 		{
 			File::delete($file);
@@ -937,8 +937,21 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 */
 	public function delete()
 	{
-		$file = JPATH_ROOT . '/sitemap.xml';
+		// Delete single sitemap
+		$file = Path::clean(JPATH_ROOT . '/sitemap.xml');
+		if (File::exists($file) && !File::delete($file)) return false;
 
-		return (!File::exists($file) || File::delete($file));
+		// Delete multi sitemap
+		$files = Folder::files(JPATH_ROOT, 'sitemap_[0-9]*\.xml');
+		foreach ($files as $file)
+		{
+			if (!File::delete($file)) return false;
+		}
+
+		// Delete json sitemap
+		$file = Path::clean(JPATH_ROOT . '/sitemap.json');
+		if (File::exists($file) && !File::delete($file)) return false;
+
+		return true;
 	}
 }
