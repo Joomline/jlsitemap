@@ -35,11 +35,7 @@ $stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
 				<?php echo Text::sprintf('COM_JLSITEMAP_XSL_TITLE', Factory::getConfig()->get('sitename')); ?>
 			</h1>
 			<p class="description">
-				<xsl:choose>
-					<xsl:otherwise>
-						<?php echo Text::sprintf('COM_JLSITEMAP_XSL_DESCRIPTION', '<xsl:value-of select="count(sitemap:urlset/sitemap:url)"/>'); ?>
-					</xsl:otherwise>
-				</xsl:choose>
+				<?php echo Text::sprintf('COM_JLSITEMAP_XSL_DESCRIPTION', '<xsl:value-of select="count(sitemap:urlset/sitemap:url)"/>'); ?>
 			</p>
 			<xsl:apply-templates/>
 			<div class="center muted">
