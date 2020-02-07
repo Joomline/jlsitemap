@@ -51,5 +51,6 @@
 	<layouts destination="components/jlsitemap" folder="layouts">
 		<folder>admin</folder>
 		<folder>site</folder>
+		<folder>xsl</folder>
 	</layouts>
 </extension>

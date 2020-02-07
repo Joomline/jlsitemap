@@ -14,7 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
-HTMLHelper::stylesheet('media/com_jlsitemap/css/admin.min.css', array('version' => 'auto'));
+HTMLHelper::stylesheet('com_jlsitemap/admin.min.css', array('version' => 'auto', 'relative' => true));
 ?>
 <div id="controlPanel">
 	<div class="main">

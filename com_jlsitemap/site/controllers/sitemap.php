@@ -263,4 +263,26 @@ class JLSiteMapControllerSitemap extends BaseController
 			throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 		}
 	}
+
+
+	/**
+	 * Method to get Sitemap stylesheet.
+	 *
+	 * @throws Exception
+	 *
+	 * @since  1.9.0
+	 */
+	public function getStylesheet()
+	{
+		// Set xml response
+		$app = Factory::getApplication();
+		$app->setHeader('Content-Type', 'application/xml; charset=utf-8', true);
+		$app->sendHeaders();
+
+		echo '<?xml version="1.0" encoding="UTF-8"?>';
+		echo LayoutHelper::render('components.jlsitemap.xsl.' . $this->input->get('type', 'urlset'));
+		$app->close();
+
+		return true;
+	}
 }

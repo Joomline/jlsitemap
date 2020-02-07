@@ -20,11 +20,13 @@ use Joomla\Registry\Registry;
 class JLSiteMapControllerSitemap extends BaseController
 {
 	/**
-	 * Method to generate sitemap
+	 * Method to generate sitemap.
 	 *
-	 * @return bool
+	 * @throws  Exception
 	 *
-	 * @since 1.4.1
+	 * @return bool True on success, False on failure.
+	 *
+	 * @since  1.4.1
 	 */
 	public function generate()
 	{
@@ -94,11 +96,13 @@ class JLSiteMapControllerSitemap extends BaseController
 	}
 
 	/**
-	 * Method to delete sitemap
+	 * Method to delete sitemap.
 	 *
-	 * @return bool
+	 * @throws  Exception
 	 *
-	 * @since 1.4.1
+	 * @return bool True on success, False on failure.
+	 *
+	 * @since  1.4.1
 	 */
 	public function delete()
 	{
@@ -127,7 +131,7 @@ class JLSiteMapControllerSitemap extends BaseController
 
 		// Get Response
 		$response = new Registry($result);
-		$message  = ($response->get('success'))? Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS') :
+		$message  = ($response->get('success')) ? Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS') :
 			Text::_('COM_JLSITEMAP_SITEMAP_DELETE_FAILURE');
 
 		// Remove cookie
@@ -152,11 +156,11 @@ class JLSiteMapControllerSitemap extends BaseController
 	}
 
 	/**
-	 * Method to get component access key
+	 * Method to get component access key.
 	 *
-	 * @return string
+	 * @return  string Access key.
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	protected function getAccessKey()
 	{

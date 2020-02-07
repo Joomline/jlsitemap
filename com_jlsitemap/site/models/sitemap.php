@@ -187,11 +187,16 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 */
 	protected function getXML($rows = array())
 	{
-		$rows = (empty($rows)) ? $this->getUrls()->includes : $rows;
-
+		$rows       = (empty($rows)) ? $this->getUrls()->includes : $rows;
+		$date       = Factory::getDate()->toSql();
+		$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port'))
+			. Route::_('index.php?option=com_jlsitemap&task=sitemap.getStylesheet&date=' . $date);
+		$stylesheet = preg_replace('#&amp;Itemid=[0-9]*#', '', $stylesheet);
+		
 		// Create sitemap
 		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
-			. '<!-- JLSitemap ' . Factory::getDate()->toSql() . ' -->'
+			. '<!-- JLSitemap ' . $date . ' -->'
+			. '<?xml-stylesheet type="text/xsl" href="' . $stylesheet . '"?>'
 			. '<urlset'
 			. ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
 			. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
