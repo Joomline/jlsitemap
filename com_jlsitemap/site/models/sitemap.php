@@ -577,7 +577,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 						$changefreqValue = $exist->get('changefreqValue');
 					}
 
-					if (floatval($priority) > floatval($exist->get('priority')))
+					if ((float) $priority < (float) $exist->get('priority'))
 					{
 						$priority = $exist->get('priority');
 					}
