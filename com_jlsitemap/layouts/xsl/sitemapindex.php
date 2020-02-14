@@ -10,19 +10,6 @@
 
 defined('_JEXEC') or die;
 
-?>
-<?php
-/**
- * @package    JLSitemap Component
- * @version    @version@
- * @author     Joomline - joomline.ru
- * @copyright  Copyright (c) 2010 - 2020 Joomline. All rights reserved.
- * @license    GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
- * @link       https://joomline.ru/
- */
-
-defined('_JEXEC') or die;
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
