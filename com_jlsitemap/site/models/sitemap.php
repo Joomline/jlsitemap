@@ -148,7 +148,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.7
 	 */
-	protected function generateSingleXML($rows = array())
+	public function generateSingleXML($rows = array())
 	{
 		$xml      = $this->filterRegexp($this->getXML($rows));
 		$filename = $this->getConfiguration()->get('filename', 'sitemap');
