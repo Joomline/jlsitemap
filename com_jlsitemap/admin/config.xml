@@ -3,6 +3,10 @@
 	<fieldset name="global" label="JGLOBAL_FIELDSET_OPTIONS">
 		<field name="access_key" type="hidden" readonly="true"/>
 		<field name="sef_advanced" type="hidden" default="1"/>
+		<field name="filename" type="text"
+			   label="COM_JLSITEMAP_PARAMS_FILENAME"
+			   description="COM_JLSITEMAP_PARAMS_FILENAME_DESC"
+			   default="sitemap"/>
 		<field name="html_limit" type="number"
 			   label="COM_JLSITEMAP_PARAMS_HTML_LIMIT"
 			   description="COM_JLSITEMAP_PARAMS_HTML_LIMIT_DESC"

@@ -19,7 +19,7 @@ class JFormFieldDate extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 1.0.1
+	 * @since  1.0.1
 	 */
 	protected $type = 'date';
 
@@ -28,7 +28,7 @@ class JFormFieldDate extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 1.0.1
+	 * @since  1.0.1
 	 */
 	protected $layout = 'plugins.system.jlsitemap_cron.fields.date';
 }

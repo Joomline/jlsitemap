@@ -24,7 +24,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	 *
 	 * @throws  Exception
 	 *
-	 * @return bool True on success, False on failure.
+	 * @return  bool True on success, False on failure.
 	 *
 	 * @since  1.4.1
 	 */
@@ -100,7 +100,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	 *
 	 * @throws  Exception
 	 *
-	 * @return bool True on success, False on failure.
+	 * @return  bool True on success, False on failure.
 	 *
 	 * @since  1.4.1
 	 */

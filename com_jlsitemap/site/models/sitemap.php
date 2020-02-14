@@ -27,11 +27,20 @@ use Joomla\Utilities\ArrayHelper;
 class JLSitemapModelSitemap extends BaseDatabaseModel
 {
 	/**
+	 * JLSitemap component configuration
+	 *
+	 * @var Registry
+	 *
+	 * @since  1.9.0
+	 */
+	protected $_configuration = null;
+
+	/**
 	 * Object with urls array
 	 *
 	 * @var object
 	 *
-	 * @since 1.1.0
+	 * @since  1.1.0
 	 */
 	protected $_urls = null;
 
@@ -40,7 +49,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @var array
 	 *
-	 * @since 1.1.0
+	 * @since  1.1.0
 	 */
 	protected $_menuItems = null;
 
@@ -51,9 +60,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return bool|object Array if successful, false otherwise and internal error is set.
+	 * @return  bool|object Array if successful, false otherwise and internal error is set.
 	 *
-	 * @since 1.1.0
+	 * @since  1.1.0
 	 */
 	public function generate($debug = false)
 	{
@@ -63,7 +72,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		// Generate sitemap file
 		if (!$debug)
 		{
-			$params   = ComponentHelper::getParams('com_jlsitemap');
+			$params   = $this->getConfiguration();
 			$xmlLimit = (int) $params->get('xml_limit', 50000);
 
 			// Generate xml
@@ -82,16 +91,17 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @param   array  $rows  Include urls array
 	 *
-	 * @throws Exception
+	 * @throws  Exception
 	 *
-	 * @return bool
+	 * @return  bool
 	 *
 	 * @since  1.7
 	 */
 	protected function generateSingleXML($rows = array())
 	{
-		$xml  = $this->filterRegexp($this->getXML($rows));
-		$file = Path::clean(JPATH_ROOT . '/sitemap.xml');
+		$xml      = $this->filterRegexp($this->getXML($rows));
+		$filename = $this->getConfiguration()->get('filename', 'sitemap');
+		$file     = Path::clean(JPATH_ROOT . '/' . $filename . '.xml');
 
 		if (File::exists($file))
 		{
@@ -109,14 +119,15 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return bool True on success, False on failure.
+	 * @return  bool True on success, False on failure.
 	 *
 	 * @since  1.7
 	 */
-	protected function generateMultiXML($rows = array(), $xmlLimit = 50000)
+	public function generateMultiXML($rows = array(), $xmlLimit = 50000)
 	{
 		// Clean old files
-		$files = Folder::files(JPATH_ROOT, 'sitemap_[0-9]*\.xml', false, true);
+		$filename = $this->getConfiguration()->get('filename', 'sitemap');
+		$files    = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml', false, true);
 		foreach ($files as $file)
 		{
 			File::delete($file);
@@ -139,7 +150,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$f++;
 
 				$xml  = $this->filterRegexp($this->getXML($rows));
-				$file = Path::clean(JPATH_ROOT . '/sitemap_' . $f . '.xml');
+				$file = Path::clean(JPATH_ROOT . '/' . $filename . '_' . $f . '.xml');
 				File::append($file, $xml);
 
 				// Reset
@@ -160,7 +171,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		for ($i = 1; $i <= $f; $i++)
 		{
 			$child = $sitemap->addChild('sitemap');
-			$child->addChild('loc', Uri::root() . 'sitemap_' . $i . '.xml');
+			$child->addChild('loc', Uri::root() . $filename . '_' . $i . '.xml');
 			$child->addChild('lastmod', $date->toISO8601());
 		}
 		$xml = $sitemap->asXML();
@@ -169,7 +180,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		$xml = $this->filterRegexp($xml);
 
 		// Put to file
-		$file = Path::clean(JPATH_ROOT . '/sitemap.xml');
+		$file = Path::clean(JPATH_ROOT . '/' . $filename . '.xml');
 		if (File::exists($file))
 		{
 			File::delete($file);
@@ -185,11 +196,11 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return string
+	 * @return  string
 	 *
-	 * @since 1.1.0
+	 * @since  1.1.0
 	 */
-	protected function getXML($rows = array())
+	public function getXML($rows = array())
 	{
 		$rows       = (empty($rows)) ? $this->getUrls()->includes : $rows;
 		$date       = Factory::getDate()->toSql();
@@ -266,11 +277,11 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @param   array  $rows  Include urls array
 	 *
-	 * @return string
+	 * @return  string
 	 *
-	 * @since 1.6.0
+	 * @since  1.6.0
 	 */
-	protected function generateJSON($rows = array())
+	public function generateJSON($rows = array())
 	{
 		// Get json
 		foreach ($rows as &$row)
@@ -284,7 +295,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		$json = $this->filterRegexp($json);
 
 		// Create sitemap json file
-		$file = Path::clean(JPATH_ROOT . '/sitemap.json');
+		$filename = $this->getConfiguration()->get('filename', 'sitemap');
+		$file     = Path::clean(JPATH_ROOT . '/' . $filename . '.json');
 		if (File::exists($file))
 		{
 			File::delete($file);
@@ -300,13 +312,13 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @return  object
 	 *
-	 * @since 1.1.0
+	 * @since  1.1.0
 	 */
 	protected function getUrls()
 	{
 		if ($this->_urls === null)
 		{
-			$config           = ComponentHelper::getParams('com_jlsitemap');
+			$config           = $this->getConfiguration();
 			$siteConfig       = Factory::getConfig();
 			$siteSef          = ($siteConfig->get('sef') == 1);
 			$siteRobots       = $siteConfig->get('robots');
@@ -669,9 +681,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 * @param   string       $siteRobots     Site config robots
 	 * @param   array        $guestAccess    Guest access levels
 	 *
-	 * @return array
+	 * @return  array
 	 *
-	 * @since 1.1.0
+	 * @since  1.1.0
 	 */
 	protected function getMenuItems($multilanguage = false, $menutypes = false, $siteRobots = null, $guestAccess = array())
 	{
@@ -824,9 +836,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 * @param   array|bool  $strpos  Strpos filter
 	 * @param   array|bool  $menu    Menu items filter
 	 *
-	 * @return array Excludes array
+	 * @return  array Excludes array
 	 *
-	 * @since 1.3.0
+	 * @since  1.3.0
 	 */
 	public function filtering($link = null, $raw = false, $strpos = false, $menu = false)
 	{
@@ -912,16 +924,16 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @param   string  $string  Sitemap string
 	 *
-	 * @return string Sitemap string.
+	 * @return  string Sitemap string.
 	 *
-	 * @since 1.7
+	 * @since  1.7
 	 */
 	protected function filterRegexp($string = '')
 	{
 		if (empty($string)) return $string;
 
 		// Regexp filter
-		$filterRegexp = ComponentHelper::getParams('com_jlsitemap')->get('filter_regexp');
+		$filterRegexp = $this->getConfiguration()->get('filter_regexp');
 		if (!empty($filterRegexp))
 		{
 			foreach (ArrayHelper::fromObject($filterRegexp) as $regexp)
@@ -939,27 +951,64 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to delete sitemap
 	 *
-	 * @return bool
+	 * @return  bool
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	public function delete()
 	{
 		// Delete single sitemap
-		$file = Path::clean(JPATH_ROOT . '/sitemap.xml');
+		$filename = $this->getConfiguration()->get('filename', 'sitemap');
+		$file     = Path::clean(JPATH_ROOT . '/' . $filename . '.xml');
 		if (File::exists($file) && !File::delete($file)) return false;
 
 		// Delete multi sitemap
-		$files = Folder::files(JPATH_ROOT, 'sitemap_[0-9]*\.xml');
+		$files = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml');
 		foreach ($files as $file)
 		{
 			if (!File::delete($file)) return false;
 		}
 
 		// Delete json sitemap
-		$file = Path::clean(JPATH_ROOT . '/sitemap.json');
+		$file = Path::clean(JPATH_ROOT . '/' . $filename . '.json');
 		if (File::exists($file) && !File::delete($file)) return false;
 
 		return true;
+	}
+
+	/**
+	 * Method to get component configuration.
+	 *
+	 * @return  Registry JLSitemap component configuration.
+	 *
+	 * @since  1.9.0
+	 */
+	public function getConfiguration()
+	{
+		if ($this->_configuration === null)
+		{
+			$this->_configuration = ComponentHelper::getParams('com_jlsitemap');
+		}
+
+		return $this->_configuration;
+	}
+
+	/**
+	 * Method to set component configuration parameter.
+	 *
+	 * @param   string  $path       Registry Path (e.g. joomla.content.showauthor)
+	 * @param   mixed   $value      Value of entry
+	 * @param   string  $separator  The key separator
+	 *
+	 * @since  1.9.0
+	 */
+	public function setConfigurationParameter($path, $value, $separator = null)
+	{
+		if ($this->_configuration === null)
+		{
+			$this->getConfiguration();
+		}
+
+		$this->_configuration->set($path, $value);
 	}
 }

@@ -19,7 +19,7 @@ class JLSiteMapController extends BaseController
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	protected $default_view = 'controlpanel';
 }

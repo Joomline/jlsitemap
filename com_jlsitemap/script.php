@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
@@ -26,7 +27,7 @@ class com_jlsitemapInstallerScript
 	 * @param   string            $type    Type of PostFlight action. Possible values are:
 	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
-	 * @return void
+	 * @return  void
 	 *
 	 * @since  1.4.0
 	 */
@@ -95,7 +96,7 @@ class com_jlsitemapInstallerScript
 	/**
 	 * Method to add access key to component params
 	 *
-	 * @return void
+	 * @return  void
 	 *
 	 * @since  1.4.0
 	 */
@@ -111,7 +112,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
-	 * @return void
+	 * @return  void
 	 *
 	 * @since  1.4.0
 	 */
@@ -121,10 +122,10 @@ class com_jlsitemapInstallerScript
 		$this->removeLayouts($parent->getParent()->getManifest()->layouts);
 
 		// Remove sitemap files
-		$files = array(
-			JPATH_ROOT . '/sitemap.xml',
-			JPATH_ROOT . '/sitemap.json',
-		);
+		$filename = ComponentHelper::getParams('com_jlsitemap')->get('filename', 'sitemap');
+		$files    = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml', false, true);
+		$files [] = JPATH_ROOT . '/' . $filename . '.xml';
+		$files [] = JPATH_ROOT . '/' . $filename . '.json';
 		foreach ($files as $file)
 		{
 			if (File::exists($file))

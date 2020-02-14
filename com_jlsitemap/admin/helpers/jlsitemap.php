@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -21,11 +22,11 @@ class JLSitemapHelper extends ContentHelper
 	/**
 	 * Configure the Linkbar.
 	 *
-	 * @param   string $vName The name of the active view.
+	 * @param   string  $vName  The name of the active view.
 	 *
 	 * @return  void
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	static function addSubmenu($vName)
 	{
@@ -37,7 +38,8 @@ class JLSitemapHelper extends ContentHelper
 			'index.php?option=com_jlsitemap&task=sitemap.generate',
 			$vName == 'generation');
 
-		if (File::exists(JPATH_ROOT . '/sitemap.xml'))
+		$filename = ComponentHelper::getParams('com_jlsitemap')->get('filename', 'sitemap');
+		if (File::exists(JPATH_ROOT . '/' . $filename . '.xml'))
 		{
 			JHtmlSidebar::addEntry(Text::_('COM_JLSITEMAP_SITEMAP'),
 				Uri::root() . 'sitemap.xml',

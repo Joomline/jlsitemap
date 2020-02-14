@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Language\Text;
@@ -40,8 +41,8 @@ class JLSitemapModelHTML extends ListModel
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * @param  string $ordering  An optional ordering field.
-	 * @param  string $direction An optional direction (asc|desc).
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
 	 *
 	 * @throws  Exception
 	 *
@@ -94,13 +95,15 @@ class JLSitemapModelHTML extends ListModel
 	/**
 	 * Gets an array of objects from json sitemap.
 	 *
-	 * @param   string  $query      The query.
-	 * @param   integer $limitstart Offset.
-	 * @param   integer $limit      The number of records.
+	 * @param   string   $query       The query.
+	 * @param   integer  $limitstart  Offset.
+	 * @param   integer  $limit       The number of records.
+	 *
+	 * @throws  Exception
 	 *
 	 * @return  array  An array of results.
 	 *
-	 * @since   1.6.0
+	 * @since  1.6.0
 	 */
 	protected function _getList($query, $limitstart = 0, $limit = 0)
 	{
@@ -128,11 +131,13 @@ class JLSitemapModelHTML extends ListModel
 	/**
 	 * Returns a record count for the query.
 	 *
-	 * @param   string $query The query.
+	 * @param   string  $query  The query.
+	 *
+	 * @throws  Exception
 	 *
 	 * @return  integer  Number of rows for query.
 	 *
-	 * @since   1.6.0
+	 * @since  1.6.0
 	 */
 	protected function _getListCount($query)
 	{
@@ -142,15 +147,18 @@ class JLSitemapModelHTML extends ListModel
 	/**
 	 * Method to get sitemap links array.
 	 *
+	 * @throws  Exception
+	 *
 	 * @return  array  An array of results.
 	 *
-	 * @since   1.6.0
+	 * @since  1.6.0
 	 */
 	protected function getLinks()
 	{
 		if ($this->_links === null)
 		{
-			$file = JPATH_ROOT . '/sitemap.json';
+			$filename = ComponentHelper::getParams('com_jlsitemap')->get('filename', 'sitemap');
+			$file     = JPATH_ROOT . '/' . $filename . '.json';
 			if (!File::exists($file))
 			{
 				$this->generate();
@@ -159,16 +167,15 @@ class JLSitemapModelHTML extends ListModel
 			// Decode json
 			$registry     = new Registry(file_get_contents($file));
 			$this->_links = $registry->toArray();
-
 		}
 
 		return $this->_links;
 	}
 
 	/**
-	 * Method to generate sitemap
+	 * Method to generate sitemap.
 	 *
-	 * @since 1.6.0
+	 * @since  1.6.0
 	 */
 	protected function generate()
 	{

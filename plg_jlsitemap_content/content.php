@@ -22,7 +22,7 @@ class plgJLSitemapContent extends CMSPlugin
 	 *
 	 * @var boolean
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	protected $autoloadLanguage = true;
 
@@ -32,9 +32,9 @@ class plgJLSitemapContent extends CMSPlugin
 	 * @param array    $urls   Urls array
 	 * @param Registry $config Component config
 	 *
-	 * @return array Urls array with attributes
+	 * @return  array Urls array with attributes
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	public function onGetUrls(&$urls, $config)
 	{

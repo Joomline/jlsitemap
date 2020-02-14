@@ -21,7 +21,7 @@ class JFormFieldLink extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected $type = 'link';
 
@@ -30,7 +30,7 @@ class JFormFieldLink extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected $layout = 'plugins.system.jlsitemap_cron.fields.link';
 
@@ -39,7 +39,7 @@ class JFormFieldLink extends FormField
 	 *
 	 * @return  array
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected function getLayoutData()
 	{

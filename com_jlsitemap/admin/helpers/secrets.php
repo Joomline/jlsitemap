@@ -20,9 +20,9 @@ class JLSitemapHelperSecrets
 	 *
 	 * @param int $length Secret length
 	 *
-	 * @return string
+	 * @return  string
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	public static function generateSecret($length = 15)
 	{
@@ -43,9 +43,9 @@ class JLSitemapHelperSecrets
 	/**
 	 * Method to get JLSitemap component access key
 	 *
-	 * @return string
+	 * @return  string
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	public static function getAccessKey()
 	{

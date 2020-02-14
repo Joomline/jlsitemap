@@ -27,9 +27,9 @@ class PlgSystemJLSitemap_CronInstallerScript
 	 * @param  string           $type   Type of PostFlight action. Possible values are:
 	 * @param  InstallerAdapter $parent Parent object calling object.
 	 *
-	 * @return void
+	 * @return  void
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	function postflight($type, $parent)
 	{
@@ -48,9 +48,9 @@ class PlgSystemJLSitemap_CronInstallerScript
 	 *
 	 * @param  InstallerAdapter $parent Parent object calling object.
 	 *
-	 * @return void
+	 * @return  void
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected function enablePlugin($parent)
 	{
@@ -122,7 +122,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 	 *
 	 * @param  InstallerAdapter $parent Parent object calling object.
 	 *
-	 * @return void
+	 * @return  void
 	 *
 	 * @since  0.0.2
 	 */

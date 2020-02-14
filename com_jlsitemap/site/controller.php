@@ -19,7 +19,7 @@ class JLSiteMapController extends BaseController
 	 *
 	 * @var string
 	 *
-	 * @since 1.6.0
+	 * @since  1.6.0
 	 */
 	protected $default_view = 'html';
 }

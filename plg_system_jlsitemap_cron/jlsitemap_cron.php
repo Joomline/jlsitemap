@@ -26,14 +26,14 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	 *
 	 * @var boolean
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected $autoloadLanguage = true;
 
 	/**
 	 * Method to add cron js
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	public function onBeforeRender()
 	{
@@ -63,9 +63,9 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	/**
 	 * Method to run cron
 	 *
-	 * @return mixed
+	 * @return  mixed
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	public function onAjaxJLSitemap_Cron()
 	{
@@ -125,9 +125,9 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	/**
 	 * Method to generate site map
 	 *
-	 * @return boolean|object
+	 * @return  boolean|object
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected function generate()
 	{
@@ -143,6 +143,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 			Factory::getDbo()->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			// Run generation
+			/* @var $model  JLSitemapModelSitemap */
 			BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jlsitemap/models');
 			$model = BaseDatabaseModel::getInstance('Sitemap', 'JLSitemapModel', array('ignore_request' => true));
 
@@ -162,9 +163,9 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	/**
 	 * Method to check client cache time
 	 *
-	 * @return bool True if  run. False if don't  run
+	 * @return  bool True if  run. False if don't  run
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected function checkCacheTime()
 	{

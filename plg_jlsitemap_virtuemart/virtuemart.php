@@ -22,7 +22,7 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 	 *
 	 * @var boolean
 	 *
-	 * @since 1.6.0
+	 * @since  1.6.0
 	 */
 	protected $autoloadLanguage = true;
 
@@ -32,9 +32,9 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 	 * @param   array     $urls    Urls array
 	 * @param   Registry  $config  Component config
 	 *
-	 * @return array Urls array with attributes
+	 * @return  array Urls array with attributes
 	 *
-	 * @since 1.6.0
+	 * @since  1.6.0
 	 */
 	public function onGetUrls(&$urls, $config)
 	{

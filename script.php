@@ -21,7 +21,7 @@ class pkg_jlsitemapInstallerScript
 	 *
 	 * @var  string
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected $minimumPhp = '5.6';
 
@@ -30,14 +30,14 @@ class pkg_jlsitemapInstallerScript
 	 *
 	 * @var string
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected $minimumJoomla = '3.9.0';
 
 	/**
 	 * Method to check compatible
 	 *
-	 * @return bool
+	 * @return  bool
 	 *
 	 * @since  1.4.0
 	 */

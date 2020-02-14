@@ -23,11 +23,11 @@ use Joomla\Registry\Registry;
 class JLSitemapViewControlPanel extends HtmlView
 {
 	/**
-	 * Component params
+	 * Component params.
 	 *
 	 * @var Registry;
 	 *
-	 * @since 1.5.1
+	 * @since  1.5.1
 	 */
 	protected $params;
 
@@ -36,7 +36,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	protected $sidebar;
 
@@ -45,7 +45,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var string
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	protected $generate = 'index.php?option=com_jlsitemap&task=sitemap.generate';
 
@@ -54,7 +54,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var false|object
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected $sitemap = false;
 
@@ -63,7 +63,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var string
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	protected $plugins = 'index.php?option=com_plugins&filter[folder]=jlsitemap';
 
@@ -72,7 +72,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var false|object
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected $cron = false;
 
@@ -81,7 +81,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var string
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	protected $debug = 'index.php?option=com_jlsitemap&task=sitemap.generate&debug=1';
 
@@ -90,7 +90,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var string
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	protected $delete = 'index.php?option=com_jlsitemap&task=sitemap.delete';
 
@@ -99,7 +99,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var false|object
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected $config = false;
 
@@ -108,7 +108,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @var false|array
 	 *
-	 * @since 1.4.0
+	 * @since  1.4.0
 	 */
 	protected $messages = false;
 
@@ -119,9 +119,9 @@ class JLSitemapViewControlPanel extends HtmlView
 	 *
 	 * @throws  Exception
 	 *
-	 * @return mixed A string if successful, otherwise an Error object.
+	 * @return  mixed A string if successful, otherwise an Error object.
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 */
 	public function display($tpl = null)
 	{
@@ -136,10 +136,11 @@ class JLSitemapViewControlPanel extends HtmlView
 		$this->sidebar = JHtmlSidebar::render();
 
 		// Set sitemap
-		if (File::exists(JPATH_ROOT . '/sitemap.xml'))
+		$filename = $this->params->get('filename', 'sitemap');
+		if (File::exists(JPATH_ROOT . '/' . $filename . '.xml'))
 		{
 			$sitemap               = new stdClass();
-			$sitemap->file         = 'sitemap.xml';
+			$sitemap->file         = $filename . '.xml';
 			$sitemap->path         = JPATH_ROOT . '/' . $sitemap->file;
 			$sitemap->url          = Uri::root() . $sitemap->file;
 			$sitemap->date         = '';
@@ -149,7 +150,7 @@ class JLSitemapViewControlPanel extends HtmlView
 				$sitemap->date         = $matches[1];
 				$sitemap->unidentified = false;
 			}
-			
+
 			$this->sitemap = $sitemap;
 		}
 

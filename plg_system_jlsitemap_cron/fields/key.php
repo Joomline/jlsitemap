@@ -19,7 +19,7 @@ class JFormFieldKey extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected $type = 'key';
 
@@ -28,7 +28,7 @@ class JFormFieldKey extends FormField
 	 *
 	 * @var string
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected $layout = 'plugins.system.jlsitemap_cron.fields.key';
 
@@ -37,7 +37,7 @@ class JFormFieldKey extends FormField
 	 *
 	 * @return  string  The field label markup.
 	 *
-	 * @since 0.0.2
+	 * @since  0.0.2
 	 */
 	protected function getLabel()
 	{

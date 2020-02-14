@@ -24,13 +24,13 @@ use Joomla\CMS\Uri\Uri;
 class JLSiteMapControllerSitemap extends BaseController
 {
 	/**
-	 * Method to generate sitemap
+	 * Method to generate sitemap.
 	 *
 	 * @throws  Exception
 	 *
-	 * @return bool
+	 * @return  bool True on success, False on failure.
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	public function generate()
 	{
@@ -121,13 +121,13 @@ class JLSiteMapControllerSitemap extends BaseController
 	}
 
 	/**
-	 * Method to generate sitemap
+	 * Method to generate sitemap.
 	 *
 	 * @throws  Exception
 	 *
-	 * @return bool
+	 * @return  bool True on success, False on failure.
 	 *
-	 * @since 1.4.1
+	 * @since  1.4.1
 	 */
 	public function delete()
 	{
@@ -197,7 +197,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	 *
 	 * @return  \Joomla\CMS\MVC\Model\BaseDatabaseModel|boolean  Model object on success; otherwise false on failure.
 	 *
-	 * @since   1.4.1
+	 * @since  1.4.1
 	 */
 	public function getModel($name = 'Sitemap', $prefix = 'JLSitemapModel', $config = array())
 	{
@@ -205,9 +205,11 @@ class JLSiteMapControllerSitemap extends BaseController
 	}
 
 	/**
-	 * Method to check current language
+	 * Method to check current language.
 	 *
-	 * @since 1.5.1
+	 * @throws  Exception
+	 *
+	 * @since  1.5.1
 	 */
 	protected function checkLanguage()
 	{
@@ -231,7 +233,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	 *
 	 * @throws  Exception
 	 *
-	 * @since 1.6.0
+	 * @since  1.6.0
 	 */
 	protected function checkAccess()
 	{
@@ -268,7 +270,7 @@ class JLSiteMapControllerSitemap extends BaseController
 	/**
 	 * Method to get Sitemap stylesheet.
 	 *
-	 * @throws Exception
+	 * @throws  Exception
 	 *
 	 * @since  1.9.0
 	 */
