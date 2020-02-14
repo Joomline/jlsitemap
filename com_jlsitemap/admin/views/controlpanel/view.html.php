@@ -25,7 +25,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Component params.
 	 *
-	 * @var Registry;
+	 * @var  Registry;
 	 *
 	 * @since  1.5.1
 	 */
@@ -34,7 +34,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Sidebar html
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  0.0.1
 	 */
@@ -43,7 +43,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Generate url
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.4.1
 	 */
@@ -52,7 +52,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Sitemap info object
 	 *
-	 * @var false|object
+	 * @var  false|object
 	 *
 	 * @since  1.4.0
 	 */
@@ -61,7 +61,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Plugins url
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.4.1
 	 */
@@ -70,7 +70,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Cron plugin
 	 *
-	 * @var false|object
+	 * @var  false|object
 	 *
 	 * @since  1.4.0
 	 */
@@ -79,7 +79,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Debug url
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.4.1
 	 */
@@ -88,7 +88,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Delete url
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.4.1
 	 */
@@ -97,7 +97,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * Config link
 	 *
-	 * @var false|object
+	 * @var  false|object
 	 *
 	 * @since  1.4.0
 	 */
@@ -106,7 +106,7 @@ class JLSitemapViewControlPanel extends HtmlView
 	/**
 	 * System messages
 	 *
-	 * @var false|array
+	 * @var  false|array
 	 *
 	 * @since  1.4.0
 	 */

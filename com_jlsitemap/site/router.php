@@ -10,20 +10,22 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\Router\RouterView;
 use Joomla\CMS\Component\Router\RouterViewConfiguration;
 use Joomla\CMS\Component\Router\Rules\MenuRules;
 use Joomla\CMS\Component\Router\Rules\NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Menu\AbstractMenu;
 
 class JLSitemapRouter extends RouterView
 {
 	/**
 	 * Router constructor.
 	 *
-	 * @param  \Joomla\CMS\Application\CMSApplication $app  The application object.
-	 * @param  \Joomla\CMS\Menu\AbstractMenu          $menu The menu object to work with.
+	 * @param   CMSApplication  $app   The application object.
+	 * @param   AbstractMenu    $menu  The menu object to work with.
 	 *
 	 * @since  1.6.0
 	 */
@@ -44,8 +46,8 @@ class JLSitemapRouter extends RouterView
 	/**
 	 * Method to get the segment(s) for html.
 	 *
-	 * @param  string $id    ID of the item to retrieve the segments.
-	 * @param  array  $query The request that is built right now.
+	 * @param   string  $id     ID of the item to retrieve the segments.
+	 * @param   array   $query  The request that is built right now.
 	 *
 	 * @return  array|string  The segments of this item.
 	 *
@@ -59,8 +61,8 @@ class JLSitemapRouter extends RouterView
 	/**
 	 * Method to get the id for html.
 	 *
-	 * @param  string $segment Segment to retrieve the ID.
-	 * @param  array  $query   The request that is parsed right now.
+	 * @param   string  $segment  Segment to retrieve the ID.
+	 * @param   array   $query    The request that is parsed right now.
 	 *
 	 * @return  integer|false  The id of this item or false.
 	 *
@@ -75,7 +77,7 @@ class JLSitemapRouter extends RouterView
 /**
  * JLSitemap router functions.
  *
- * @param  array &$query An array of URL arguments.
+ * @param   array &$query  An array of URL arguments.
  *
  * @throws  Exception
  *
@@ -94,7 +96,7 @@ function JLSitemapBuildRoute(&$query)
 /**
  * Parse the segments of a URL.
  *
- * @param  array $segments The segments of the URL to parse.
+ * @param   array  $segments  The segments of the URL to parse.
  *
  * @throws  Exception
  *

@@ -18,7 +18,7 @@ class JLSitemapHelperSecrets
 	/**
 	 * Method to generate secret
 	 *
-	 * @param int $length Secret length
+	 * @param   int  $length  Secret length
 	 *
 	 * @return  string
 	 *

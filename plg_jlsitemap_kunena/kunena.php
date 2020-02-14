@@ -20,7 +20,7 @@ class plgJLSitemapKunena extends CMSPlugin
 	/**
 	 * Affects constructor behavior. If true, language files will be loaded automatically.
 	 *
-	 * @var boolean
+	 * @var  boolean
 	 *
 	 * @since  1.4.0
 	 */
@@ -29,8 +29,8 @@ class plgJLSitemapKunena extends CMSPlugin
 	/**
 	 * Method to get urls array
 	 *
-	 * @param array    $urls   Urls array
-	 * @param Registry $config Component config
+	 * @param   array     $urls    Urls array
+	 * @param   Registry  $config  Component config
 	 *
 	 * @return  array Urls array with attributes
 	 *

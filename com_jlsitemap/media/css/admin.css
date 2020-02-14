@@ -94,7 +94,7 @@ a#controlPanel .main .action:active {
 	max-height: 80px
 }
 
-#controlPanel .main .action .head .icon>svg {
+#controlPanel .main .action .head .icon > svg {
 	stroke: currentcolor;
 	fill: currentcolor;
 	height: 80px;

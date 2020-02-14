@@ -17,7 +17,7 @@ class JFormFieldDate extends FormField
 	/**
 	 * The form field type.
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.0.1
 	 */
@@ -26,7 +26,7 @@ class JFormFieldDate extends FormField
 	/**
 	 * Name of the layout being used to render the field
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.0.1
 	 */

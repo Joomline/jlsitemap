@@ -17,7 +17,7 @@ class JLSiteMapController extends BaseController
 	/**
 	 * The default view.
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  0.0.1
 	 */

@@ -28,16 +28,16 @@ class pkg_jlsitemapInstallerScript
 	/**
 	 * Minimum Joomla! version required to install the extension
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  1.4.0
 	 */
 	protected $minimumJoomla = '3.9.0';
 
 	/**
-	 * Method to check compatible
+	 * Method to check compatible.
 	 *
-	 * @return  bool
+	 * @throws  Exception
 	 *
 	 * @since  1.4.0
 	 */

@@ -24,14 +24,16 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	/**
 	 * Affects constructor behavior. If true, language files will be loaded automatically.
 	 *
-	 * @var boolean
+	 * @var  boolean
 	 *
 	 * @since  0.0.2
 	 */
 	protected $autoloadLanguage = true;
 
 	/**
-	 * Method to add cron js
+	 * Method to add cron js.
+	 *
+	 * @throws  Exception
 	 *
 	 * @since  0.0.2
 	 */
@@ -63,7 +65,9 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	/**
 	 * Method to run cron
 	 *
-	 * @return  mixed
+	 * @throws  Exception
+	 *
+	 * @return  bool True on success, False on failure.
 	 *
 	 * @since  0.0.2
 	 */
@@ -123,9 +127,11 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	}
 
 	/**
-	 * Method to generate site map
+	 * Method to generate site map.
 	 *
-	 * @return  boolean|object
+	 * @throws  Exception
+	 *
+	 * @return  object|false Sitemap generation result on success, False on failure.
 	 *
 	 * @since  0.0.2
 	 */
@@ -143,16 +149,16 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 			Factory::getDbo()->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			// Run generation
-			/* @var $model  JLSitemapModelSitemap */
+			/* @var  $model  JLSitemapModelSitemap */
 			BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jlsitemap/models');
 			$model = BaseDatabaseModel::getInstance('Sitemap', 'JLSitemapModel', array('ignore_request' => true));
 
-			if (!$urls = $model->generate())
+			if (!$result = $model->generate())
 			{
 				throw new Exception(Text::sprintf('PLG_SYSTEM_JLSITEMAP_GENERATION_FAILURE', $model->getError()));
 			}
 
-			return $urls;
+			return $result;
 		}
 		catch (Exception $e)
 		{

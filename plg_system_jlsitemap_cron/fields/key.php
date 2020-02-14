@@ -17,7 +17,7 @@ class JFormFieldKey extends FormField
 	/**
 	 * The form field type.
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  0.0.2
 	 */
@@ -26,7 +26,7 @@ class JFormFieldKey extends FormField
 	/**
 	 * Name of the layout being used to render the field
 	 *
-	 * @var string
+	 * @var  string
 	 *
 	 * @since  0.0.2
 	 */

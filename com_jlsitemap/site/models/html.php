@@ -175,12 +175,15 @@ class JLSitemapModelHTML extends ListModel
 	/**
 	 * Method to generate sitemap.
 	 *
+	 * @throws  Exception
+	 *
 	 * @since  1.6.0
 	 */
 	protected function generate()
 	{
+		/* @var  $model JLSitemapModelSitemap */
 		$model = BaseDatabaseModel::getInstance('Sitemap', 'JLSitemapModel', array('ignore_request' => true));
-		if (!$urls = $model->generate())
+		if (!$result = $model->generate())
 		{
 			throw new Exception(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_FAILURE', $model->getError()));
 		}

@@ -29,7 +29,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * JLSitemap component configuration
 	 *
-	 * @var Registry
+	 * @var  Registry
 	 *
 	 * @since  1.9.0
 	 */
@@ -38,7 +38,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Object with urls array
 	 *
-	 * @var object
+	 * @var  object
 	 *
 	 * @since  1.1.0
 	 */
@@ -47,11 +47,28 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Menu items array
 	 *
-	 * @var array
+	 * @var  array
 	 *
 	 * @since  1.1.0
 	 */
 	protected $_menuItems = null;
+
+	/**
+	 * Constructor
+	 *
+	 * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
+	 *
+	 * @throws  Exception
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function __construct($config = array())
+	{
+		// Import plugins
+		PluginHelper::importPlugin('jlsitemap');
+
+		parent::__construct($config);
+	}
 
 	/**
 	 * Method to generate sitemap
@@ -60,30 +77,64 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return  bool|object Array if successful, false otherwise and internal error is set.
+	 * @return  object|false Array if successful, false otherwise and internal error is set.
 	 *
 	 * @since  1.1.0
 	 */
 	public function generate($debug = false)
 	{
+		$app = Factory::getApplication();
+
+		// Trigger before generate event
+		$params = $this->getConfiguration();
+		$app->triggerEvent('onBeforeGenerate', array($params));
+
 		// Get urs
-		$urls = $this->getUrls();
+		$result = $this->getUrls();
+
+		// Trigger after get urls event
+		$app->triggerEvent('onAfterGetUrls', array(&$result, $params));
 
 		// Generate sitemap file
 		if (!$debug)
 		{
-			$params   = $this->getConfiguration();
-			$xmlLimit = (int) $params->get('xml_limit', 50000);
+			$result->files = array();
+			$xmlLimit      = (int) $params->get('xml_limit', 50000);
 
 			// Generate xml
-			$xml = (count($urls->includes) <= $xmlLimit) ? $this->generateSingleXML($urls->includes)
-				: $this->generateMultiXML($urls->includes, $xmlLimit);
+			$xml = (count($result->includes) <= $xmlLimit) ? $this->generateSingleXML($result->includes)
+				: $this->generateMultiXML($result->includes, $xmlLimit);
+			if ($xml)
+			{
+				if (is_array($xml))
+				{
+					$result->files = array_merge($result->files, $xml);
+				}
+				else
+				{
+					$result->files[] = $xml;
+				}
+			}
+			else
+			{
+				throw new Exception(Text::_('COM_JLSITEMAP_ERROR_SITEMAP_XML_CREATE_FAILED'), 500);
+			}
 
 			// Generate json
-			$json = $this->generateJSON($urls->includes);
+			if ($json = $this->generateJSON($result->includes))
+			{
+				$result->files[] = $json;
+			}
+			else
+			{
+				throw new Exception(Text::_('COM_JLSITEMAP_ERROR_SITEMAP_JSON_CREATE_FAILED'), 500);
+			}
+
+			// Trigger after generate event
+			$app->triggerEvent('onAfterGenerate', array(&$result, $params));
 		}
 
-		return $urls;
+		return $result;
 	}
 
 	/**
@@ -93,7 +144,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return  bool
+	 * @return  string|false Sitemap file path on success, False on failure.
 	 *
 	 * @since  1.7
 	 */
@@ -108,7 +159,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			File::delete($file);
 		}
 
-		return File::append($file, $xml);
+		return (File::append($file, $xml)) ? $file : false;
 	}
 
 	/**
@@ -119,7 +170,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return  bool True on success, False on failure.
+	 * @return  string[]|false Sitemap XML sting on success, Exception on failure.
 	 *
 	 * @since  1.7
 	 */
@@ -134,6 +185,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		}
 
 		// Generate files
+		$result   = array();
 		$i        = 0;
 		$t        = 0;
 		$f        = 0;
@@ -151,7 +203,14 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 				$xml  = $this->filterRegexp($this->getXML($rows));
 				$file = Path::clean(JPATH_ROOT . '/' . $filename . '_' . $f . '.xml');
-				File::append($file, $xml);
+				if (File::append($file, $xml))
+				{
+					$result[] = $file;
+				}
+				else
+				{
+					return false;
+				}
 
 				// Reset
 				$i        = 0;
@@ -164,8 +223,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port'))
 			. Route::_('index.php?option=com_jlsitemap&task=sitemap.getStylesheet&&type=sitemapindex&date=' . $date->toSql());
 		$stylesheet = preg_replace('#&amp;Itemid=[0-9]*#', '', $stylesheet);
+		$comment    = '<!-- JLSitemap ' . $date->toSql() . ' -->';
 		$sitemap    = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
-			. '<!-- JLSitemap ' . $date->toSql() . ' -->'
+			. $comment
 			. '<?xml-stylesheet type="text/xsl" href="' . $stylesheet . '"?>'
 			. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" />');
 		for ($i = 1; $i <= $f; $i++)
@@ -185,8 +245,16 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		{
 			File::delete($file);
 		}
+		if (File::append($file, $xml))
+		{
+			$result[] = $file;
+		}
+		else
+		{
+			return false;
+		}
 
-		return File::append($file, $xml);
+		return $result;
 	}
 
 	/**
@@ -196,7 +264,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @throws  Exception
 	 *
-	 * @return  string
+	 * @return  string Sitemap XML sting on success, Exception on failure.
 	 *
 	 * @since  1.1.0
 	 */
@@ -273,11 +341,13 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	}
 
 	/**
-	 * Method to create json sitemap
+	 * Method to create json sitemap.
 	 *
 	 * @param   array  $rows  Include urls array
 	 *
-	 * @return  string
+	 * @throws  Exception
+	 *
+	 * @return  string|false Sitemap file path on success, False on failure.
 	 *
 	 * @since  1.6.0
 	 */
@@ -302,7 +372,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			File::delete($file);
 		}
 
-		return File::append($file, $json);
+		return (File::append($file, $json)) ? $file : false;
 	}
 
 	/**
@@ -502,7 +572,6 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 			// Add urls from jlsitemap plugins
 			$rows = array();
-			PluginHelper::importPlugin('jlsitemap');
 			Factory::getApplication()->triggerEvent('onGetUrls', array(&$rows, &$config));
 			foreach ($rows as $row)
 			{
@@ -924,6 +993,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @param   string  $string  Sitemap string
 	 *
+	 * @throws  Exception
+	 *
 	 * @return  string Sitemap string.
 	 *
 	 * @since  1.7
@@ -951,7 +1022,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to delete sitemap
 	 *
-	 * @return  bool
+	 * @throws  Exception
+	 *
+	 * @return  bool True on success, False on failure.
 	 *
 	 * @since  1.4.1
 	 */
@@ -979,6 +1052,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	/**
 	 * Method to get component configuration.
 	 *
+	 * @throws  Exception
+	 *
 	 * @return  Registry JLSitemap component configuration.
 	 *
 	 * @since  1.9.0
@@ -987,7 +1062,11 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	{
 		if ($this->_configuration === null)
 		{
-			$this->_configuration = ComponentHelper::getParams('com_jlsitemap');
+			$configuration = ComponentHelper::getParams('com_jlsitemap');
+
+			Factory::getApplication()->triggerEvent('onGetConfiguration', array(&$configuration));
+
+			$this->_configuration = $configuration;
 		}
 
 		return $this->_configuration;
@@ -1000,6 +1079,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 * @param   mixed   $value      Value of entry
 	 * @param   string  $separator  The key separator
 	 *
+	 * @throws  Exception
+	 *
 	 * @since  1.9.0
 	 */
 	public function setConfigurationParameter($path, $value, $separator = null)
@@ -1009,6 +1090,6 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			$this->getConfiguration();
 		}
 
-		$this->_configuration->set($path, $value);
+		$this->_configuration->set($path, $value, $separator);
 	}
 }

@@ -20,7 +20,7 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 	/**
 	 * Affects constructor behavior. If true, language files will be loaded automatically.
 	 *
-	 * @var boolean
+	 * @var  boolean
 	 *
 	 * @since  1.6.0
 	 */

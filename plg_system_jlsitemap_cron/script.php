@@ -24,8 +24,8 @@ class PlgSystemJLSitemap_CronInstallerScript
 	/**
 	 * Runs right after any installation action.
 	 *
-	 * @param  string           $type   Type of PostFlight action. Possible values are:
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   string            $type    Type of PostFlight action. Possible values are:
+	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
 	 * @return  void
 	 *
@@ -46,7 +46,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 	/**
 	 * Enable plugin after installation
 	 *
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
 	 * @return  void
 	 *
@@ -120,7 +120,7 @@ class PlgSystemJLSitemap_CronInstallerScript
 	/**
 	 * This method is called after extension is uninstalled.
 	 *
-	 * @param  InstallerAdapter $parent Parent object calling object.
+	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
 	 * @return  void
 	 *
