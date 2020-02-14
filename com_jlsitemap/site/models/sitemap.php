@@ -149,9 +149,13 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		}
 
 		// Main sitemap
-		$date    = Factory::getDate();
-		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
+		$date       = Factory::getDate();
+		$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port'))
+			. Route::_('index.php?option=com_jlsitemap&task=sitemap.getStylesheet&&type=sitemapindex&date=' . $date->toSql());
+		$stylesheet = preg_replace('#&amp;Itemid=[0-9]*#', '', $stylesheet);
+		$sitemap    = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
 			. '<!-- JLSitemap ' . $date->toSql() . ' -->'
+			. '<?xml-stylesheet type="text/xsl" href="' . $stylesheet . '"?>'
 			. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" />');
 		for ($i = 1; $i <= $f; $i++)
 		{
@@ -192,7 +196,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port'))
 			. Route::_('index.php?option=com_jlsitemap&task=sitemap.getStylesheet&date=' . $date);
 		$stylesheet = preg_replace('#&amp;Itemid=[0-9]*#', '', $stylesheet);
-		
+
 		// Create sitemap
 		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
 			. '<!-- JLSitemap ' . $date . ' -->'
