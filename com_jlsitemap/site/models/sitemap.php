@@ -201,7 +201,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			{
 				$f++;
 
-				$xml  = $this->filterRegexp($this->getXML($rows));
+				$xml  = $this->filterRegexp($this->getXML($includes));
 				$file = Path::clean(JPATH_ROOT . '/' . $filename . '_' . $f . '.xml');
 				if (File::append($file, $xml))
 				{
