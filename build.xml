@@ -1,11 +1,11 @@
 <project name="jlsitemap" default="dist" basedir=".">
-	<property name="VERSION" value="1.7.0"/>
+	<property name="VERSION" value="1.9.0"/>
 	<tstamp>
 		<format property="DATE" pattern="%d.%m.%Y"/>
 	</tstamp>
 	<property name="build" value="_build"/>
 	<property name="dist" value="_dist"/>
-	<property name="filename" value="pkg_jlsitemap_v${VERSION}_j3.9.zip"/>
+	<property name="filename" value="pkg_jlsitemap_v${VERSION}_j3.9_j4.zip"/>
 	<target name="init" depends="clean">
 		<mkdir dir="${build}"/>
 		<mkdir dir="${dist}"/>
