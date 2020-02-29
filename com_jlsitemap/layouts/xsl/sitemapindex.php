@@ -15,6 +15,14 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+extract($displayData);
+
+/**
+ * Layout variables
+ * -----------------
+ * @var  string $date Generation date.
+ */
+
 $stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
 	HTMLHelper::stylesheet('com_jlsitemap/sitemap.min.css', array('version' => 'auto', 'relative' => true, 'pathOnly' => true))
 ?>
@@ -41,7 +49,7 @@ $stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
 			<div class="center muted">
 				<?php echo Text::_('COM_JLSITEMAP_XSL_COPYRIGHT'); ?>
 			</div>
-			<?php if ($date = Factory::getApplication()->input->get('date', '', 'text')): ?>
+			<?php if ($date): ?>
 				<div class="center muted">
 					<?php echo $date; ?>
 				</div>

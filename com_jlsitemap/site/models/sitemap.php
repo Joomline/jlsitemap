@@ -17,6 +17,7 @@ use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
@@ -27,7 +28,7 @@ use Joomla\Utilities\ArrayHelper;
 class JLSitemapModelSitemap extends BaseDatabaseModel
 {
 	/**
-	 * JLSitemap component configuration
+	 * JLSitemap component configuration.
 	 *
 	 * @var  Registry
 	 *
@@ -36,7 +37,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	protected $_configuration = null;
 
 	/**
-	 * Object with urls array
+	 * Object with urls array.
 	 *
 	 * @var  object
 	 *
@@ -45,7 +46,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	protected $_urls = null;
 
 	/**
-	 * Menu items array
+	 * Menu items array.
 	 *
 	 * @var  array
 	 *
@@ -54,7 +55,16 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	protected $_menuItems = null;
 
 	/**
-	 * Constructor
+	 * Sitemap stylesheet.
+	 *
+	 * @var  string
+	 *
+	 * @since  1.10.0
+	 */
+	protected $_xsl = null;
+
+	/**
+	 * Constructor.
 	 *
 	 * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
 	 *
@@ -71,9 +81,9 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	}
 
 	/**
-	 * Method to generate sitemap
+	 * Method to generate sitemap.
 	 *
-	 * @param   bool  $debug  Debug generation
+	 * @param   bool  $debug  Debug generation.
 	 *
 	 * @throws  Exception
 	 *
@@ -109,10 +119,22 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				if (is_array($xml))
 				{
 					$result->files = array_merge($result->files, $xml);
+					if ($sitemapindex = $this->generateXSL('sitemapindex'))
+					{
+						$result->files[] = Path::clean(JPATH_ROOT . '/' . $sitemapindex);
+					}
+					if ($urlset = $this->generateXSL('urlset'))
+					{
+						$result->files[] = Path::clean(JPATH_ROOT . '/' . $urlset);
+					}
 				}
 				else
 				{
 					$result->files[] = $xml;
+					if ($urlset = $this->generateXSL('urlset'))
+					{
+						$result->files[] = Path::clean(JPATH_ROOT . '/' . $urlset);
+					}
 				}
 			}
 			else
@@ -220,13 +242,11 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 
 		// Main sitemap
 		$date       = Factory::getDate();
-		$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port'))
-			. Route::_('index.php?option=com_jlsitemap&task=sitemap.getStylesheet&&type=sitemapindex&date=' . $date->toSql());
-		$stylesheet = preg_replace('#&amp;Itemid=[0-9]*#', '', $stylesheet);
+		$xsl        = $this->generateXSL('sitemapindex');
+		$stylesheet = ($xsl) ? '<?xml-stylesheet type="text/xsl" href="' . Uri::root() . $xsl . '"?>' : '';
 		$comment    = '<!-- JLSitemap ' . $date->toSql() . ' -->';
 		$sitemap    = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
-			. $comment
-			. '<?xml-stylesheet type="text/xsl" href="' . $stylesheet . '"?>'
+			. $comment . $stylesheet
 			. '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" />');
 		for ($i = 1; $i <= $f; $i++)
 		{
@@ -272,14 +292,13 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	{
 		$rows       = (empty($rows)) ? $this->getUrls()->includes : $rows;
 		$date       = Factory::getDate()->toSql();
-		$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port'))
-			. Route::_('index.php?option=com_jlsitemap&task=sitemap.getStylesheet&date=' . $date);
-		$stylesheet = preg_replace('#&amp;Itemid=[0-9]*#', '', $stylesheet);
+		$comment    = '<!-- JLSitemap ' . $date . ' -->';
+		$xsl        = $this->generateXSL('urlset');
+		$stylesheet = ($xsl) ? '<?xml-stylesheet type="text/xsl" href="' . Uri::root() . $xsl . '"?>' : '';
 
 		// Create sitemap
 		$sitemap = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>'
-			. '<!-- JLSitemap ' . $date . ' -->'
-			. '<?xml-stylesheet type="text/xsl" href="' . $stylesheet . '"?>'
+			. $comment . $stylesheet
 			. '<urlset'
 			. ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
 			. ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
@@ -341,6 +360,55 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	}
 
 	/**
+	 * Method to generate sitemap xsl style files.
+	 *
+	 * @param   string  $type  Layout type.
+	 *
+	 * @throws  Exception
+	 *
+	 * @return  string|false Style src on success, false on failure.
+	 *
+	 * @since  1.10.0
+	 */
+	public function generateXSL($type = null)
+	{
+		if (empty($type)) return false;
+
+		if ($this->_xsl === null)
+		{
+			$this->_xsl = array();
+		}
+
+		if (!isset($this->_xsl[$type]))
+		{
+			$config = $this->getConfiguration();
+			$src    = false;
+
+			// Generate file
+			if ($config->get('xsl', 1))
+			{
+				$xsl = '<?xml version="1.0" encoding="UTF-8"?>'
+					. PHP_EOL . LayoutHelper::render('components.jlsitemap.xsl.' . $type, array('date' => Factory::getDate()->toSql()));
+
+				$filename = $config->get('filename', 'sitemap');
+				$file     = $filename . '_' . $type . '.xsl';
+				$path     = Path::clean(JPATH_ROOT . '/' . $file);
+
+				if (File::exists($path))
+				{
+					File::delete($path);
+				}
+
+				$src = (File::append($file, $xsl)) ? $file : false;
+			}
+
+			$this->_xsl[$type] = $src;
+		}
+
+		return $this->_xsl[$type];
+	}
+
+	/**
 	 * Method to create json sitemap.
 	 *
 	 * @param   array  $rows  Include urls array
@@ -351,7 +419,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.6.0
 	 */
-	public function generateJSON($rows = array())
+	public
+	function generateJSON($rows = array())
 	{
 		// Get json
 		foreach ($rows as &$row)
@@ -384,7 +453,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.1.0
 	 */
-	protected function getUrls()
+	protected
+	function getUrls()
 	{
 		if ($this->_urls === null)
 		{
@@ -754,7 +824,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.1.0
 	 */
-	protected function getMenuItems($multilanguage = false, $menutypes = false, $siteRobots = null, $guestAccess = array())
+	protected
+	function getMenuItems($multilanguage = false, $menutypes = false, $siteRobots = null, $guestAccess = array())
 	{
 		if ($this->_menuItems === null)
 		{
@@ -909,7 +980,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.3.0
 	 */
-	public function filtering($link = null, $raw = false, $strpos = false, $menu = false)
+	public
+	function filtering($link = null, $raw = false, $strpos = false, $menu = false)
 	{
 		$exclude = array();
 
@@ -999,7 +1071,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.7
 	 */
-	protected function filterRegexp($string = '')
+	protected
+	function filterRegexp($string = '')
 	{
 		if (empty($string)) return $string;
 
@@ -1028,7 +1101,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.4.1
 	 */
-	public function delete()
+	public
+	function delete()
 	{
 		// Delete single sitemap
 		$filename = $this->getConfiguration()->get('filename', 'sitemap');
@@ -1058,7 +1132,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.9.0
 	 */
-	public function getConfiguration()
+	public
+	function getConfiguration()
 	{
 		if ($this->_configuration === null)
 		{
@@ -1083,7 +1158,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.9.0
 	 */
-	public function setConfigurationParameter($path, $value, $separator = null)
+	public
+	function setConfigurationParameter($path, $value, $separator = null)
 	{
 		if ($this->_configuration === null)
 		{

@@ -266,13 +266,14 @@ class JLSiteMapControllerSitemap extends BaseController
 		}
 	}
 
-
 	/**
 	 * Method to get Sitemap stylesheet.
 	 *
 	 * @throws  Exception
 	 *
-	 * @since  1.9.0
+	 * @since      1.9.0
+	 *
+	 * @deprecated 1.11
 	 */
 	public function getStylesheet()
 	{
@@ -282,7 +283,8 @@ class JLSiteMapControllerSitemap extends BaseController
 		$app->sendHeaders();
 
 		echo '<?xml version="1.0" encoding="UTF-8"?>';
-		echo LayoutHelper::render('components.jlsitemap.xsl.' . $this->input->get('type', 'urlset'));
+		echo LayoutHelper::render('components.jlsitemap.xsl.' . $this->input->get('type', 'urlset'),
+			array('date' => Factory::getApplication()->input->get('date', false, 'text')));
 		$app->close();
 
 		return true;
