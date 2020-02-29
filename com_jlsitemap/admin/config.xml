@@ -7,6 +7,12 @@
 			   label="COM_JLSITEMAP_PARAMS_FILENAME"
 			   description="COM_JLSITEMAP_PARAMS_FILENAME_DESC"
 			   default="sitemap"/>
+		<field name="xsl" type="radio"
+			   default="1" label="COM_JLSITEMAP_PARAMS_XSL"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
 		<field name="html_limit" type="number"
 			   label="COM_JLSITEMAP_PARAMS_HTML_LIMIT"
 			   description="COM_JLSITEMAP_PARAMS_HTML_LIMIT_DESC"
