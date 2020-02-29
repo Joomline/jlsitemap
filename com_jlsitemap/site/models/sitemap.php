@@ -453,8 +453,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.1.0
 	 */
-	protected
-	function getUrls()
+	protected function getUrls()
 	{
 		if ($this->_urls === null)
 		{
@@ -824,8 +823,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.1.0
 	 */
-	protected
-	function getMenuItems($multilanguage = false, $menutypes = false, $siteRobots = null, $guestAccess = array())
+	protected function getMenuItems($multilanguage = false, $menutypes = false, $siteRobots = null, $guestAccess = array())
 	{
 		if ($this->_menuItems === null)
 		{
@@ -980,8 +978,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.3.0
 	 */
-	public
-	function filtering($link = null, $raw = false, $strpos = false, $menu = false)
+	public function filtering($link = null, $raw = false, $strpos = false, $menu = false)
 	{
 		$exclude = array();
 
@@ -1071,8 +1068,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.7
 	 */
-	protected
-	function filterRegexp($string = '')
+	protected function filterRegexp($string = '')
 	{
 		if (empty($string)) return $string;
 
@@ -1116,7 +1112,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		}
 
 		// Delete xsl stylesheets
-		$files = array($filename.'_sitemapindex.xsl', $filename.'urlset.xsl');
+		$files = array($filename.'_sitemapindex.xsl', $filename.'_urlset.xsl');
 		foreach ($files as $file)
 		{
 			$path = Path::clean(JPATH_ROOT.'/'.$file);

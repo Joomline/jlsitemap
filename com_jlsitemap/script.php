@@ -27,8 +27,6 @@ class com_jlsitemapInstallerScript
 	 * @param   string            $type    Type of PostFlight action. Possible values are:
 	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
-	 * @return  void
-	 *
 	 * @since  1.4.0
 	 */
 	function postflight($type, $parent)
@@ -46,7 +44,7 @@ class com_jlsitemapInstallerScript
 	 * @param   SimpleXMLElement  $element    The XML node to process.
 	 * @param   Installer         $installer  Installer calling object.
 	 *
-	 * @return  boolean     True on success
+	 * @return  boolean     True on success. False on failure.
 	 *
 	 * @since  1.6.2
 	 */
@@ -94,9 +92,7 @@ class com_jlsitemapInstallerScript
 	}
 
 	/**
-	 * Method to add access key to component params
-	 *
-	 * @return  void
+	 * Method to add access key to component params.
 	 *
 	 * @since  1.4.0
 	 */
@@ -112,8 +108,6 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @param   InstallerAdapter  $parent  Parent object calling object.
 	 *
-	 * @return  void
-	 *
 	 * @since  1.4.0
 	 */
 	public function uninstall($parent)
@@ -126,6 +120,9 @@ class com_jlsitemapInstallerScript
 		$files    = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml', false, true);
 		$files [] = JPATH_ROOT . '/' . $filename . '.xml';
 		$files [] = JPATH_ROOT . '/' . $filename . '.json';
+		$files [] = JPATH_ROOT . '/' . $filename . '.xml';
+		$files [] = JPATH_ROOT . '/' . $filename . '_urlset.xsl';
+		$files [] = JPATH_ROOT . '/' . $filename . '_sitemapindex.xsl';
 		foreach ($files as $file)
 		{
 			if (File::exists($file))
@@ -140,7 +137,7 @@ class com_jlsitemapInstallerScript
 	 *
 	 * @param   SimpleXMLElement  $element  The XML node to process.
 	 *
-	 * @return  boolean     True on success
+	 * @return  boolean     True on success, False on failure.
 	 *
 	 * @since  1.6.2
 	 */
