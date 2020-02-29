@@ -1101,8 +1101,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.4.1
 	 */
-	public
-	function delete()
+	public function delete()
 	{
 		// Delete single sitemap
 		$filename = $this->getConfiguration()->get('filename', 'sitemap');
@@ -1114,6 +1113,14 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 		foreach ($files as $file)
 		{
 			if (!File::delete($file)) return false;
+		}
+
+		// Delete xsl stylesheets
+		$files = array($filename.'_sitemapindex.xsl', $filename.'urlset.xsl');
+		foreach ($files as $file)
+		{
+			$path = Path::clean(JPATH_ROOT.'/'.$file);
+			if (File::exists($path) && !File::delete($path)) return false;
 		}
 
 		// Delete json sitemap
@@ -1132,8 +1139,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.9.0
 	 */
-	public
-	function getConfiguration()
+	public function getConfiguration()
 	{
 		if ($this->_configuration === null)
 		{
@@ -1158,8 +1164,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 	 *
 	 * @since  1.9.0
 	 */
-	public
-	function setConfigurationParameter($path, $value, $separator = null)
+	public function setConfigurationParameter($path, $value, $separator = null)
 	{
 		if ($this->_configuration === null)
 		{
