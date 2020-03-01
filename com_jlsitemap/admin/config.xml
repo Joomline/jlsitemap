@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<config>
+	<fieldset name="global" label="JGLOBAL_FIELDSET_OPTIONS">
+		<field name="access_key" type="hidden" readonly="true"/>
+		<field name="sef_advanced" type="hidden" default="1"/>
+		<field name="filename" type="text"
+			   label="COM_JLSITEMAP_PARAMS_FILENAME"
+			   description="COM_JLSITEMAP_PARAMS_FILENAME_DESC"
+			   default="sitemap"/>
+		<field name="xsl" type="radio"
+			   default="1" label="COM_JLSITEMAP_PARAMS_XSL"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="html_limit" type="number"
+			   label="COM_JLSITEMAP_PARAMS_HTML_LIMIT"
+			   description="COM_JLSITEMAP_PARAMS_HTML_LIMIT_DESC"
+			   min="1"
+			   default="200"/>
+		<field name="xml_limit" type="number"
+			   label="COM_JLSITEMAP_PARAMS_XML_LIMIT"
+			   description="COM_JLSITEMAP_PARAMS_XML_LIMIT_DESC"
+			   min="1"
+			   default="50000"/>
+		<field name="changefreq" type="list" default="weekly"
+			   label="COM_JLSITEMAP_PARAMS_CHANGEFREQ">
+			<option value="always">always</option>
+			<option value="hourly">hourly</option>
+			<option value="daily">daily</option>
+			<option value="weekly">weekly</option>
+			<option value="monthly">monthly</option>
+			<option value="yearly">yearly</option>
+			<option value="never">never</option>
+		</field>
+		<field name="priority" type="list"
+			   default="0.5" label="COM_JLSITEMAP_PARAMS_PRIORITY">
+			<option value="0.0">0.0</option>
+			<option value="0.1">0.1</option>
+			<option value="0.2">0.2</option>
+			<option value="0.3">0.3</option>
+			<option value="0.4">0.4</option>
+			<option value="0.5">0.5</option>
+			<option value="0.6">0.6</option>
+			<option value="0.7">0.7</option>
+			<option value="0.8">0.8</option>
+			<option value="0.9">0.9</option>
+			<option value="1">1</option>
+		</field>
+	</fieldset>
+	<fieldset name="filter" label="COM_JLSITEMAP_PARAMS_FILTER">
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_RAW"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_RAW_DESC"
+			   heading="h3"/>
+		<field name="filter_raw_index" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_RAW_INDEX"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_raw_component" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_RAW_COMPONENT"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_raw_get" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_RAW_GET"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_MENU"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_DESC"
+			   heading="h3"/>
+		<field name="filter_menu" type="radio"
+			   default="0" label="COM_JLSITEMAP_PARAMS_FILTER_MENU_LABEL"
+			   class="btn-group btn-group-yesno">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="filter_menu_menus" type="menu"
+			   addfieldpath="/administrator/components/com_menus/models/fields"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
+			   hint="COM_JLSITEMAP_PARAMS_FILTER_MENU_MENUS_DESC"
+			   clientid="0"
+			   multiple="true"
+			   showon="filter_menu:1"/>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_STRPOS"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_STRPOS_DESC"
+			   heading="h3"/>
+		<field name="filter_strpos" type="textarea"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_STRPOS_LABEL"
+			   rows="5"
+			   class="input-xxlarge"/>
+		<field type="note" label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP"
+			   description="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_DESC"
+			   heading="h3"/>
+		<field name="filter_regexp" type="subform"
+			   label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_LABEL"
+			   multiple="true"
+			   layout="joomla.form.field.subform.repeatable-table">
+			<form>
+				<field name="pattern" type="text" label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_PATTERN"/>
+				<field name="replacement" type="text" label="COM_JLSITEMAP_PARAMS_FILTER_REGEXP_REPLACEMENT"/>
+			</form>
+		</field>
+	</fieldset>
+	<fieldset name="permissions"
+			  label="JCONFIG_PERMISSIONS_LABEL"
+			  description="JCONFIG_PERMISSIONS_DESC">
+		<field name="rules" type="rules"
+			   label="JCONFIG_PERMISSIONS_LABEL"
+			   class="inputbox"
+			   validate="rules"
+			   filter="rules"
+			   component="com_jlsitemap"
+			   section="component"/>
+	</fieldset>
+</config>

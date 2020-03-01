@@ -1,33 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.8" type="component" method="upgrade">
+<extension version="3.9" type="component" method="upgrade">
 	<name>COM_JLSITEMAP</name>
 	<author>Joomline</author>
-	<creationDate>October 2018</creationDate>
-	<copyright>Copyright (c) 2010 - 2018 Joomline. All rights reserved.</copyright>
+	<creationDate>@date@</creationDate>
+	<copyright>Copyright (c) 2010 - 2019 Joomline. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<authorEmail>sales@joomline.ru</authorEmail>
+	<authorEmail>sale@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
-	<version>0.0.1</version>
+	<version>@version@</version>
 	<description>COM_JLSITEMAP_DESCRIPTION</description>
+	<scriptfile>script.php</scriptfile>
+	<files folder="site">
+		<folder>controllers</folder>
+		<folder>helpers</folder>
+		<folder>models</folder>
+		<folder>views</folder>
+		<filename>controller.php</filename>
+		<filename>router.php</filename>
+		<filename>jlsitemap.php</filename>
+	</files>
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.sys.ini</language>
+		<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.ini</language>
+		<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
+	</languages>
 	<administration>
 		<menu>COM_JLSITEMAP</menu>
-		<files>
+		<files folder="admin">
+			<folder>controllers</folder>
 			<folder>helpers</folder>
-			<folder>models</folder>
+			<folder>layouts</folder>
 			<folder>views</folder>
 			<filename>access.xml</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
 			<filename>jlsitemap.php</filename>
 		</files>
-		<languages folder="language">
-			<language tag="en-GB">en-GB/en-GB.com_jlsitemap.ini</language>
-			<language tag="en-GB">en-GB/en-GB.com_jlsitemap.sys.ini</language>
-			<language tag="ru-RU">ru-RU/ru-RU.com_jlsitemap.ini</language>
-			<language tag="ru-RU">ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_jlsitemap.sys.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_jlsitemap.sys.ini</language>
 		</languages>
 	</administration>
 	<media destination="com_jlsitemap" folder="media">
 		<folder>css</folder>
+		<folder>icons</folder>
 	</media>
+	<layouts destination="components/jlsitemap" folder="layouts">
+		<folder>admin</folder>
+		<folder>site</folder>
+		<folder>xsl</folder>
+	</layouts>
 </extension>

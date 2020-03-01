@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_JLSITEMAP_VIEW_HTML" option="COM_JLSITEMAP_VIEW_HTML_DEFAULT_OPTION">
+		<message>
+			<![CDATA[COM_JLSITEMAP_VIEW_HTML_DESCRIPTION]]>
+		</message>
+	</layout>
+	<fields name="request" addfieldpath="/administrator/components/com_jlsitemap/models/fields">
+		<fieldset name="request">
+			<fieldset name="request">
+				<field name="key" type="hidden" default="1"/>
+			</fieldset>
+		</fieldset>
+	</fields>
+</metadata>
