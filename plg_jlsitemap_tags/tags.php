@@ -3,7 +3,7 @@
  * @package    JLSitemap - Tags Plugin
  * @version    @version@
  * @author     Joomline - joomline.ru
- * @copyright  Copyright (c) 2010 - 2019 Joomline. All rights reserved.
+ * @copyright  Copyright (c) 2010 - 2020 Joomline. All rights reserved.
  * @license    GNU/GPL license: http://www.gnu.org/copyleft/gpl.html
  * @link       https://joomline.ru/
  */
