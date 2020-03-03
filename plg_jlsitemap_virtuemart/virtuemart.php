@@ -90,8 +90,12 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 		if ($this->params->get('products_enable'))
 		{
 			$query = $db->getQuery(true)
-				->select(array('p.virtuemart_product_id as id', 'p.published', 'p.metarobot'))
-				->from($db->quoteName('#__virtuemart_products', 'p'));
+				->select(array('p.virtuemart_product_id as id', 'p.published', 'p.metarobot',
+					'c.virtuemart_category_id as catid', 'product_canon_category_id as canon_catid'))
+				->leftJoin($db->quoteName('#__virtuemart_product_categories', 'c')
+					. '  ON c.virtuemart_product_id = p.virtuemart_product_id')
+				->from($db->quoteName('#__virtuemart_products', 'p'))
+				->group('p.virtuemart_product_id');
 
 			foreach ($languages as $key => $code)
 			{
@@ -110,9 +114,12 @@ class plgJLSitemapVirtueMart extends CMSPlugin
 				$selector     = 'product_name_' . $defaultLanguageKey;
 				$defaultTitle = $row->$selector;
 
+				// Prepare catid
+				$catid   = (!empty($row->canon_catid)) ? $row->canon_catid : $row->catid;
+
 				// Prepare default loc attribute
-				$defaultLoc = 'index.php?option=com_virtuemart&view=productdetails&Itemid=0&virtuemart_product_id='
-					. $row->id;
+				$defaultLoc = 'index.php?option=com_virtuemart&view=productdetails&virtuemart_product_id='
+					. $row->id . '&virtuemart_category_id=' . $catid;
 
 				// Prepare exclude attribute
 				$exclude = array();
