@@ -18,6 +18,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
 
 class PlgSystemJLSitemap_Cron extends CMSPlugin
 {
@@ -29,6 +30,15 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	 * @since  0.0.2
 	 */
 	protected $autoloadLanguage = true;
+
+	/**
+	 * Cron last run date.
+	 *
+	 * @var  string
+	 *
+	 * @since  1.10.1
+	 */
+	protected $_lastRun = null;
 
 	/**
 	 * Method to add cron js.
@@ -81,6 +91,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 		// Client checks
 		if ($clientRun)
 		{
+			echo '<pre>', var_dump($this->checkCacheTime()), '</pre>';
 			if ($this->checkCacheTime())
 			{
 				$generate = true;
@@ -175,7 +186,20 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	 */
 	protected function checkCacheTime()
 	{
-		if (!$lastRun = $this->params->get('last_run', false))
+		if ($this->_lastRun === null)
+		{
+			$db             = Factory::getDbo();
+			$query          = $db->getQuery('true')
+				->select('params')
+				->from('#__extensions')
+				->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
+				->where($db->quoteName('element') . ' = ' . $db->quote('jlsitemap_cron'))
+				->where($db->quoteName('folder') . ' = ' . $db->quote('system'));
+			$params         = new Registry($db->setQuery($query)->loadResult());
+			$this->_lastRun = $params->get('last_run', false);
+		}
+
+		if (!$this->_lastRun)
 		{
 			return true;
 		}
@@ -183,7 +207,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 		// Prepare cache time
 		$offset = ' + ' . $this->params->get('client_cache_number', 1) . ' ' .
 			$this->params->get('client_cache_value', 'day');
-		$cache  = new Date($lastRun . $offset);
+		$cache  = new Date($this->_lastRun . $offset);
 
 		return (Factory::getDate()->toUnix() >= $cache->toUnix());
 	}
