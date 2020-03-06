@@ -387,6 +387,8 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			// Generate file
 			if ($config->get('xsl', 1))
 			{
+				Factory::getLanguage()->load('com_jlsitemap', JPATH_SITE,
+					ComponentHelper::getParams('com_languages')->get('site', 'en-GB'), true);
 				$xsl = '<?xml version="1.0" encoding="UTF-8"?>'
 					. PHP_EOL . LayoutHelper::render('components.jlsitemap.xsl.' . $type, array('date' => Factory::getDate()->toSql()));
 
