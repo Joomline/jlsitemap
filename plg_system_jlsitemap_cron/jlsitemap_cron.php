@@ -90,8 +90,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 
 		// Client checks
 		if ($clientRun)
-		{
-			echo '<pre>', var_dump($this->checkCacheTime()), '</pre>';
+		{		
 			if ($this->checkCacheTime())
 			{
 				$generate = true;
