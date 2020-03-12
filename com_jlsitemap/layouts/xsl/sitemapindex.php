@@ -24,7 +24,8 @@ extract($displayData);
  */
 
 $stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
-	HTMLHelper::stylesheet('com_jlsitemap/sitemap.min.css', array('version' => 'auto', 'relative' => true, 'pathOnly' => true))
+	HTMLHelper::stylesheet('com_jlsitemap/sitemap.min.css', array('version' => 'auto', 'relative' => true, 'pathOnly' => true));
+$sitename   = htmlspecialchars(Factory::getConfig()->get('sitename'));
 ?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 				xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -34,13 +35,13 @@ $stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
 		<html lang="<?php echo Factory::getLanguage()->getTag(); ?>">
 		<head>
 			<meta charset="UTF-8"/>
-			<title><?php echo Text::sprintf('COM_JLSITEMAP_XSL_TITLE', Factory::getConfig()->get('sitename')); ?></title>
+			<title><?php echo Text::sprintf('COM_JLSITEMAP_XSL_TITLE', $sitename); ?></title>
 			<link rel="stylesheet" href="<?php echo $stylesheet; ?>"/>
 		</head>
 		<body>
 		<div class="container">
 			<h1>
-				<?php echo Text::sprintf('COM_JLSITEMAP_XSL_TITLE', Factory::getConfig()->get('sitename')); ?>
+				<?php echo Text::sprintf('COM_JLSITEMAP_XSL_TITLE', $sitename); ?>
 			</h1>
 			<p class="description">
 				<?php echo Text::sprintf('COM_JLSITEMAP_XSL_DESCRIPTION_INDEX', '<xsl:value-of select="count(sitemap:sitemapindex/sitemap:sitemap)"/>'); ?>
