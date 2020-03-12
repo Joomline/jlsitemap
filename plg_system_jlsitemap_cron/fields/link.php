@@ -45,10 +45,11 @@ class JFormFieldLink extends FormField
 	{
 		$site   = SiteApplication::getInstance('site');
 		$router = $site->getRouter();
+		$root   = Uri::getInstance()->toString(array('scheme', 'host', 'port'));
 		$link   = 'index.php?option=com_ajax&plugin=jlsitemap_cron&group=system&format=raw';
-		$link   = str_replace('administrator/', '', $router->build($link)->toString());
+		$link   = $router->build($link)->toString();
 		$link   = str_replace('/?', '?', $link);
-		$link   = trim(Uri::root(), '/') . '/' . trim($link, '/');
+		$link   = $root . $link;
 
 		$data         = parent::getLayoutData();
 		$data['link'] = $link;
