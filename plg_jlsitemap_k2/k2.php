@@ -47,13 +47,15 @@ class plgJLSitemapK2 extends CMSPlugin
 			JLoader::register('K2HelperRoute', JPATH_SITE . '/components/com_k2/helpers/route.php');
 		}
 
+		$multilanguage = $config->get('multilanguage');
+
 		// Items
 		if ($this->params->get('items_enable', false))
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
 				->select(array('i.id', 'i.title', 'i.alias', 'i.published', 'i.created', 'i.modified',
-					'i.publish_up', 'i.publish_down', 'i.trash', 'i.access', 'i.params', 'i.metadata',
+					'i.publish_up', 'i.publish_down', 'i.trash', 'i.access', 'i.params', 'i.metadata', 'i.language',
 					'c.id as category_id', 'c.alias as category_alias', 'c.published as category_published',
 					'c.access as category_access', 'c.trash as category_trash'))
 				->from($db->quoteName('#__k2_items', 'i'))
@@ -74,6 +76,10 @@ class plgJLSitemapK2 extends CMSPlugin
 				// Prepare loc attribute
 				$loc = K2HelperRoute::getItemRoute($row->id . ':' . urlencode($row->alias),
 					$row->category_id . ':' . urlencode($row->category_alias));
+				if ($multilanguage && $row->language !== '*')
+				{
+					$loc .= '&lang=' . $row->language;
+				}
 
 				// Prepare exclude attribute
 				$exclude = array();
@@ -156,7 +162,7 @@ class plgJLSitemapK2 extends CMSPlugin
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('c.id', 'c.name', 'c.alias', 'c.published', 'c.access', 'c.params', 'c.trash',
+				->select(array('c.id', 'c.name', 'c.alias', 'c.published', 'c.access', 'c.params', 'c.trash', 'c.language',
 					'MAX(i.created) as created', 'MAX(i.modified) as modified'))
 				->from($db->quoteName('#__k2_categories', 'c'))
 				->join('LEFT', '#__k2_items AS i ON i.catid = c.id')
@@ -176,6 +182,10 @@ class plgJLSitemapK2 extends CMSPlugin
 			{
 				// Prepare loc attribute
 				$loc = K2HelperRoute::getCategoryRoute($row->id . ':' . urlencode($row->alias));
+				if ($multilanguage && $row->language !== '*')
+				{
+					$loc .= '&lang=' . $row->language;
+				}
 
 				// Prepare exclude attribute
 				$exclude = array();
