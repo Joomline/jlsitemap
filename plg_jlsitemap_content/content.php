@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Registry\Registry;
+use Joomla\CMS\Uri\Uri;
 
 class plgJLSitemapContent extends CMSPlugin
 {
@@ -55,7 +56,7 @@ class plgJLSitemapContent extends CMSPlugin
 		{
 			$db    = Factory::getDbo();
 			$query = $db->getQuery(true)
-				->select(array('c.id', 'c.title', 'c.published', 'c.access', 'c.metadata', 'c.language', 'MAX(a.modified) as modified'))
+				->select(array('c.id', 'c.title', 'c.published', 'c.access', 'c.metadata', 'c.language', 'MAX(a.modified) as modified', 'c.params'))
 				->from($db->quoteName('#__categories', 'c'))
 				->join('LEFT', '#__content AS a ON a.catid = c.id')
 				->where($db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
@@ -76,6 +77,8 @@ class plgJLSitemapContent extends CMSPlugin
 			$nullDate   = $db->getNullDate();
 			$changefreq = $this->params->get('categories_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('categories_priority', $config->get('priority', '0.5'));
+
+			$categories_images_enable = $this->params->get('categories_images_enable', 1);
 
 			// Add categories to arrays
 			$categories = array();
@@ -124,6 +127,15 @@ class plgJLSitemapContent extends CMSPlugin
 				$category->exclude    = (!empty($exclude)) ? $exclude : false;
 				$category->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
 
+				if ($categories_images_enable)
+				{
+					$category_params = json_decode($row->params);
+					if (is_object($category_params) && !empty($category_params->image))
+					{
+						$category->images = array(Uri::root() . $category_params->image);
+					}
+				}
+
 				// Add category to array
 				$categories[] = $category;
 
@@ -159,7 +171,7 @@ class plgJLSitemapContent extends CMSPlugin
 			$query = $db->getQuery(true)
 				->select(array('a.id', 'a.title', 'a.alias', 'a.state', 'a.modified', 'a.publish_up', 'a.publish_down', 'a.access',
 					'a.metadata', 'a.language', 'c.id as category_id', 'c.published as category_published',
-					'c.access as category_access'))
+					'c.access as category_access', 'a.images'))
 				->from($db->quoteName('#__content', 'a'))
 				->join('LEFT', '#__categories AS c ON c.id = a.catid')
 				->group('a.id')
@@ -180,6 +192,8 @@ class plgJLSitemapContent extends CMSPlugin
 			$nowDate    = Factory::getDate()->toUnix();
 			$changefreq = $this->params->get('articles_changefreq', $config->get('changefreq', 'weekly'));
 			$priority   = $this->params->get('articles_priority', $config->get('priority', '0.5'));
+
+			$articles_images_enable = $this->params->get('articles_images_enable', 1);
 
 			// Add articles to urls arrays
 			$articles   = array();
@@ -252,6 +266,15 @@ class plgJLSitemapContent extends CMSPlugin
 				$article->lastmod    = $lastmod;
 				$article->exclude    = (!empty($exclude)) ? $exclude : false;
 				$article->alternates = ($multilanguage && !empty($row->association)) ? $row->association : false;
+
+				if ($articles_images_enable)
+				{
+					$article_images = json_decode($row->images);
+					if (is_object($article_images) && !empty($article_images->image_fulltext))
+					{
+						$article->images = array(Uri::root() . $article_images->image_fulltext); 
+					}
+				}
 
 				// Add article to array
 				$articles[] = $article;
