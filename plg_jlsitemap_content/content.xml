@@ -28,6 +28,13 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field name="articles_images_enable" type="radio"
+					   label="JGLOBAL_FIELDSET_IMAGE_OPTIONS"
+					   default="1"
+					   class="btn-group btn-group-yesno">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
 				<field name="articles_changefreq" type="list" default="weekly"
 					   label="PLG_JLSITEMAP_CONTENT_PARAMS_CHANGEFREQ"
 					   showon="articles_enable:1">
@@ -58,6 +65,13 @@
 			<fieldset name="categories" label="PLG_JLSITEMAP_CONTENT_PARAMS_CATEGORIES">
 				<field name="categories_enable" type="radio"
 					   label="PLG_JLSITEMAP_CONTENT_PARAMS_ENABLE"
+					   default="1"
+					   class="btn-group btn-group-yesno">
+					<option value="0">JNO</option>
+					<option value="1">JYES</option>
+				</field>
+				<field name="categories_images_enable" type="radio"
+					   label="JGLOBAL_FIELDSET_IMAGE_OPTIONS"
 					   default="1"
 					   class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
