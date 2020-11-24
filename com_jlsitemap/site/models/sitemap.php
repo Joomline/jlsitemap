@@ -305,6 +305,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 			. ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd"'
 			. ' xmlns:xhtml="http://www.w3.org/1999/xhtml"'
 			. ' xhtml="http://www.w3.org/1999/xhtml"'
+			. ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"'
 			. '/>');
 
 		// Add urls
@@ -350,6 +351,16 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 						$alternate->addAttribute('rel', 'alternate');
 						$alternate->addAttribute('hreflang', $lang);
 						$alternate->addAttribute('href', $href);
+					}
+				}
+
+				// Images
+				if ($images = $row->get('images', false))
+				{
+					foreach ($images as $href)
+					{
+						$image = $url->addChild('image', '', 'http://www.google.com/schemas/sitemap-image/1.1');
+						$image->addChild('loc', $href, 'http://www.google.com/schemas/sitemap-image/1.1');
 					}
 				}
 			}
@@ -721,6 +732,19 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 					}
 				}
 
+				// Prepare images
+				$images = array();
+				if ($item->get('images', false))
+				{
+					foreach ($item->get('images') as $href)
+					{
+						if (!empty($href))
+						{
+							$images[] = $href;
+						}
+					}
+				}
+
 				// Exist url override
 				if (isset($all[$key]))
 				{
@@ -779,6 +803,7 @@ class JLSitemapModelSitemap extends BaseDatabaseModel
 				$url->set('exclude', (!empty($exclude)) ? $exclude : false);
 				$url->set('lastmod', $lastmod);
 				$url->set('alternates', (!empty($alternates)) ? $alternates : false);
+				$url->set('images', (!empty($images)) ? $images : false);
 
 				// Add url to arrays
 				$all[$key] = $url;
