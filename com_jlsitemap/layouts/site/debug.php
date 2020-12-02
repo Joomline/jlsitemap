@@ -86,15 +86,35 @@ $multilanguage = Multilanguage::isEnabled();
 									</a>
 								<?php endif; ?>
 							</div>
-							<?php if ($multilanguage && is_array($include->get('alternates', false))): ?>
-								<div class="alternates">
+							<div class="additions">
+								<?php if ($multilanguage && is_array($include->get('alternates', false))): ?>
 									<?php foreach ($include->get('alternates') as $lang => $loc): ?>
-										<a href="<?php echo $loc; ?>" class="alternate" target="_blank">
-											<?php echo $lang; ?>
-										</a>
+										<div class="item">
+											<a href="<?php echo $loc; ?>" class="alternate" target="_blank">
+												<?php echo $lang; ?>
+											</a>
+										</div>
 									<?php endforeach; ?>
-								</div>
-							<?php endif; ?>
+								<?php endif; ?>
+								<?php if (is_array($include->get('images', false))): ?>
+									<?php foreach ($include->get('images') as $i => $src): ?>
+										<div class="item">
+											<a href="<?php echo $src; ?>" title="<?php echo $src; ?>" class="image"
+											   target="_blank">
+												<svg width="20" height="20" viewBox="0 0 20 20"
+													 xmlns="http://www.w3.org/2000/svg" data-svg="image">
+													<rect fill="none" stroke="#1e87f0" x=".5" y="2.5" width="19"
+														  height="15"></rect>
+													<polyline fill="none" stroke="#1e87f0" stroke-width="1.01"
+															  points="4,13 8,9 13,14"></polyline>
+													<polyline fill="none" stroke="#1e87f0" stroke-width="1.01"
+															  points="11,12 12.5,10.5 16,14"></polyline>
+												</svg>
+											</a>
+										</div>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</div>
 						</td>
 						<td><?php echo $include->get('changefreq', ''); ?></td>
 						<td><?php echo $include->get('priority', ''); ?></td>

@@ -102,18 +102,25 @@ a:focus {
 	text-decoration: underline;
 }
 
-.alternates {
-	margin-top: 8px;
-	clear: both;
+.additions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 }
 
-.alternates .alternate {
-	display: inline-block;
-	float: left;
+.additions .item {
+	display: inline-flex;
 	margin: 3px 3px 3px 0;
+}
+
+.additions .item > a {
+	display: inline-block;
+}
+
+.additions .alternate {
+	line-height: 1.5;
 	padding: 0 10px;
 	background: #1e87f0;
-	line-height: 1.5;
 	font-size: 12px;
 	color: #fff;
 	vertical-align: middle;
@@ -122,7 +129,11 @@ a:focus {
 	text-transform: uppercase;
 }
 
-.alternates .alternate:hover {
+.additions .alternate:hover {
 	color: #fff;
 	text-decoration: none;
+}
+
+.additions .image {
+	line-height: 0;
 }
