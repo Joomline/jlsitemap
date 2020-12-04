@@ -1,5 +1,5 @@
 <project name="jlsitemap" default="dist" basedir=".">
-	<property name="VERSION" value="1.11.0"/>
+	<property name="VERSION" value="1.11.1"/>
 	<tstamp>
 		<format property="DATE" pattern="%d.%m.%Y"/>
 	</tstamp>
