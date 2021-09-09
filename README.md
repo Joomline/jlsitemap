@@ -7,3 +7,5 @@ Sitemap Component for Joomla.
 **Read this in other languages:**
 [English](https://github.com/Joomline/jlsitemap/blob/master/README.md),
 [Русский](https://github.com/Joomline/jlsitemap/blob/master/README.ru-RU.md).
+
+![GitHub all releases](https://img.shields.io/github/downloads/joomline/jlsitemap/total?style=for-the-badge)  ![GitHub release (latest by SemVer)](https://img.shields.io/github/downloads/Joomline/jlsitemap/latest/total?style=for-the-badge)
