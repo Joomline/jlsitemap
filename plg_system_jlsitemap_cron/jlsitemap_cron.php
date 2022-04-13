@@ -81,7 +81,7 @@ class PlgSystemJLSitemap_Cron extends CMSPlugin
 	 *
 	 * @since  0.0.2
 	 */
-	public function onAjaxJLSitemap_Cron()
+	public function onAjaxJlsitemap_cron()
 	{
 		$app       = Factory::getApplication();
 		$generate  = false;
