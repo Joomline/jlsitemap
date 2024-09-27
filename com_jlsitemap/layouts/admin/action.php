@@ -11,8 +11,10 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 extract($displayData);
 
@@ -32,46 +34,38 @@ $url       = (!empty($url)) ? Route::_($url) : false;
 $class     = (!empty($class)) ? 'action ' . $class : 'action';
 $title     = (!empty($title)) ? Text::_($title) : '';
 $newWindow = (isset($newWindow)) ? $newWindow : false;
-$icon      = (isset($icon) && File::exists(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg')) ?
+$icon      = (isset($icon) && \is_file(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg')) ?
 	file_get_contents(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg') : false;
-$badge     = (!empty($badge)) ? Text::_($badge) : false;
-
+$badge = (!empty($badge)) ? Text::_($badge) : false;
 ?>
-<?php if ($url): ?>
-	<a href="<?php echo $url; ?>"
-	   class="<?php echo $class; ?>"<?php echo ($newWindow) ? ' target="_blank"' : ''; ?>>
-		<div class="head">
-			<?php if ($icon): ?>
-				<div class="icon">
-					<?php echo $icon; ?>
-				</div>
-			<?php endif; ?>
-			<?php if ($badge): ?>
-				<div class="badge">
-					<?php echo $badge; ?>
-				</div>
-			<?php endif; ?>
-		</div>
-		<div class="title">
-			<?php echo $title; ?>
-		</div>
-	</a>
-<?php else: ?>
-	<div class="<?php echo $class; ?>">
-		<div class="head">
-			<?php if ($icon): ?>
-				<div class="icon">
-					<?php echo $icon; ?>
-				</div>
-			<?php endif; ?>
-			<?php if ($badge): ?>
-				<div class="badge">
-					<?php echo $badge; ?>
-				</div>
-			<?php endif; ?>
-		</div>
-		<div class="title">
-			<?php echo $title; ?>
-		</div>
-	</div>
-<?php endif; ?>
+
+<div class="card rounded-0 shadow-hover h-100 position-relative <?php echo $class; ?>">
+	<?php if ($badge): ?>
+        <div class="position-absolute end-0 top-0">
+            <span class="badge bg-primary rounded-0 ms-auto"><?php echo $badge; ?></span>
+        </div>
+	<?php endif; ?>
+	<?php if ($icon): ?>
+        <div class="card-body text-center card-text">
+			<?php echo $icon; ?>
+        </div>
+	<?php endif; ?>
+    <div class="card-footer text-center card-text bg-light-subtle">
+		<?php
+		if ($url)
+		{
+			$link_attribs = [
+				'class' => 'stretched-link link-body-emphasis'
+			];
+			if ($newWindow)
+			{
+				$link_attribs['target'] = '_blank';
+			}
+			echo HTMLHelper::link($url, $title, $link_attribs);
+		} else {
+            echo '<span class="text-secondary-emphasis">'.$title.'</span>';
+        }
+		?>
+
+    </div>
+</div>

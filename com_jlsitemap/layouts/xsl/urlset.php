@@ -26,7 +26,7 @@ extract($displayData);
 
 $stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
 	HTMLHelper::stylesheet('com_jlsitemap/sitemap.min.css', array('version' => 'auto', 'relative' => true, 'pathOnly' => true));
-$sitename   = htmlspecialchars(Factory::getConfig()->get('sitename'));
+$sitename   = htmlspecialchars(Factory::getContainer()->get('config')->get('sitename'));
 ?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 				xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -34,7 +34,7 @@ $sitename   = htmlspecialchars(Factory::getConfig()->get('sitename'));
 				xmlns:xhtml="http://www.w3.org/1999/xhtml">
 	<xsl:output method="html" indent="yes" encoding="UTF-8"/>
 	<xsl:template match="/">
-		<html lang="<?php echo Factory::getLanguage()->getTag(); ?>">
+		<html lang="<?php echo Factory::getApplication()->getLanguage()->getTag(); ?>">
 		<head>
 			<meta charset="UTF-8"/>
 			<title><?php echo Text::sprintf('COM_JLSITEMAP_XSL_TITLE', $sitename); ?></title>

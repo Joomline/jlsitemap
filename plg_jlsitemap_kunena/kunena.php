@@ -56,6 +56,36 @@ class plgJLSitemapKunena extends CMSPlugin
 
 			foreach ($rows as $row)
 			{
+				/**
+				 * Виталя Ведал писал об этом
+				 * https://github.com/Joomline/jlsitemap/issues/93
+				 * Оставлю здесь проблему и решение.
+				 *
+				 * Joomla 4 + Kunena 6.2.1 + JL Sitemap 1.12.0
+				 *
+				 * При активации плагина Kunena карта дает ошибку:
+				 *
+				 * Class "KunenaUserHelper" not found
+				 *
+				 * Исправляется следующим образом:
+				 *
+				 * Файл: /plugins/jlsitemap/kunena/kunena.php
+				 *
+				 * Добавляем в начале файла:
+				 * use Kunena\Forum\Libraries\Forum\Category\KunenaCategoryHelper;
+				 * use Kunena\Forum\Libraries\Forum\Topic\KunenaTopicHelper;
+				 * use Kunena\Forum\Libraries\Route\KunenaRoute;
+				 * use Kunena\Forum\Libraries\User\KunenaUserHelper;
+				 * Далее заменить на:
+				 * Стр 64:
+				 * $object = KunenaTopicHelper::get($row->id);
+				 *
+				 * Далее заменить на:
+				 * Стр 117:
+				 * $object = KunenaCategoryHelper::get($row->id);
+				 *
+				 * Это работает в указанных версиях, но не тестировал на более ранних. Надеюсь, кому-то поможет до выхода обновления компонента карты сайта.
+				 */
 				$guest  = KunenaUserHelper::get(0);
 				$object = KunenaForumTopicHelper::get($row->id);
 

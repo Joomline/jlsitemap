@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.9" type="package" method="upgrade">
+<extension type="package" method="upgrade">
 	<name>PKG_JLSITEMAP</name>
 	<packagename>jlsitemap</packagename>
 	<author>Joomline</author>
 	<creationDate>@date@</creationDate>
-	<copyright>Copyright (c) 2010 - 2022 Joomline. All rights reserved.</copyright>
+	<copyright>Copyright (c) 2010 - 2024 Joomline. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sale@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
@@ -12,14 +12,13 @@
 	<description>PKG_JLSITEMAP_DESCRIPTION</description>
 	<scriptfile>script.php</scriptfile>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.pkg_jlsitemap.sys.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.pkg_jlsitemap.sys.ini</language>
+		<language tag="en-GB">en-GB/pkg_jlsitemap.sys.ini</language>
+		<language tag="ru-RU">ru-RU/pkg_jlsitemap.sys.ini</language>
 	</languages>
 	<files>
 		<folder type="component" id="com_jlsitemap">com_jlsitemap</folder>
 		<folder type="plugin" group="jlsitemap" id="contact">plg_jlsitemap_contact</folder>
 		<folder type="plugin" group="jlsitemap" id="content">plg_jlsitemap_content</folder>
-		<folder type="plugin" group="jlsitemap" id="k2">plg_jlsitemap_k2</folder>
 		<folder type="plugin" group="jlsitemap" id="kunena">plg_jlsitemap_kunena</folder>
 		<folder type="plugin" group="jlsitemap" id="tags">plg_jlsitemap_tags</folder>
 		<folder type="plugin" group="jlsitemap" id="virtuemart">plg_jlsitemap_virtuemart</folder>
