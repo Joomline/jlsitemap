@@ -1,1 +1,1 @@
-#controlPanel.action svg{stroke:currentcolor;fill:currentcolor;height:80px;}.shadow-hover:hover{box-shadow:0 .5rem 1rem rgba(0,0,0,.15)!important;transition:all.3s ease-in-out;z-index:1015;}
+#controlPanel .action svg{stroke:currentcolor;fill:currentcolor;height:80px;}.shadow-hover:hover{box-shadow:0 .5rem 1rem rgba(0,0,0,.15)!important;transition:all.3s ease-in-out;z-index:1015;}
