@@ -24,19 +24,24 @@ extract($displayData);
  */
 
 HTMLHelper::_('jquery.framework');
-HTMLHelper::_('stylesheet', 'media/plg_system_jlsitemap_cron/css/link.min.css', array('version' => 'auto'));
-HTMLHelper::_('script', 'media/plg_system_jlsitemap_cron/js/link.min.js', array('version' => 'auto'));
+HTMLHelper::_('stylesheet', 'media/plg_system_jlsitemap_cron/css/link.min.css', ['version' => 'auto']);
+HTMLHelper::_('script', 'media/plg_system_jlsitemap_cron/js/link.min.js', ['version' => 'auto']);
 
 ?>
-<div id="<?php echo $id; ?>" data-input-link="<?php echo $link; ?>">
-	<div class="title">
-		<?php echo Text::_('PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK'); ?>
-	</div>
-	<div class="input clearfix">
-		<code class=""></code>
-		<input type="hidden" name="<?php echo $name; ?>">
-	</div>
-	<div class="description">
-		<?php echo Text::_('PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK_DESC'); ?>
-	</div>
+<div id="<?php
+echo $id; ?>" data-input-link="<?php
+echo $link; ?>">
+    <div class="title">
+        <?php
+        echo Text::_('PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK'); ?>
+    </div>
+    <div class="input clearfix">
+        <code class=""></code>
+        <input type="hidden" name="<?php
+        echo $name; ?>">
+    </div>
+    <div class="description">
+        <?php
+        echo Text::_('PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK_DESC'); ?>
+    </div>
 </div>

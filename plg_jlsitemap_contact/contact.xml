@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.9" type="plugin" group="jlsitemap" method="upgrade">
+<extension type="plugin" group="jlsitemap" method="upgrade">
 	<name>PLG_JLSITEMAP_CONTACT</name>
 	<author>Joomline</author>
 	<creationDate>@date@</creationDate>
@@ -9,14 +9,17 @@
 	<authorUrl>https://joomline.ru</authorUrl>
 	<version>@version@</version>
 	<description>PLG_JLSITEMAP_CONTACT_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\JLSitemap\Contact</namespace>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_contact.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_contact.sys.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_contact.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_contact.sys.ini</language>
+		<language tag="en-GB">en-GB/plg_jlsitemap_contact.ini</language>
+		<language tag="en-GB">en-GB/plg_jlsitemap_contact.sys.ini</language>
+		<language tag="ru-RU">ru-RU/plg_jlsitemap_contact.ini</language>
+		<language tag="ru-RU">ru-RU/plg_jlsitemap_contact.sys.ini</language>
 	</languages>
 	<files>
-		<filename plugin="contact">contact.php</filename>
+		<folder plugin="contact">src</folder>
+		<folder>services</folder>
+		<filename>contact.xml</filename>
 	</files>
 	<config>
 		<fields name="params">

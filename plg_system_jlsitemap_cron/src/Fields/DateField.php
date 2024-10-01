@@ -8,11 +8,13 @@
  * @link       https://joomline.ru/
  */
 
+namespace Joomla\Plugin\System\Jlsitemap_cron\Fields;
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormField;
 
-class JFormFieldDate extends FormField
+class DateField extends FormField
 {
 	/**
 	 * The form field type.

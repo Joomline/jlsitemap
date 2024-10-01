@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.9" type="plugin" group="system" method="upgrade">
+<extension type="plugin" group="system" method="upgrade">
 	<name>PLG_SYSTEM_JLSITEMAP_CRON</name>
 	<author>Joomline</author>
 	<creationDate>@date@</creationDate>
@@ -9,24 +9,28 @@
 	<authorUrl>https://joomline.ru/</authorUrl>
 	<version>@version@</version>
 	<description>PLG_SYSTEM_JLSITEMAP_CRON_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\System\Jlsitemap_cron</namespace>
 	<scriptfile>script.php</scriptfile>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_system_jlsitemap_cron.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_system_jlsitemap_cron.sys.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_system_jlsitemap_cron.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_system_jlsitemap_cron.sys.ini</language>
+		<language tag="en-GB">en-GB/plg_system_jlsitemap_cron.ini</language>
+		<language tag="en-GB">en-GB/plg_system_jlsitemap_cron.sys.ini</language>
+		<language tag="ru-RU">ru-RU/plg_system_jlsitemap_cron.ini</language>
+		<language tag="ru-RU">ru-RU/plg_system_jlsitemap_cron.sys.ini</language>
 	</languages>
 	<files>
-		<filename plugin="jlsitemap_cron">jlsitemap_cron.php</filename>
-		<folder>fields</folder>
+		<folder plugin="jlsitemap_cron">src</folder>
+		<folder>services</folder>
+		<filename>jlsitemap_cron.xml</filename>
 	</files>
 	<config>
-		<fields name="params" addfieldpath="/plugins/system/jlsitemap_cron/fields">
-			<fieldset name="basic">
-				<field name="link" type="link" label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK"/>
+		<fields name="params">
+			<fieldset name="basic" addfieldprefix="Joomla\Plugin\System\Jlsitemap_cron\Fields">
+				<field name="link"
+					   type="link"
+					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK"/>
 				<field name="last_run" type="date"
 					   readonly="true"
-					   class="readonly"
+					   class="form-control readonly"
 					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LAST_RUN"/>
 				<field name="key_enabled" type="radio"
 					   label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_KEY"

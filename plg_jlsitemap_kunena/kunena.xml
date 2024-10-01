@@ -9,14 +9,17 @@
 	<authorUrl>https://joomline.ru/</authorUrl>
 	<version>@version@</version>
 	<description>PLG_JLSITEMAP_KUNENA_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\JLSitemap\Kunena</namespace>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_kunena.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_kunena.sys.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_kunena.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_kunena.sys.ini</language>
+		<language tag="en-GB">en-GB/plg_jlsitemap_kunena.ini</language>
+		<language tag="en-GB">en-GB/plg_jlsitemap_kunena.sys.ini</language>
+		<language tag="ru-RU">ru-RU/plg_jlsitemap_kunena.ini</language>
+		<language tag="ru-RU">ru-RU/plg_jlsitemap_kunena.sys.ini</language>
 	</languages>
 	<files>
-		<filename plugin="kunena">kunena.php</filename>
+		<folder plugin="kunena">src</folder>
+		<folder>services</folder>
+		<filename>kunena.xml</filename>
 	</files>
 	<config>
 		<fields name="params">

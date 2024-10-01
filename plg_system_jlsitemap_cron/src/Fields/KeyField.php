@@ -8,11 +8,13 @@
  * @link       https://joomline.ru/
  */
 
+namespace Joomla\Plugin\System\Jlsitemap_cron\Fields;
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormField;
 
-class JFormFieldKey extends FormField
+class KeyField extends FormField
 {
 	/**
 	 * The form field type.
@@ -32,7 +34,7 @@ class JFormFieldKey extends FormField
 	 */
 	protected $layout = 'plugins.system.jlsitemap_cron.fields.key';
 
-	/**
+ 	/**
 	 * Method to get the field label markup.
 	 *
 	 * @return  string  The field label markup.
