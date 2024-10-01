@@ -26,161 +26,156 @@ use Joomla\Registry\Registry;
 
 class HtmlView extends BaseHtmlView
 {
-	/**
-	 * Component params.
-	 *
-	 * @var  Registry;
-	 *
-	 * @since  1.5.1
-	 */
-	protected $params;
+    /**
+     * Component params.
+     *
+     * @var  Registry;
+     *
+     * @since  1.5.1
+     */
+    protected $params;
 
-	/**
-	 * Sidebar html
-	 *
-	 * @var  string
-	 *
-	 * @since  0.0.1
-	 */
-	protected $sidebar;
+    /**
+     * Sidebar html
+     *
+     * @var  string
+     *
+     * @since  0.0.1
+     */
+    protected $sidebar;
 
-	/**
-	 * Generate url
-	 *
-	 * @var  string
-	 *
-	 * @since  1.4.1
-	 */
-	protected $generate = 'index.php?option=com_jlsitemap&task=sitemap.generate';
+    /**
+     * Generate url
+     *
+     * @var  string
+     *
+     * @since  1.4.1
+     */
+    protected $generate = 'index.php?option=com_jlsitemap&task=sitemap.generate';
 
-	/**
-	 * Sitemap info object
-	 *
-	 * @var  false|object
-	 *
-	 * @since  1.4.0
-	 */
-	protected $sitemap = false;
+    /**
+     * Sitemap info object
+     *
+     * @var  false|object
+     *
+     * @since  1.4.0
+     */
+    protected $sitemap = false;
 
-	/**
-	 * Plugins url
-	 *
-	 * @var  string
-	 *
-	 * @since  1.4.1
-	 */
-	protected $plugins = 'index.php?option=com_plugins&filter[folder]=jlsitemap';
+    /**
+     * Plugins url
+     *
+     * @var  string
+     *
+     * @since  1.4.1
+     */
+    protected $plugins = 'index.php?option=com_plugins&filter[folder]=jlsitemap';
 
-	/**
-	 * Cron plugin
-	 *
-	 * @var  false|object
-	 *
-	 * @since  1.4.0
-	 */
-	protected $cron = false;
+    /**
+     * Cron plugin
+     *
+     * @var  false|object
+     *
+     * @since  1.4.0
+     */
+    protected $cron = false;
 
-	/**
-	 * Debug url
-	 *
-	 * @var  string
-	 *
-	 * @since  1.4.1
-	 */
-	protected $debug = 'index.php?option=com_jlsitemap&task=sitemap.generate&debug=1';
+    /**
+     * Debug url
+     *
+     * @var  string
+     *
+     * @since  1.4.1
+     */
+    protected $debug = 'index.php?option=com_jlsitemap&task=sitemap.generate&debug=1';
 
-	/**
-	 * Delete url
-	 *
-	 * @var  string
-	 *
-	 * @since  1.4.1
-	 */
-	protected $delete = 'index.php?option=com_jlsitemap&task=sitemap.delete';
+    /**
+     * Delete url
+     *
+     * @var  string
+     *
+     * @since  1.4.1
+     */
+    protected $delete = 'index.php?option=com_jlsitemap&task=sitemap.delete';
 
-	/**
-	 * Config link
-	 *
-	 * @var  false|object
-	 *
-	 * @since  1.4.0
-	 */
-	protected $config = false;
+    /**
+     * Config link
+     *
+     * @var  false|object
+     *
+     * @since  1.4.0
+     */
+    protected $config = false;
 
-	/**
-	 * System messages
-	 *
-	 * @var  false|array
-	 *
-	 * @since  1.4.0
-	 */
-	protected $messages = false;
+    /**
+     * System messages
+     *
+     * @var  false|array
+     *
+     * @since  1.4.0
+     */
+    protected $messages = false;
 
-	/**
-	 * Execute and display a template script.
-	 *
-	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
-	 *
-	 * @throws  \Exception
-	 *
-	 * @return
-	 *
-	 * @since  0.0.1
-	 */
-	public function display($tpl = null)
-	{
-		// Set title
-		ToolBarHelper::title(Text::_('COM_JLSITEMAP') . ': ' . Text::_('COM_JLSITEMAP_CONTROL_PANEL'), 'tree-2');
+    /**
+     * Execute and display a template script.
+     *
+     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     *
+     * @return
+     *
+     * @throws  \Exception
+     *
+     * @since  0.0.1
+     */
+    public function display($tpl = null)
+    {
+        // Set title
+        ToolBarHelper::title(Text::_('COM_JLSITEMAP') . ': ' . Text::_('COM_JLSITEMAP_CONTROL_PANEL'), 'tree-2');
 
-		// Set params
-		$this->params = ComponentHelper::getParams('com_jlsitemap');
+        // Set params
+        $this->params = ComponentHelper::getParams('com_jlsitemap');
 
-		// Set sidebar
-		JLSitemapHelper::addSubmenu('controlpanel');
-		$this->sidebar = Sidebar::render();
+        // Set sidebar
+        JLSitemapHelper::addSubmenu('controlpanel');
+        $this->sidebar = Sidebar::render();
 
-		// Set sitemap
-		$filename = $this->params->get('filename', 'sitemap');
-		if (\is_file(JPATH_ROOT . '/' . $filename . '.xml'))
-		{
-			$sitemap               = new \stdClass();
-			$sitemap->file         = $filename . '.xml';
-			$sitemap->path         = JPATH_ROOT . '/' . $sitemap->file;
-			$sitemap->url          = Uri::root() . $sitemap->file;
-			$sitemap->date         = '';
-			$sitemap->unidentified = true;
-			if (preg_match('/<!-- JLSitemap (.*) -->/', file_get_contents($sitemap->path), $matches))
-			{
-				$sitemap->date         = $matches[1];
-				$sitemap->unidentified = false;
-			}
+        // Set sitemap
+        $filename = $this->params->get('filename', 'sitemap');
+        if (\is_file(JPATH_ROOT . '/' . $filename . '.xml')) {
+            $sitemap               = new \stdClass();
+            $sitemap->file         = $filename . '.xml';
+            $sitemap->path         = JPATH_ROOT . '/' . $sitemap->file;
+            $sitemap->url          = Uri::root() . $sitemap->file;
+            $sitemap->date         = '';
+            $sitemap->unidentified = true;
+            if (preg_match('/<!-- JLSitemap (.*) -->/', file_get_contents($sitemap->path), $matches)) {
+                $sitemap->date         = $matches[1];
+                $sitemap->unidentified = false;
+            }
 
-			$this->sitemap = $sitemap;
-		}
+            $this->sitemap = $sitemap;
+        }
 
-		// Set cron
-		if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron'))
-		{
-			$cron->url      = 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id;
-			$cron->params   = new Registry($cron->params);
-			$cron->last_run = $cron->params->get('last_run', false);
+        // Set cron
+        if ($cron = PluginHelper::getPlugin('system', 'jlsitemap_cron')) {
+            $cron->url      = 'index.php?option=com_plugins&task=plugin.edit&extension_id=' . $cron->id;
+            $cron->params   = new Registry($cron->params);
+            $cron->last_run = $cron->params->get('last_run', false);
 
-			$this->cron = $cron;
-		}
+            $this->cron = $cron;
+        }
 
-		// Set config
-		$user = Factory::getApplication()->getIdentity();
-		if ($user->authorise('core.admin', 'com_jlsitemap') || $user->authorise('core.options', 'com_jlsitemap'))
-		{
-			$this->config = 'index.php?option=com_config&view=component&component=com_jlsitemap';
-		}
+        // Set config
+        $user = Factory::getApplication()->getIdentity();
+        if ($user->authorise('core.admin', 'com_jlsitemap') || $user->authorise('core.options', 'com_jlsitemap')) {
+            $this->config = 'index.php?option=com_config&view=component&component=com_jlsitemap';
+        }
 
-		// Set messages
-		if ($messages = Factory::getApplication()->getMessageQueue())
-		{
-			$this->messages = $messages;
-		}
+        // Set messages
+        if ($messages = Factory::getApplication()->getMessageQueue()) {
+            $this->messages = $messages;
+        }
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 }

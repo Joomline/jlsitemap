@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package    SW JProjects
- * @subpackage  com_jlsitemap
+ * @package         SW JProjects
+ * @subpackage      com_jlsitemap
  *
  * @copyright   (C) 2018 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @license         GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 namespace Joomla\Component\JLSitemap\Administrator\Extension;
@@ -14,13 +14,7 @@ use Joomla\CMS\Component\Router\RouterServiceInterface;
 use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Component\SWJProjects\Administrator\Helper\SWJProjectsHelper;
-use Joomla\Component\SWJProjects\Administrator\Service\HTML\Icon;
 use Psr\Container\ContainerInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -55,6 +49,5 @@ class JLSitemapComponent extends MVCComponent implements
      */
     public function boot(ContainerInterface $container)
     {
-
     }
 }

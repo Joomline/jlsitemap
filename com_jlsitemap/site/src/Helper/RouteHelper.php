@@ -16,15 +16,15 @@ use Joomla\CMS\Helper\RouteHelper as CMSRouteHelper;
 
 class RouteHelper extends CMSRouteHelper
 {
-	/**
-	 * Fetches html route.
-	 *
-	 * @return  string  HTML view link.
-	 *
-	 * @since  1.6.0
-	 */
-	public static function getHTMLRoute()
-	{
-		return 'index.php?option=com_jlsitemap&view=html&key=1';
-	}
+    /**
+     * Fetches html route.
+     *
+     * @return  string  HTML view link.
+     *
+     * @since  1.6.0
+     */
+    public static function getHTMLRoute()
+    {
+        return 'index.php?option=com_jlsitemap&view=html&key=1';
+    }
 }

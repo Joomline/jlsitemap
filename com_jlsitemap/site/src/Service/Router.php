@@ -29,64 +29,64 @@ use Joomla\Event\Event;
 class Router extends RouterView
 {
 
-	/**
-	 * The db
-	 *
-	 * @var DatabaseInterface
-	 *
-	 * @since  4.0.0
-	 */
-	private $db;
+    /**
+     * The db
+     *
+     * @var DatabaseInterface
+     *
+     * @since  4.0.0
+     */
+    private $db;
 
-	/**
-	 * Router constructor.
-	 *
-	 * @param   CMSApplication  $app   The application object.
-	 * @param   AbstractMenu    $menu  The menu object to work with.
-	 *
-	 * @since  1.6.0
-	 */
-	public function __construct($app = null, $menu = null)
-	{
-		// Registration route
-		$html = new RouterViewConfiguration('html');
-		$html->setKey('key');
-		$this->registerView($html);
+    /**
+     * Router constructor.
+     *
+     * @param   CMSApplication  $app   The application object.
+     * @param   AbstractMenu    $menu  The menu object to work with.
+     *
+     * @since  1.6.0
+     */
+    public function __construct($app = null, $menu = null)
+    {
+        // Registration route
+        $html = new RouterViewConfiguration('html');
+        $html->setKey('key');
+        $this->registerView($html);
 
-		parent::__construct($app, $menu);
+        parent::__construct($app, $menu);
 
-		$this->attachRule(new MenuRules($this));
-		$this->attachRule(new StandardRules($this));
-		$this->attachRule(new NomenuRules($this));
-	}
+        $this->attachRule(new MenuRules($this));
+        $this->attachRule(new StandardRules($this));
+        $this->attachRule(new NomenuRules($this));
+    }
 
-	/**
-	 * Method to get the segment(s) for html.
-	 *
-	 * @param   string  $id     ID of the item to retrieve the segments.
-	 * @param   array   $query  The request that is built right now.
-	 *
-	 * @return  array|string  The segments of this item.
-	 *
-	 * @since  1.6.0
-	 */
-	public function getHTMLSegment($id, $query)
-	{
-		return [1 => 'html'];
-	}
+    /**
+     * Method to get the segment(s) for html.
+     *
+     * @param   string  $id     ID of the item to retrieve the segments.
+     * @param   array   $query  The request that is built right now.
+     *
+     * @return  array|string  The segments of this item.
+     *
+     * @since  1.6.0
+     */
+    public function getHTMLSegment($id, $query)
+    {
+        return [1 => 'html'];
+    }
 
-	/**
-	 * Method to get the id for html.
-	 *
-	 * @param   string  $segment  Segment to retrieve the ID.
-	 * @param   array   $query    The request that is parsed right now.
-	 *
-	 * @return  integer|false  The id of this item or false.
-	 *
-	 * @since  1.6.0
-	 */
-	public function getHTMLId($segment, $query)
-	{
-		return (@$query['view'] == 'html') ? 1 : false;
-	}
+    /**
+     * Method to get the id for html.
+     *
+     * @param   string  $segment  Segment to retrieve the ID.
+     * @param   array   $query    The request that is parsed right now.
+     *
+     * @return  integer|false  The id of this item or false.
+     *
+     * @since  1.6.0
+     */
+    public function getHTMLId($segment, $query)
+    {
+        return (@$query['view'] == 'html') ? 1 : false;
+    }
 }

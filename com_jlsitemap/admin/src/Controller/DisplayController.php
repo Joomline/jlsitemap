@@ -33,20 +33,20 @@ class DisplayController extends BaseController
      */
     protected $default_view = 'controlpanel';
 
-	/**
-	 * Typical view method for MVC based architecture
-	 *
-	 * @param   boolean  $cachable   If true, the view output will be cached
-	 * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link       https://web-tolk.ru
-	 *
-	 * @throws  \Exception
-	 *
-	 * @return  BaseController  A BaseController object to support chaining.
-	 *
-	 * @since   1.5.2
-	 */
-	public function display($cachable = false, $urlparams = array())
-	{
-		return parent::display($cachable, $urlparams);
-	}
+    /**
+     * Typical view method for MVC based architecture
+     *
+     * @param   boolean  $cachable   If true, the view output will be cached
+     * @param   array    $urlparams  An array of safe URL parameters and their variable types, for valid values see {@link       https://web-tolk.ru
+     *
+     * @return  BaseController  A BaseController object to support chaining.
+     *
+     * @throws  \Exception
+     *
+     * @since   1.5.2
+     */
+    public function display($cachable = false, $urlparams = array())
+    {
+        return parent::display($cachable, $urlparams);
+    }
 }
