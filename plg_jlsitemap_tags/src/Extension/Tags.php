@@ -99,7 +99,8 @@ final class Tags extends CMSPlugin implements SubscriberInterface
             // Prepare exclude attribute
             $metadata = new Registry($row->metadata);
             $exclude  = [];
-            if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots')))) {
+	        $robots = $metadata->get('robots', $config->get('siteRobots'));
+	        if (!empty($robots) && preg_match('/noindex/', $robots)) {
                 $exclude[] = [
                     'type' => Text::_('PLG_JLSITEMAP_TAGS_EXCLUDE'),
                     'msg'  => Text::_('PLG_JLSITEMAP_TAGS_EXCLUDE_ROBOTS'),

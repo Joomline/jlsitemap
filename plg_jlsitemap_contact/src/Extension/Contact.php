@@ -128,7 +128,8 @@ final class Contact extends CMSPlugin implements SubscriberInterface
                 // Prepare exclude attribute
                 $metadata = new Registry($row->metadata);
                 $exclude  = [];
-                if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots')))) {
+				$robots = $metadata->get('robots', $config->get('siteRobots'));
+                if (!empty($robots) && preg_match('/noindex/', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CATEGORY_ROBOTS'),
