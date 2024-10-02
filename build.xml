@@ -15,6 +15,7 @@
 			<fileset dir="./">
 				<exclude name="${dist}"/>
 				<exclude name="${build}"/>
+				<exclude name=".idea/**"/>
 				<exclude name="build.xml"/>
 				<exclude name="README.md"/>
 				<exclude name="README.ru-RU.md"/>
