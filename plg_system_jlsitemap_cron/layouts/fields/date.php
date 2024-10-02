@@ -25,9 +25,14 @@ extract($displayData);
  */
 
 $date = (empty($value)) ? Text::_('JNEVER') : HTMLHelper::_('date', $value, Text::_('DATE_FORMAT_LC6')) .
-	' (' . Factory::getConfig()->get('offset') . ')'
+    ' (' . Factory::getContainer()->get('config')->get('offset') . ')'
 ?>
-<div data-input-date="<?php echo $id; ?>">
-	<input type="text" value="<?php echo $date; ?>" readonly>
-	<input id="<?php echo $id; ?>" type="hidden" name="<?php echo $name; ?>" value="<?php echo $value; ?>" readonly>
+<div data-input-date="<?php
+echo $id; ?>">
+    <input type="text" class="form-control" value="<?php
+    echo $date; ?>" readonly>
+    <input id="<?php
+    echo $id; ?>" type="hidden" name="<?php
+    echo $name; ?>" value="<?php
+    echo $value; ?>" readonly>
 </div>

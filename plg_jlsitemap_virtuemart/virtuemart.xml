@@ -9,14 +9,17 @@
 	<authorUrl>https://joomline.ru</authorUrl>
 	<version>@version@</version>
 	<description>PLG_JLSITEMAP_VIRTUEMART_DESCRIPTION</description>
+	<namespace path="src">Joomla\Plugin\JLSitemap\Virtuemart</namespace>
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_virtuemart.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_jlsitemap_virtuemart.sys.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_virtuemart.ini</language>
-		<language tag="ru-RU">ru-RU/ru-RU.plg_jlsitemap_virtuemart.sys.ini</language>
+		<language tag="en-GB">en-GB/plg_jlsitemap_virtuemart.ini</language>
+		<language tag="en-GB">en-GB/plg_jlsitemap_virtuemart.sys.ini</language>
+		<language tag="ru-RU">ru-RU/plg_jlsitemap_virtuemart.ini</language>
+		<language tag="ru-RU">ru-RU/plg_jlsitemap_virtuemart.sys.ini</language>
 	</languages>
 	<files>
-		<filename plugin="virtuemart">virtuemart.php</filename>
+		<folder plugin="virtuemart">src</folder>
+		<folder>services</folder>
+		<filename>virtuemart.xml</filename>
 	</files>
 	<config>
 		<fields name="params">
