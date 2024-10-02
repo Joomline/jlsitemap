@@ -12,7 +12,7 @@ namespace Joomla\Plugin\JLSitemap\Kunena\Extension;
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Database\DatabaseAwareTrait;
@@ -61,6 +61,12 @@ final class Kunena extends CMSPlugin implements SubscriberInterface
      */
     public function onGetUrls(Event $event): void
     {
+
+        if(!ComponentHelper::isEnabled('com_kunena'))
+        {
+            return;
+        }
+
         /**
          * @param   array     $urls    Urls array
          * @param   Registry  $config  Component config

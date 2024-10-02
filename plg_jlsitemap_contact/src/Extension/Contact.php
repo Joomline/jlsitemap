@@ -12,6 +12,7 @@ namespace Joomla\Plugin\JLSitemap\Contact\Extension;
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -57,6 +58,11 @@ final class Contact extends CMSPlugin implements SubscriberInterface
      */
     public function onGetUrls(Event $event): void
     {
+        if(!ComponentHelper::isEnabled('com_contact'))
+        {
+            return;
+        }
+
         /**
          * @param array $urls Urls array
          * @param Registry $config Component config

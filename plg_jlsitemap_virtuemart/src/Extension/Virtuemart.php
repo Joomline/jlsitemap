@@ -12,6 +12,7 @@ namespace Joomla\Plugin\JLSitemap\Virtuemart\Extension;
 
 \defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Database\DatabaseAwareTrait;
@@ -56,6 +57,11 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
      */
     public function onGetUrls(Event $event): void
     {
+        if(!ComponentHelper::isEnabled('com_virtuemart'))
+        {
+            return;
+        }
+
         /**
          * @param   array     $urls    Urls array
          * @param   Registry  $config  Component config

@@ -12,6 +12,7 @@ namespace Joomla\Plugin\JLSitemap\Tags\Extension;
 
 \defined('_JEXEC') or die;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -58,6 +59,12 @@ final class Tags extends CMSPlugin implements SubscriberInterface
      */
     public function onGetUrls(Event $event): void
     {
+
+        if(!ComponentHelper::isEnabled('com_tags'))
+        {
+            return;
+        }
+
         /**
          * @param   array     $urls    Urls array
          * @param   Registry  $config  Component config
