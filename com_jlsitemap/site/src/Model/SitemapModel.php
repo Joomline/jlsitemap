@@ -10,13 +10,9 @@
 
 namespace Joomla\Component\JLSitemap\Site\Model;
 
-defined('_JEXEC') or die;
-
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -24,46 +20,51 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+
+\defined('_JEXEC') or die;
 
 class SitemapModel extends BaseDatabaseModel
 {
     /**
      * JLSitemap component configuration.
      *
-     * @var  Registry
+     * @var  ?Registry
      *
      * @since  1.9.0
      */
-    protected $_configuration = null;
+    protected ?Registry $_configuration = null;
 
     /**
      * Object with urls array.
      *
-     * @var  object
+     * @var  ?object
      *
      * @since  1.1.0
      */
-    protected $_urls = null;
+    protected ?object $_urls = null;
 
     /**
      * Menu items array.
      *
-     * @var  array
+     * @var  ?array
      *
      * @since  1.1.0
      */
-    protected $_menuItems = null;
+    protected ?array $_menuItems = null;
 
     /**
      * Sitemap stylesheet.
      *
-     * @var  string
+     * @var  ?array
      *
      * @since  1.10.0
      */
-    protected $_xsl = null;
+    protected ?array $_xsl = [];
 
     /**
      * Constructor.
@@ -142,7 +143,7 @@ class SitemapModel extends BaseDatabaseModel
             }
 
             // Trigger after generate event
-            $app->triggerEvent('onAfterGenerate', array(&$result, $params));
+            $app->triggerEvent('onAfterGenerate', [&$result, $params]);
         }
 
         return $result;
@@ -162,7 +163,7 @@ class SitemapModel extends BaseDatabaseModel
         if ($this->_configuration === null) {
             $configuration = ComponentHelper::getParams('com_jlsitemap');
 
-            Factory::getApplication()->triggerEvent('onGetConfiguration', array(&$configuration));
+            Factory::getApplication()->triggerEvent('onGetConfiguration', [&$configuration]);
 
             $this->_configuration = $configuration;
         }
@@ -264,7 +265,7 @@ class SitemapModel extends BaseDatabaseModel
             $url->set('priority', $priority);
             $url->set('exclude', $exclude);
 
-            $all [$key]        = $url;
+            $all[$key]        = $url;
             $includes[$key]    = $url;
             $filterMenuHomes[] = $key;
 
@@ -534,7 +535,7 @@ class SitemapModel extends BaseDatabaseModel
         $multilanguage = false,
         $menutypes = false,
         $siteRobots = null,
-        $guestAccess = array()
+        $guestAccess = []
     ) {
         if ($this->_menuItems === null) {
             // Get menu items
@@ -751,11 +752,11 @@ class SitemapModel extends BaseDatabaseModel
             foreach ($menu as $filter) {
                 $filter   = str_replace(['.html'], '', $filter);
                 $filter   = str_replace(['/'], '\/', $filter);
-                $patterns = array(
+                $patterns = [
                     '/^' . $filter . '\//',
                     '/^' . $filter . '$/',
                     '/^' . $filter . '\.html/',
-                );
+                ];
                 foreach ($patterns as $pattern) {
                     if (preg_match($pattern, $link)) {
                         $excludeMenu = false;
@@ -789,7 +790,7 @@ class SitemapModel extends BaseDatabaseModel
      *
      * @since  1.7
      */
-    public function generateSingleXML($rows = [])
+    public function generateSingleXML($rows = []): false|string
     {
         $xml      = $this->filterRegexp($this->getXML($rows));
         $filename = $this->getConfiguration()->get('filename', 'sitemap');
@@ -799,7 +800,7 @@ class SitemapModel extends BaseDatabaseModel
             File::delete($file);
         }
 
-        return (File::append($file, $xml)) ? $file : false;
+        return (File::write(file:$file, buffer:$xml, appendToFile:true)) ? $file : false;
     }
 
     /**
@@ -813,7 +814,7 @@ class SitemapModel extends BaseDatabaseModel
      *
      * @since  1.7
      */
-    protected function filterRegexp($string = '')
+    protected function filterRegexp($string = ''): string
     {
         if (empty($string)) {
             return $string;
@@ -846,7 +847,7 @@ class SitemapModel extends BaseDatabaseModel
     public function getXML($rows = [])
     {
         $rows       = (empty($rows)) ? $this->getUrls()->includes : $rows;
-        $date       = Factory::getDate()->toSql();
+        $date       = (new Date())->toSql();
         $comment    = '<!-- JLSitemap ' . $date . ' -->';
         $xsl        = $this->generateXSL('urlset');
         $stylesheet = ($xsl) ? '<?xml-stylesheet type="text/xsl" href="' . Uri::root() . $xsl . '"?>' : '';
@@ -914,9 +915,8 @@ class SitemapModel extends BaseDatabaseModel
                 }
             }
         }
-        $xml = $sitemap->asXML();
 
-        return $xml;
+        return $sitemap->asXML();
     }
 
     /**
@@ -936,10 +936,6 @@ class SitemapModel extends BaseDatabaseModel
             return false;
         }
 
-        if ($this->_xsl === null) {
-            $this->_xsl = [];
-        }
-
         if (!isset($this->_xsl[$type])) {
             $config = $this->getConfiguration();
             $src    = false;
@@ -955,7 +951,7 @@ class SitemapModel extends BaseDatabaseModel
                 $xsl = '<?xml version="1.0" encoding="UTF-8"?>'
                     . PHP_EOL . LayoutHelper::render(
                         'components.jlsitemap.xsl.' . $type,
-                        ['date' => Factory::getDate()->toSql()]
+                        ['date' => (new Date())->toSql()]
                     );
 
                 $filename = $config->get('filename', 'sitemap');
@@ -966,7 +962,7 @@ class SitemapModel extends BaseDatabaseModel
                     File::delete($path);
                 }
 
-                $src = (File::append($file, $xsl)) ? $file : false;
+                $src = (File::write(file:$file, buffer:$xsl, useStreams: false, appendToFile: true)) ? $file : false;
             }
 
             $this->_xsl[$type] = $src;
@@ -1002,7 +998,7 @@ class SitemapModel extends BaseDatabaseModel
         }
 
         // Delete xsl stylesheets
-        $files = array($filename . '_sitemapindex.xsl', $filename . '_urlset.xsl');
+        $files = [$filename . '_sitemapindex.xsl', $filename . '_urlset.xsl'];
         foreach ($files as $file) {
             $path = Path::clean(JPATH_ROOT . '/' . $file);
             if (\is_file($path) && !File::delete($path)) {
@@ -1031,7 +1027,7 @@ class SitemapModel extends BaseDatabaseModel
      *
      * @since  1.7
      */
-    public function generateMultiXML($rows = array(), $xmlLimit = 50000)
+    public function generateMultiXML($rows = [], $xmlLimit = 50000)
     {
         // Clean old files
         $filename = $this->getConfiguration()->get('filename', 'sitemap');
@@ -1057,7 +1053,7 @@ class SitemapModel extends BaseDatabaseModel
 
                 $xml  = $this->filterRegexp($this->getXML($includes));
                 $file = Path::clean(JPATH_ROOT . '/' . $filename . '_' . $f . '.xml');
-                if (File::append($file, $xml)) {
+                if (File::write(file:$file, buffer: $xml, appendToFile: true)) {
                     $result[] = $file;
                 } else {
                     return false;
@@ -1070,7 +1066,7 @@ class SitemapModel extends BaseDatabaseModel
         }
 
         // Main sitemap
-        $date       = Factory::getDate();
+        $date       = new Date();
         $xsl        = $this->generateXSL('sitemapindex');
         $stylesheet = ($xsl) ? '<?xml-stylesheet type="text/xsl" href="' . Uri::root() . $xsl . '"?>' : '';
         $comment    = '<!-- JLSitemap ' . $date->toSql() . ' -->';
@@ -1094,7 +1090,7 @@ class SitemapModel extends BaseDatabaseModel
         if (\is_file($file)) {
             File::delete($file);
         }
-        if (File::append($file, $xml)) {
+        if (File::write(file:$file, buffer:$xml, appendToFile: true)) {
             $result[] = $file;
         } else {
             return false;
@@ -1133,7 +1129,7 @@ class SitemapModel extends BaseDatabaseModel
             File::delete($file);
         }
 
-        return (File::append($file, $json)) ? $file : false;
+        return (File::write(file:$file, buffer:$json,appendToFile: true)) ? $file : false;
     }
 
     /**

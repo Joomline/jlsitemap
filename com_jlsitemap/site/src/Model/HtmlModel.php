@@ -38,7 +38,7 @@ class HtmlModel extends ListModel
      *
      * @since  1.6.0
      */
-    protected $_links = null;
+    protected ?array $_links = [];
 
     /**
      * Method to get an array of links data.
@@ -135,7 +135,7 @@ class HtmlModel extends ListModel
      */
     protected function getLinks()
     {
-        if ($this->_links === null) {
+        if (empty($this->_links)) {
             $filename = ComponentHelper::getParams('com_jlsitemap')->get('filename', 'sitemap');
             $file     = JPATH_ROOT . '/' . $filename . '.json';
             if (!\is_file($file)) {
@@ -162,7 +162,7 @@ class HtmlModel extends ListModel
         $model = Factory::getApplication()
             ->bootComponent('com_jlsitemap')
             ->getMVCFactory()
-            ->createModel('Sitemap', 'JLSitemapModel', ['ignore_request' => true]);
+            ->createModel('Sitemap', 'Site', ['ignore_request' => true]);
         if (!$result = $model->generate()) {
             throw new \Exception(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_FAILURE', $model->getError()));
         }

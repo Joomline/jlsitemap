@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="task" method="upgrade">
+	<name>PLG_TASK_JLSITEMAPCRON</name>
+	<author>Sergey Tolkachyov</author>
+	<creationDate>@date@</creationDate>
+	<copyright>Copyright (c) 2025 Sergey Tolkachyov. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>info@web-tolk.ru</authorEmail>
+	<authorUrl>https://web-tolk.ru</authorUrl>
+	<version>@version@</version>
+	<description>PLG_TASK_JLSITEMAPCRON_DESC</description>
+	<namespace path="src">Joomla\Plugin\Task\Jlsitemapcron</namespace>
+	<files>
+		<folder>services</folder>
+		<folder plugin="jlsitemapcron">src</folder>
+		<filename>jlsitemapcron.xml</filename>
+	</files>
+	<languages>
+		<language tag="ru-RU">language/ru-RU/plg_task_jlsitemapcron.ini</language>
+		<language tag="ru-RU">language/ru-RU/plg_task_jlsitemapcron.sys.ini</language>
+		<language tag="en-GB">language/en-GB/plg_task_jlsitemapcron.ini</language>
+		<language tag="en-GB">language/en-GB/plg_task_jlsitemapcron.sys.ini</language>
+	</languages>
+	<config>
+        <fields name="params">
+            <fieldset name="basic">
+
+			</fieldset>
+		</fields>
+	</config>
+</extension>

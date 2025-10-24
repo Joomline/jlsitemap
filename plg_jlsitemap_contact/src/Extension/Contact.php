@@ -28,7 +28,7 @@ final class Contact extends CMSPlugin implements SubscriberInterface
     /**
      * Affects constructor behavior. If true, language files will be loaded automatically.
      *
-     * @var  boolean
+     * @var  bool
      *
      * @since  1.3.0
      */
@@ -250,7 +250,8 @@ final class Contact extends CMSPlugin implements SubscriberInterface
                 // Prepare exclude attribute
                 $metadata = new Registry($row->metadata);
                 $exclude  = [];
-                if (preg_match('/noindex/', $metadata->get('robots', $config->get('siteRobots')))) {
+                $robots = $metadata->get('robots', $config->get('siteRobots'));
+                if (preg_match('/noindex/', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTACT_EXCLUDE_CONTACT_ROBOTS'),
