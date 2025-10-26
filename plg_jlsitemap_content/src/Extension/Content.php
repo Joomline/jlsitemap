@@ -29,7 +29,7 @@ final class Content extends CMSPlugin implements SubscriberInterface
     /**
      * Affects constructor behavior. If true, language files will be loaded automatically.
      *
-     * @var  boolean
+     * @var  bool
      *
      * @since  0.0.1
      */
@@ -347,7 +347,7 @@ final class Content extends CMSPlugin implements SubscriberInterface
                     }
 
                     $alternates[$row->association][$row->language] = $loc;
-                };
+                }
             }
 
             // Add alternates to articles

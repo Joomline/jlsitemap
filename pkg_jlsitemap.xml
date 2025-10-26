@@ -4,7 +4,7 @@
 	<packagename>jlsitemap</packagename>
 	<author>Joomline</author>
 	<creationDate>@date@</creationDate>
-	<copyright>Copyright (c) 2010 - 2024 Joomline. All rights reserved.</copyright>
+	<copyright>Copyright (c) 2010 - 2025 Joomline. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sale@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
@@ -23,6 +23,7 @@
 		<folder type="plugin" group="jlsitemap" id="tags">plg_jlsitemap_tags</folder>
 		<folder type="plugin" group="jlsitemap" id="virtuemart">plg_jlsitemap_virtuemart</folder>
 		<folder type="plugin" group="system" id="jlsitemap_cron">plg_system_jlsitemap_cron</folder>
+		<folder type="plugin" group="task" id="jlsitemapcron">plg_task_jlsitemapcron</folder>
 	</files>
 	<updateservers>
 		<server type="extension" priority="1" name="JL Sitemap">
