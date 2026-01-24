@@ -12,7 +12,7 @@
 use Joomla\CMS\Application\AdministratorApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Installer\InstallerScriptInterface;
 use Joomla\CMS\Language\Text;
@@ -22,8 +22,8 @@ use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\CMS\Version;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\Registry\Registry;
 
 return new class () implements ServiceProviderInterface {
