@@ -18,6 +18,8 @@
 	<languages folder="site">
 		<language tag="en-GB">language/en-GB/com_jlsitemap.ini</language>
 		<language tag="en-GB">language/en-GB/com_jlsitemap.sys.ini</language>
+		<language tag="de-DE">language/de-DE/com_jlsitemap.ini</language>
+		<language tag="de-DE">language/de-DE/com_jlsitemap.sys.ini</language>
 		<language tag="ru-RU">language/ru-RU/com_jlsitemap.ini</language>
 		<language tag="ru-RU">language/ru-RU/com_jlsitemap.sys.ini</language>
 	</languages>
@@ -33,6 +35,8 @@
 		<languages folder="admin">
 			<language tag="en-GB">language/en-GB/com_jlsitemap.ini</language>
 			<language tag="en-GB">language/en-GB/com_jlsitemap.sys.ini</language>
+			<language tag="de-DE">language/de-DE/com_jlsitemap.ini</language>
+			<language tag="de-DE">language/de-DE/com_jlsitemap.sys.ini</language>
 			<language tag="ru-RU">language/ru-RU/com_jlsitemap.ini</language>
 			<language tag="ru-RU">language/ru-RU/com_jlsitemap.sys.ini</language>
 		</languages>

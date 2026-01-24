@@ -13,6 +13,8 @@
 	<languages folder="language">
 		<language tag="en-GB">en-GB/plg_jlsitemap_contact.ini</language>
 		<language tag="en-GB">en-GB/plg_jlsitemap_contact.sys.ini</language>
+		<language tag="de-DE">de-DE/plg_jlsitemap_contact.ini</language>
+		<language tag="de-DE">de-DE/plg_jlsitemap_contact.sys.ini</language>
 		<language tag="ru-RU">ru-RU/plg_jlsitemap_contact.ini</language>
 		<language tag="ru-RU">ru-RU/plg_jlsitemap_contact.sys.ini</language>
 	</languages>
@@ -25,15 +27,15 @@
 		<fields name="params">
 			<fieldset name="contacts" label="PLG_JLSITEMAP_CONTACT_PARAMS_CONTACTS">
 				<field name="contacts_enable" type="radio"
-					   label="PLG_JLSITEMAP_CONTACT_PARAMS_ENABLE"
-					   default="1"
-					   class="btn-group btn-group-yesno">
+					label="PLG_JLSITEMAP_CONTACT_PARAMS_ENABLE"
+					default="1"
+					class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="contacts_changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_CONTACT_PARAMS_CHANGEFREQ"
-					   showon="contacts_enable:1">
+					label="PLG_JLSITEMAP_CONTACT_PARAMS_CHANGEFREQ"
+					showon="contacts_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -43,8 +45,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="contacts_priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_CONTACT_PARAMS_PRIORITY"
-					   showon="contacts_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_CONTACT_PARAMS_PRIORITY"
+					showon="contacts_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>
@@ -60,15 +62,15 @@
 			</fieldset>
 			<fieldset name="categories" label="PLG_JLSITEMAP_CONTACT_PARAMS_CATEGORIES">
 				<field name="categories_enable" type="radio"
-					   label="PLG_JLSITEMAP_CONTACT_PARAMS_ENABLE"
-					   default="1"
-					   class="btn-group btn-group-yesno">
+					label="PLG_JLSITEMAP_CONTACT_PARAMS_ENABLE"
+					default="1"
+					class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="categories_changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_CONTACT_PARAMS_CHANGEFREQ"
-					   showon="categories_enable:1">
+					label="PLG_JLSITEMAP_CONTACT_PARAMS_CHANGEFREQ"
+					showon="categories_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -78,8 +80,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="categories_priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_CONTACT_PARAMS_PRIORITY"
-					   showon="categories_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_CONTACT_PARAMS_PRIORITY"
+					showon="categories_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>
