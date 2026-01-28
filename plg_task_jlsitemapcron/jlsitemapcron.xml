@@ -20,10 +20,12 @@
 		<language tag="ru-RU">language/ru-RU/plg_task_jlsitemapcron.sys.ini</language>
 		<language tag="en-GB">language/en-GB/plg_task_jlsitemapcron.ini</language>
 		<language tag="en-GB">language/en-GB/plg_task_jlsitemapcron.sys.ini</language>
+		<language tag="de-DE">language/de-DE/plg_task_jlsitemapcron.ini</language>
+		<language tag="de-DE">language/de-DE/plg_task_jlsitemapcron.sys.ini</language>
 	</languages>
 	<config>
-        <fields name="params">
-            <fieldset name="basic">
+		<fields name="params">
+			<fieldset name="basic">
 
 			</fieldset>
 		</fields>

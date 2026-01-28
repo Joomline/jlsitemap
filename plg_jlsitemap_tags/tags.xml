@@ -13,6 +13,8 @@
 	<languages folder="language">
 		<language tag="en-GB">en-GB/plg_jlsitemap_tags.ini</language>
 		<language tag="en-GB">en-GB/plg_jlsitemap_tags.sys.ini</language>
+		<language tag="de-DE">de-DE/plg_jlsitemap_tags.ini</language>
+		<language tag="de-DE">de-DE/plg_jlsitemap_tags.sys.ini</language>
 		<language tag="ru-RU">ru-RU/plg_jlsitemap_tags.ini</language>
 		<language tag="ru-RU">ru-RU/plg_jlsitemap_tags.sys.ini</language>
 	</languages>
@@ -25,8 +27,8 @@
 		<fields name="params">
 			<fieldset name="basic">
 				<field name="changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_TAGS_PARAMS_CHANGEFREQ"
-					   showon="items_enable:1">
+					label="PLG_JLSITEMAP_TAGS_PARAMS_CHANGEFREQ"
+					showon="items_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -36,8 +38,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_TAGS_PARAMS_PRIORITY"
-					   showon="items_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_TAGS_PARAMS_PRIORITY"
+					showon="items_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>

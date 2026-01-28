@@ -13,6 +13,8 @@
 	<languages folder="language">
 		<language tag="en-GB">en-GB/plg_jlsitemap_virtuemart.ini</language>
 		<language tag="en-GB">en-GB/plg_jlsitemap_virtuemart.sys.ini</language>
+		<language tag="de-DE">de-DE/plg_jlsitemap_virtuemart.ini</language>
+		<language tag="de-DE">de-DE/plg_jlsitemap_virtuemart.sys.ini</language>
 		<language tag="ru-RU">ru-RU/plg_jlsitemap_virtuemart.ini</language>
 		<language tag="ru-RU">ru-RU/plg_jlsitemap_virtuemart.sys.ini</language>
 	</languages>
@@ -25,15 +27,15 @@
 		<fields name="params">
 			<fieldset name="products" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRODUCTS">
 				<field name="products_enable" type="radio"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
-					   default="1"
-					   class="btn-group btn-group-yesno">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
+					default="1"
+					class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="products_changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
-					   showon="products_enable:1">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
+					showon="products_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -43,8 +45,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="products_priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
-					   showon="products_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
+					showon="products_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>
@@ -60,15 +62,15 @@
 			</fieldset>
 			<fieldset name="categories" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CATEGORIES">
 				<field name="categories_enable" type="radio"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
-					   default="1"
-					   class="btn-group btn-group-yesno">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
+					default="1"
+					class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="categories_changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
-					   showon="categories_enable:1">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
+					showon="categories_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -78,8 +80,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="categories_priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
-					   showon="categories_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
+					showon="categories_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>
@@ -95,15 +97,15 @@
 			</fieldset>
 			<fieldset name="manufacturers" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_MANUFACTURERS">
 				<field name="manufacturers_enable" type="radio"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
-					   default="1"
-					   class="btn-group btn-group-yesno">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
+					default="1"
+					class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="manufacturers_changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
-					   showon="manufacturers_enable:1">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
+					showon="manufacturers_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -113,8 +115,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="manufacturers_priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
-					   showon="manufacturers_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
+					showon="manufacturers_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>
@@ -130,15 +132,15 @@
 			</fieldset>
 			<fieldset name="vendors" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_VENDORS">
 				<field name="vendors_enable" type="radio"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
-					   default="0"
-					   class="btn-group btn-group-yesno">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_ENABLE"
+					default="0"
+					class="btn-group btn-group-yesno">
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
 				<field name="vendors_changefreq" type="list" default="weekly"
-					   label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
-					   showon="vendors_enable:1">
+					label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_CHANGEFREQ"
+					showon="vendors_enable:1">
 					<option value="always">always</option>
 					<option value="hourly">hourly</option>
 					<option value="daily">daily</option>
@@ -148,8 +150,8 @@
 					<option value="never">never</option>
 				</field>
 				<field name="vendors_priority" type="list"
-					   default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
-					   showon="vendors_enable:1">
+					default="0.5" label="PLG_JLSITEMAP_VIRTUEMART_PARAMS_PRIORITY"
+					showon="vendors_enable:1">
 					<option value="0.0">0.0</option>
 					<option value="0.1">0.1</option>
 					<option value="0.2">0.2</option>
