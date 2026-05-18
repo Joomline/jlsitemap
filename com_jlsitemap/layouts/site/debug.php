@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 if (!$displayData) {
     return;
@@ -33,10 +34,7 @@ echo Factory::getApplication()->getLanguage()->getTag(); ?>">
     <title><?php
         echo Text::_('COM_JLSITEMAP') . ': ' . Text::_('COM_JLSITEMAP_SITEMAP_DEBUG'); ?></title>
     <link rel="stylesheet" href="<?php
-    echo HTMLHelper::stylesheet(
-        'com_jlsitemap/sitemap.min.css',
-        ['version' => 'auto', 'relative' => true, 'pathOnly' => true]
-    ); ?>"/>
+    echo rtrim(Uri::root(), '/') . '/media/com_jlsitemap/css/sitemap.min.css'; ?>"/>
     <style>
         #excludes {
             margin-top: 30px;

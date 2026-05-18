@@ -18,7 +18,7 @@ use Joomla\CMS\Installer\InstallerScriptInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\Component\JLSitemap\Administrator\Helper\SecretsHelper;
-use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\CMS\Version;
@@ -43,11 +43,11 @@ return new class () implements ServiceProviderInterface {
 			/**
 			 * The Database object.
 			 *
-			 * @var   DatabaseDriver
+			 * @var   DatabaseInterface
 			 *
 			 * @since  1.0.0
 			 */
-			protected DatabaseDriver $db;
+			protected DatabaseInterface $db;
 
 			/**
 			 * Minimum Joomla version required to install the extension.
@@ -77,7 +77,7 @@ return new class () implements ServiceProviderInterface {
 			public function __construct(AdministratorApplication $app)
 			{
 				$this->app = $app;
-				$this->db  = Factory::getContainer()->get('DatabaseDriver');
+				$this->db  = Factory::getContainer()->get(DatabaseInterface::class);
 			}
 
 			/**
@@ -246,7 +246,8 @@ return new class () implements ServiceProviderInterface {
 			 */
 			protected function addAccessKey()
 			{
-				\JLoader::registerNamespace('Joomla\Component\JLSitemap\Administrator\Helper',JPATH_ADMINISTRATOR.'/components/com_jlsitemap/src/Helper');
+				$this->app->bootComponent('com_jlsitemap');
+
 				SecretsHelper::getAccessKey();
 			}
 

@@ -33,6 +33,8 @@ class JLSitemapComponent extends MVCComponent implements
     use RouterServiceTrait;
     use HTMLRegistryAwareTrait;
 
+    protected ?ContainerInterface $container = null;
+
 
     /**
      * Booting the extension. This is the function to set up the environment of the extension like
@@ -49,5 +51,20 @@ class JLSitemapComponent extends MVCComponent implements
      */
     public function boot(ContainerInterface $container)
     {
+        $this->container = $container;
+    }
+
+    public function getContainer(): ContainerInterface
+    {
+        if ($this->container === null) {
+            throw new \RuntimeException('Component container not available. Has boot() been called?');
+        }
+
+        return $this->container;
+    }
+
+    public function hasContainerService(string $serviceId): bool
+    {
+        return $this->container !== null && $this->container->has($serviceId);
     }
 }

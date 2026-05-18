@@ -1,7 +1,7 @@
 <project name="jlsitemap" default="dist" basedir=".">
-	<property name="VERSION" value="2.1.1"/>
+	<property name="VERSION" value="2.2.0"/>
 	<tstamp>
-		<format property="DATE" pattern="%d.%m.%Y"/>
+		<format property="DATE" pattern="dd.MM.yyyy"/>
 	</tstamp>
 	<property name="build" value="_build"/>
 	<property name="dist" value="_dist"/>
@@ -16,6 +16,9 @@
 				<exclude name="${dist}"/>
 				<exclude name="${build}"/>
 				<exclude name=".idea/**"/>
+				<exclude name=".playwright-mcp/**"/>
+				<exclude name=".agents/**"/>
+				<exclude name=".serena/**"/>
 				<exclude name="build.xml"/>
 				<exclude name="README.md"/>
 				<exclude name="README.ru-RU.md"/>
@@ -27,6 +30,10 @@
 				</replacetokens>
 			</filterchain>
 		</copy>
+		<replaceregexp file="${build}/jlsitemap/com_jlsitemap/site/src/Model/SitemapModel.php"
+			match="__DEPLOY_VERSION__"
+			replace="${VERSION}"
+			byline="true"/>
 	</target>
 	<target name="dist" depends="init, replacemodule">
 		<zip destfile="${dist}/${filename}">

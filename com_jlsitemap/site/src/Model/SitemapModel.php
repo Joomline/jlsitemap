@@ -10,16 +10,19 @@
 
 namespace Joomla\Component\JLSitemap\Site\Model;
 
+use Joomla\Component\JLSitemap\Administrator\Service\SitemapGeneratorAdapterInterface;
+use Joomla\Component\JLSitemap\Administrator\Service\SitemapRuntimeContextFactory;
+use Joomla\Component\JLSitemap\Administrator\Service\SitemapServiceFactory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -28,7 +31,7 @@ use Joomla\Utilities\ArrayHelper;
 
 \defined('_JEXEC') or die;
 
-class SitemapModel extends BaseDatabaseModel
+class SitemapModel extends BaseDatabaseModel implements SitemapGeneratorAdapterInterface
 {
     /**
      * JLSitemap component configuration.
@@ -67,6 +70,15 @@ class SitemapModel extends BaseDatabaseModel
     protected ?array $_xsl = [];
 
     /**
+     * Runtime context normalized by the shared generation service.
+     *
+     * @var  ?array
+     *
+     * @since  2.1.1
+     */
+    protected ?array $_runtimeContext = null;
+
+    /**
      * Constructor.
      *
      * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
@@ -96,57 +108,7 @@ class SitemapModel extends BaseDatabaseModel
      */
     public function generate($debug = false)
     {
-        $app = Factory::getApplication();
-
-        // Trigger before generate event
-        $params = $this->getConfiguration();
-        $app->triggerEvent('onBeforeGenerate', [$params]);
-
-        // Get urs
-        $result = $this->getUrls();
-
-        // Trigger after get urls event
-        $app->triggerEvent('onAfterGetUrls', [&$result, $params]);
-
-        // Generate sitemap file
-        if (!$debug) {
-            $result->files = [];
-            $xmlLimit      = (int)$params->get('xml_limit', 50000);
-
-            // Generate xml
-            $xml = (count($result->includes) <= $xmlLimit) ? $this->generateSingleXML($result->includes)
-                : $this->generateMultiXML($result->includes, $xmlLimit);
-            if ($xml) {
-                if (is_array($xml)) {
-                    $result->files = array_merge($result->files, $xml);
-                    if ($sitemapindex = $this->generateXSL('sitemapindex')) {
-                        $result->files[] = Path::clean(JPATH_ROOT . '/' . $sitemapindex);
-                    }
-                    if ($urlset = $this->generateXSL('urlset')) {
-                        $result->files[] = Path::clean(JPATH_ROOT . '/' . $urlset);
-                    }
-                } else {
-                    $result->files[] = $xml;
-                    if ($urlset = $this->generateXSL('urlset')) {
-                        $result->files[] = Path::clean(JPATH_ROOT . '/' . $urlset);
-                    }
-                }
-            } else {
-                throw new \Exception(Text::_('COM_JLSITEMAP_ERROR_SITEMAP_XML_CREATE_FAILED'), 500);
-            }
-
-            // Generate json
-            if ($json = $this->generateJSON($result->includes)) {
-                $result->files[] = $json;
-            } else {
-                throw new \Exception(Text::_('COM_JLSITEMAP_ERROR_SITEMAP_JSON_CREATE_FAILED'), 500);
-            }
-
-            // Trigger after generate event
-            $app->triggerEvent('onAfterGenerate', [&$result, $params]);
-        }
-
-        return $result;
+        return SitemapServiceFactory::getGenerationService()->generate($this, (bool) $debug);
     }
 
     /**
@@ -180,17 +142,18 @@ class SitemapModel extends BaseDatabaseModel
      *
      * @since  1.1.0
      */
-    protected function getUrls()
+    public function getUrls()
     {
         if ($this->_urls === null) {
             $config           = $this->getConfiguration();
-            $siteConfig       = Factory::getContainer()->get('config');
-            $siteSef          = ($siteConfig->get('sef') == 1);
-            $siteRobots       = $siteConfig->get('robots');
-            $siteRoot         = Uri::getInstance()->toString(['scheme', 'host', 'port']);
-            $guestAccess      = array_unique(Factory::getApplication()->getIdentity(0)->getAuthorisedViewLevels());
-            $multilanguage    = Multilanguage::isEnabled();
-            $defaultLanguage  = ComponentHelper::getParams('com_languages')->get('site', 'en-GB');
+            $runtimeContext   = $this->getRuntimeContext();
+            $siteSef          = $runtimeContext['siteSef'];
+            $siteName         = $runtimeContext['siteName'];
+            $siteRobots       = $runtimeContext['siteRobots'];
+            $siteRoot         = $runtimeContext['siteRoot'];
+            $guestAccess      = $runtimeContext['guestAccess'];
+            $multilanguage    = $runtimeContext['multilanguage'];
+            $defaultLanguage  = $runtimeContext['defaultLanguage'];
             $changefreqValues = [
                 'always'  => 1,
                 'hourly'  => 2,
@@ -244,7 +207,7 @@ class SitemapModel extends BaseDatabaseModel
 
             // Add home page
             $type            = [Text::_('COM_JLSITEMAP_TYPES_MENU')];
-            $title           = $siteConfig->get('sitename');
+            $title           = $siteName;
             $link            = ($siteSef) ? '/' : '/index.php';
             $level           = count(explode('/', $link)) - 1;
             $key             = (empty($link)) ? '/' : $link;
@@ -339,7 +302,7 @@ class SitemapModel extends BaseDatabaseModel
             }
 
             // Prepare config
-            $config->set('siteConfig', $siteConfig);
+            $config->set('siteName', $siteName);
             $config->set('siteSef', $siteSef);
             $config->set('siteRobots', $siteRobots);
             $config->set('siteRoot', $siteRoot);
@@ -380,7 +343,7 @@ class SitemapModel extends BaseDatabaseModel
                     $priority = $config->get('priority', '0.5');
                 }
                 $lastmod = ($item->get('lastmod', false)
-                    && $item->get('lastmod') != Factory::getContainer()->get('DatabaseDriver')->getNullDate()) ?
+                    && $item->get('lastmod') != Factory::getContainer()->get(DatabaseInterface::class)->getNullDate()) ?
                     Factory::getDate($item->get('lastmod'))->toUnix() : false;
 
                 // Prepare title
@@ -415,7 +378,7 @@ class SitemapModel extends BaseDatabaseModel
                 $alternates = [];
                 if ($item->get('alternates', false)) {
                     foreach ($item->get('alternates') as $lang => $href) {
-                        $href = ($siteSef) ? Route::link('site', $href) : $href;
+                        $href = ($siteSef && !$item->get('noRoute', false)) ? Route::link('site', $href) : $href;
                         if (empty($href)) {
                             $href = '/';
                         }
@@ -433,7 +396,8 @@ class SitemapModel extends BaseDatabaseModel
                 $images = [];
                 if ($item->get('images', false)) {
                     foreach ($item->get('images') as $href) {
-                        if (!empty($href)) {
+                        $href = $this->normalizeImageUrl($href);
+                        if ($href !== '') {
                             $images[] = $href;
                         }
                     }
@@ -519,6 +483,20 @@ class SitemapModel extends BaseDatabaseModel
         return $this->_urls;
     }
 
+    public function setRuntimeContext(array $runtimeContext): void
+    {
+        $this->_runtimeContext = $runtimeContext;
+    }
+
+    public function getRuntimeContext(): array
+    {
+        if ($this->_runtimeContext === null) {
+            $this->_runtimeContext = (new SitemapRuntimeContextFactory())->create();
+        }
+
+        return $this->_runtimeContext;
+    }
+
     /**
      * Method to get menu items array
      *
@@ -539,7 +517,7 @@ class SitemapModel extends BaseDatabaseModel
     ) {
         if ($this->_menuItems === null) {
             // Get menu items
-            $db    = Factory::getContainer()->get('DatabaseDriver');
+            $db    = Factory::getContainer()->get(DatabaseInterface::class);
             $query = $db->getQuery(true)
                 ->select([
                     'm.id',
@@ -610,8 +588,12 @@ class SitemapModel extends BaseDatabaseModel
                             'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_MENUTYPES')
                         ];
                     }
-                    $siteRobots = $params->get('robots', $siteRobots);
-                    if (!empty($siteRobots) && \preg_match('/noindex/', $params->get('robots', $siteRobots))) {
+                    $robots = trim((string) $params->get('robots', ''));
+                    if ($robots === '') {
+                        $robots = (string) $siteRobots;
+                    }
+
+                    if ($robots !== '' && \preg_match('/\bnoindex\b/i', $robots)) {
                         $exclude[] = [
                             'type' => Text::_('COM_JLSITEMAP_EXCLUDE_MENU'),
                             'msg'  => Text::_('COM_JLSITEMAP_EXCLUDE_MENU_ROBOTS')
@@ -796,11 +778,7 @@ class SitemapModel extends BaseDatabaseModel
         $filename = $this->getConfiguration()->get('filename', 'sitemap');
         $file     = Path::clean(JPATH_ROOT . '/' . $filename . '.xml');
 
-        if (\is_file($file)) {
-            File::delete($file);
-        }
-
-        return (File::write(file:$file, buffer:$xml, appendToFile:true)) ? $file : false;
+        return $this->writeAtomicFile($file, $xml);
     }
 
     /**
@@ -847,7 +825,7 @@ class SitemapModel extends BaseDatabaseModel
     public function getXML($rows = [])
     {
         $rows       = (empty($rows)) ? $this->getUrls()->includes : $rows;
-        $date       = (new Date())->toSql();
+        $date       = (new Date('now'))->toSql();
         $comment    = '<!-- JLSitemap ' . $date . ' -->';
         $xsl        = $this->generateXSL('urlset');
         $stylesheet = ($xsl) ? '<?xml-stylesheet type="text/xsl" href="' . Uri::root() . $xsl . '"?>' : '';
@@ -909,6 +887,11 @@ class SitemapModel extends BaseDatabaseModel
                 // Images
                 if ($images = $row->get('images', false)) {
                     foreach ($images as $href) {
+                        $href = $this->normalizeImageUrl($href);
+                        if ($href === '') {
+                            continue;
+                        }
+
                         $image = $url->addChild('image', '', 'http://www.google.com/schemas/sitemap-image/1.1');
                         $image->addChild('loc', $href, 'http://www.google.com/schemas/sitemap-image/1.1');
                     }
@@ -917,6 +900,37 @@ class SitemapModel extends BaseDatabaseModel
         }
 
         return $sitemap->asXML();
+    }
+
+    /**
+     * Normalize sitemap image URL and reject empty root URLs.
+     *
+     * @param   mixed  $href  Raw image URL.
+     *
+     * @return  string Normalized image URL or empty string when it must be skipped.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function normalizeImageUrl(mixed $href): string
+    {
+        $href = trim((string) $href);
+
+        if ($href === '') {
+            return '';
+        }
+
+        $siteRoot     = rtrim(Uri::root(), '/');
+        $relativeRoot = trim(Uri::root(true), '/');
+
+        if (rtrim($href, '/') === $siteRoot || $href === '/') {
+            return '';
+        }
+
+        if ($relativeRoot !== '' && trim($href, '/') === $relativeRoot) {
+            return '';
+        }
+
+        return $href;
     }
 
     /**
@@ -951,18 +965,14 @@ class SitemapModel extends BaseDatabaseModel
                 $xsl = '<?xml version="1.0" encoding="UTF-8"?>'
                     . PHP_EOL . LayoutHelper::render(
                         'components.jlsitemap.xsl.' . $type,
-                        ['date' => (new Date())->toSql()]
+                        ['date' => (new Date('now'))->toSql()]
                     );
 
                 $filename = $config->get('filename', 'sitemap');
                 $file     = $filename . '_' . $type . '.xsl';
                 $path     = Path::clean(JPATH_ROOT . '/' . $file);
 
-                if (\is_file($path)) {
-                    File::delete($path);
-                }
-
-                $src = (File::write(file:$file, buffer:$xsl, useStreams: false, appendToFile: true)) ? $file : false;
+                $src = (File::write(file:$path, buffer:$xsl, useStreams: false)) ? $file : false;
             }
 
             $this->_xsl[$type] = $src;
@@ -992,7 +1002,8 @@ class SitemapModel extends BaseDatabaseModel
         // Delete multi sitemap
         $files = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml');
         foreach ($files as $file) {
-            if (!File::delete($file)) {
+            $path = Path::clean(JPATH_ROOT . '/' . $file);
+            if (!File::delete($path)) {
                 return false;
             }
         }
@@ -1029,20 +1040,18 @@ class SitemapModel extends BaseDatabaseModel
      */
     public function generateMultiXML($rows = [], $xmlLimit = 50000)
     {
-        // Clean old files
         $filename = $this->getConfiguration()->get('filename', 'sitemap');
-        $files    = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml', false, true);
-        foreach ($files as $file) {
-            File::delete($file);
-        }
+        $oldFiles = Folder::files(JPATH_ROOT, $filename . '_[0-9]*\.xml', false, true);
 
         // Generate files
-        $result   = [];
-        $i        = 0;
-        $t        = 0;
-        $f        = 0;
-        $total    = count($rows);
-        $includes = [];
+        $result      = [];
+        $tempFiles   = [];
+        $splitFiles  = [];
+        $i           = 0;
+        $t           = 0;
+        $f           = 0;
+        $total       = count($rows);
+        $includes    = [];
         foreach ($rows as $row) {
             $includes[] = $row;
             $i++;
@@ -1053,11 +1062,16 @@ class SitemapModel extends BaseDatabaseModel
 
                 $xml  = $this->filterRegexp($this->getXML($includes));
                 $file = Path::clean(JPATH_ROOT . '/' . $filename . '_' . $f . '.xml');
-                if (File::write(file:$file, buffer: $xml, appendToFile: true)) {
-                    $result[] = $file;
-                } else {
+
+                if (!$temp = $this->writeTemporaryFile($file, $xml)) {
+                    $this->deleteTemporaryFiles($tempFiles);
+
                     return false;
                 }
+
+                $tempFiles[]  = ['temp' => $temp, 'file' => $file];
+                $splitFiles[] = $file;
+                $result[]     = $file;
 
                 // Reset
                 $i        = 0;
@@ -1066,7 +1080,7 @@ class SitemapModel extends BaseDatabaseModel
         }
 
         // Main sitemap
-        $date       = new Date();
+        $date       = new Date('now');
         $xsl        = $this->generateXSL('sitemapindex');
         $stylesheet = ($xsl) ? '<?xml-stylesheet type="text/xsl" href="' . Uri::root() . $xsl . '"?>' : '';
         $comment    = '<!-- JLSitemap ' . $date->toSql() . ' -->';
@@ -1087,14 +1101,21 @@ class SitemapModel extends BaseDatabaseModel
 
         // Put to file
         $file = Path::clean(JPATH_ROOT . '/' . $filename . '.xml');
-        if (\is_file($file)) {
-            File::delete($file);
-        }
-        if (File::write(file:$file, buffer:$xml, appendToFile: true)) {
-            $result[] = $file;
-        } else {
+
+        if (!$temp = $this->writeTemporaryFile($file, $xml)) {
+            $this->deleteTemporaryFiles($tempFiles);
+
             return false;
         }
+
+        $tempFiles[] = ['temp' => $temp, 'file' => $file];
+        $result[]    = $file;
+
+        if (!$this->promoteTemporaryFiles($tempFiles)) {
+            return false;
+        }
+
+        $this->deleteStaleGeneratedFiles($oldFiles, $splitFiles);
 
         return $result;
     }
@@ -1125,11 +1146,202 @@ class SitemapModel extends BaseDatabaseModel
         // Create sitemap json file
         $filename = $this->getConfiguration()->get('filename', 'sitemap');
         $file     = Path::clean(JPATH_ROOT . '/' . $filename . '.json');
-        if (\is_file($file)) {
-            File::delete($file);
+
+        return $this->writeAtomicFile($file, $json);
+    }
+
+    /**
+     * Write a generated file through a temporary file and promote it after the write succeeds.
+     *
+     * @param   string  $file        Final file path.
+     * @param   string  $buffer      File contents.
+     * @param   bool    $useStreams  True to use streams.
+     *
+     * @return  string|false Final file path on success, false on failure.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function writeAtomicFile(string $file, string $buffer, bool $useStreams = false): false|string
+    {
+        if (!$temp = $this->writeTemporaryFile($file, $buffer, $useStreams)) {
+            return false;
         }
 
-        return (File::write(file:$file, buffer:$json,appendToFile: true)) ? $file : false;
+        return $this->promoteTemporaryFiles([['temp' => $temp, 'file' => $file]]) ? $file : false;
+    }
+
+    /**
+     * Write generated content to a temporary file in the same directory as the final file.
+     *
+     * @param   string  $file        Final file path.
+     * @param   string  $buffer      File contents.
+     * @param   bool    $useStreams  True to use streams.
+     *
+     * @return  string|false Temporary file path on success, false on failure.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function writeTemporaryFile(string $file, string $buffer, bool $useStreams = false): false|string
+    {
+        $temp = $this->getTemporaryFilePath($file, 'tmp');
+
+        return File::write(file: $temp, buffer: $buffer, useStreams: $useStreams) ? $temp : false;
+    }
+
+    /**
+     * Promote temporary files to final paths. Existing final files are backed up and restored on failure.
+     *
+     * @param   array  $files  List of arrays with `temp` and `file` paths.
+     *
+     * @return  bool True on success.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function promoteTemporaryFiles(array $files): bool
+    {
+        $backups  = [];
+        $promoted = [];
+
+        try {
+            foreach ($files as $entry) {
+                $file = $entry['file'];
+
+                if (!\is_file($file)) {
+                    continue;
+                }
+
+                $backup = $this->getTemporaryFilePath($file, 'bak');
+
+                if (!$this->moveFile($file, $backup)) {
+                    throw new \RuntimeException('Could not backup sitemap file.');
+                }
+
+                $backups[$file] = $backup;
+            }
+
+            foreach ($files as $entry) {
+                if (!$this->moveFile($entry['temp'], $entry['file'])) {
+                    throw new \RuntimeException('Could not promote sitemap file.');
+                }
+
+                $promoted[] = $entry['file'];
+            }
+        } catch (\Throwable) {
+            foreach ($promoted as $file) {
+                $this->deleteFile($file);
+            }
+
+            foreach ($backups as $file => $backup) {
+                if (\is_file($backup)) {
+                    $this->moveFile($backup, $file);
+                }
+            }
+
+            $this->deleteTemporaryFiles($files);
+
+            return false;
+        }
+
+        foreach ($backups as $backup) {
+            $this->deleteFile($backup);
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete old generated split sitemap files that are not part of the new sitemap set.
+     *
+     * @param   array  $oldFiles  Old split files.
+     * @param   array  $newFiles  New split files.
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function deleteStaleGeneratedFiles(array $oldFiles, array $newFiles): void
+    {
+        foreach ($oldFiles as $file) {
+            $file = Path::clean($file);
+
+            if (!\in_array($file, $newFiles, true)) {
+                $this->deleteFile($file);
+            }
+        }
+    }
+
+    /**
+     * Delete temporary generated files.
+     *
+     * @param   array  $files  List of arrays with `temp` paths.
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function deleteTemporaryFiles(array $files): void
+    {
+        foreach ($files as $entry) {
+            if (!empty($entry['temp'])) {
+                $this->deleteFile($entry['temp']);
+            }
+        }
+    }
+
+    /**
+     * Build a temporary file path next to a generated file.
+     *
+     * @param   string  $file    Final file path.
+     * @param   string  $suffix  Temporary suffix.
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function getTemporaryFilePath(string $file, string $suffix): string
+    {
+        return Path::clean(\dirname($file) . '/' . \basename($file) . '.' . $suffix . '.' . \uniqid('', true));
+    }
+
+    /**
+     * Move a file and normalize Joomla filesystem exceptions to a boolean result.
+     *
+     * @param   string  $source       Source file.
+     * @param   string  $destination  Destination file.
+     *
+     * @return  bool True on success.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function moveFile(string $source, string $destination): bool
+    {
+        try {
+            return File::move($source, $destination) === true;
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Delete a file and normalize Joomla filesystem exceptions to a boolean result.
+     *
+     * @param   string  $file  File path.
+     *
+     * @return  bool True on success.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function deleteFile(string $file): bool
+    {
+        if (!\is_file($file)) {
+            return true;
+        }
+
+        try {
+            return File::delete($file) === true;
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     /**

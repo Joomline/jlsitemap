@@ -84,10 +84,7 @@ class SitemapController extends BaseController
             $this->input->cookie->set(
                 $name,
                 $value,
-                $expires,
-                $app->get('cookie_path', '/'),
-                $app->get('cookie_domain'),
-                $app->isSSLConnection()
+                $this->getCookieOptions($expires)
             );
         }
 
@@ -103,7 +100,7 @@ class SitemapController extends BaseController
 
         // Json response
         if (!$debug && $this->input->get('response') == 'json') {
-            $message = (!$error) ? Text::_('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS') :
+            $message = (!$error) ? Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS', $all) :
                 Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_FAILURE', Text::_($error));
 
             echo new JsonResponse($result, $message, $error);;
@@ -178,10 +175,55 @@ class SitemapController extends BaseController
             $defaultSef = (!empty($languages[$defaultTag])) ? $languages[$defaultTag]->sef : false;
             if ($currentTag !== $defaultTag && $defaultSef) {
                 $uri = Uri::getInstance();
-                $uri->setVar('lang', 'en');
+                $uri->setVar('lang', $defaultSef);
                 Factory::getApplication()->redirect($uri->toString());
             }
         }
+    }
+
+    /**
+     * Method to get a non-empty cookie path.
+     *
+     * @return  string
+     *
+     * @since  2.1.1
+     */
+    protected function getCookiePath(): string
+    {
+        $path = (string) Factory::getApplication()->get('cookie_path', '/');
+
+        return ($path !== '') ? $path : '/';
+    }
+
+    /**
+     * Method to get cookie domain.
+     *
+     * @return  string
+     *
+     * @since  2.1.1
+     */
+    protected function getCookieDomain(): string
+    {
+        return (string) Factory::getApplication()->get('cookie_domain', '');
+    }
+
+    /**
+     * Method to get cookie options.
+     *
+     * @param   int  $expires  Cookie expiration timestamp.
+     *
+     * @return  array
+     *
+     * @since  2.1.1
+     */
+    protected function getCookieOptions(int $expires): array
+    {
+        return [
+            'expires' => $expires,
+            'path'     => $this->getCookiePath(),
+            'domain'   => $this->getCookieDomain(),
+            'secure'   => Factory::getApplication()->isSSLConnection(),
+        ];
     }
 
     /**
@@ -211,10 +253,12 @@ class SitemapController extends BaseController
      */
     public function delete()
     {
+        $this->checkAccess();
+
         $app   = Factory::getApplication();
         $debug = (!empty($this->input->get('debug')));
         $model = $this->getModel();
-        $error = ($model->delete()) ? $model->getError() : false;
+        $error = (!$model->delete()) ? $model->getError() : false;
 
         // Set messages
         if (!$debug && !empty($this->input->get('messages'))) {
@@ -236,10 +280,7 @@ class SitemapController extends BaseController
             $this->input->cookie->set(
                 $name,
                 $value,
-                $expires,
-                $app->get('cookie_path', '/'),
-                $app->get('cookie_domain'),
-                $app->isSSLConnection()
+                $this->getCookieOptions($expires)
             );
         }
 

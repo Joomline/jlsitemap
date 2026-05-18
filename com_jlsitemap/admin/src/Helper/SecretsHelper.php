@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
 
 class SecretsHelper
 {
@@ -63,7 +64,7 @@ class SecretsHelper
             $component          = new \stdClass();
             $component->element = 'com_jlsitemap';
             $component->params  = (string)$params;
-            Factory::getContainer()->get('DatabaseDriver')->updateObject('#__extensions', $component, ['element']);
+            Factory::getContainer()->get(DatabaseInterface::class)->updateObject('#__extensions', $component, ['element']);
         }
 
         return $access_key;

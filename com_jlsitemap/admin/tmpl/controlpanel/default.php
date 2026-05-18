@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Uri\Uri;
 
 $layout = 'components.jlsitemap.admin.action';
 $wa     = $this->getDocument()->getWebAssetManager();
@@ -21,6 +22,16 @@ $wa->registerAndUseStyle(
     'com_jlsitemap/admin.min.css',
     ['version' => 'auto', 'relative' => true]
 );
+$wa->registerAndUseScript(
+    'com_jlsitemap.admin.controlpanel',
+    Uri::root() . 'media/com_jlsitemap/js/admin-controlpanel.js',
+    ['version' => 'auto'],
+    [],
+    ['core']
+);
+$this->getDocument()->addScriptOptions('com_jlsitemap.controlpanel', [
+    'genericError' => Text::_('JERROR_AN_ERROR_HAS_OCCURRED'),
+]);
 ?>
 
 <div id="controlPanel" class="container">
@@ -35,6 +46,8 @@ $wa->registerAndUseStyle(
                         'url'       => $this->generate,
                         'title'     => 'COM_JLSITEMAP_GENERATION',
                         'icon'      => 'generation',
+                        'ajax'      => true,
+                        'ajaxTask'  => 'generate',
                         'newWindow' => false
                     ]); ?>
 
@@ -68,12 +81,14 @@ $wa->registerAndUseStyle(
                 </div>
                 <div class="col mb-3  p-0 p-md-3">
                     <?php
-                    echo LayoutHelper::render($layout, [
-                        'class' => 'delete bg-body-secondary',
-                        'url'   => $this->delete,
-                        'title' => 'COM_JLSITEMAP_SITEMAP_DELETE',
-                        'icon'  => 'delete'
-                    ]);
+                        echo LayoutHelper::render($layout, [
+                            'class'    => 'delete bg-body-secondary',
+                            'url'      => $this->delete,
+                            'title'    => 'COM_JLSITEMAP_SITEMAP_DELETE',
+                            'icon'     => 'delete',
+                            'ajax'     => true,
+                            'ajaxTask' => 'delete'
+                        ]);
                     }
                     else {
                         echo LayoutHelper::render($layout, [
@@ -84,6 +99,17 @@ $wa->registerAndUseStyle(
                     }
                     ?>
 
+                </div>
+                <div class="col mb-3  p-0 p-md-3">
+                    <?php
+                    echo LayoutHelper::render($layout, [
+                        'class'     => 'scheduler bg-body-secondary',
+                        'url'       => $this->scheduler,
+                        'title'     => 'COM_JLSITEMAP_TASK_SCHEDULER',
+                        'icon'      => 'cron',
+                        'newWindow' => false
+                    ]);
+                    ?>
                 </div>
                 <div class="col mb-3  p-0 p-md-3">
                     <?php

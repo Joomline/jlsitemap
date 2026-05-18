@@ -15,6 +15,7 @@ namespace Joomla\Plugin\JLSitemap\Virtuemart\Extension;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Router\Route;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
@@ -77,6 +78,7 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
 
         // Add config
         \JLoader::register('\VmConfig', JPATH_ROOT . '/administrator/components/com_virtuemart/helpers/config.php');
+        \JLoader::register('vmLanguage', JPATH_ROOT . '/administrator/components/com_virtuemart/helpers/vmlanguage.php');
 
         $db = $this->getDatabase();
 
@@ -101,6 +103,7 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                 }
             }
         }
+        $routeUrls = $multilanguage && (bool) $config->get('siteSef');
 
         // Check languages
         if (empty($languages)) {
@@ -147,10 +150,17 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                 // Prepare default loc attribute
                 $defaultLoc = 'index.php?option=com_virtuemart&view=productdetails&virtuemart_product_id='
                     . $row->id . '&virtuemart_category_id=' . $catid;
+                $routeQuery = [
+                    'option'                  => 'com_virtuemart',
+                    'view'                    => 'productdetails',
+                    'virtuemart_product_id'   => (int) $row->id,
+                    'virtuemart_category_id'  => (int) $catid,
+                ];
 
                 // Prepare exclude attribute
                 $exclude = [];
-                if (preg_match('/noindex/', $row->metarobot)) {
+                $robots = trim((string) $row->metarobot);
+                if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_PRODUCT'),
                         'msg'  => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_PRODUCT_ROBOTS'),
@@ -167,8 +177,8 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $selector = 'product_name_' . $key;
                     $title    = (!empty($row->$selector)) ? $row->$selector : $defaultTitle;
 
-                    $loc = $defaultLoc;
-                    if ($multilanguage) {
+                    $loc = $routeUrls ? $this->routeVirtuemartUrl($routeQuery, $code) : $defaultLoc;
+                    if ($multilanguage && !$routeUrls) {
                         $loc .= '&lang=' . $code;
                     }
 
@@ -181,9 +191,12 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $product->priority   = $priority;
                     $product->exclude    = (!empty($exclude)) ? $exclude : false;
                     $product->alternates = ($multilanguage) ? [] : false;
+                    $product->noRoute    = $routeUrls;
                     if ($multilanguage) {
                         foreach ($languages as $alternate) {
-                            $product->alternates[$alternate] = $defaultLoc . '&lang=' . $alternate;
+                            $product->alternates[$alternate] = $routeUrls
+                                ? $this->routeVirtuemartUrl($routeQuery, $alternate)
+                                : $defaultLoc . '&lang=' . $alternate;
                         }
                     }
 
@@ -219,10 +232,16 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                 // Prepare default loc attribute
                 $defaultLoc = 'index.php?option=com_virtuemart&view=category&virtuemart_manufacturer_id=0&Itemid=0&virtuemart_category_id='
                     . $row->id;
+                $routeQuery = [
+                    'option'                 => 'com_virtuemart',
+                    'view'                   => 'category',
+                    'virtuemart_category_id' => (int) $row->id,
+                ];
 
                 // Prepare exclude attribute
                 $exclude = [];
-                if (preg_match('/noindex/', $row->metarobot)) {
+                $robots = trim((string) $row->metarobot);
+                if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_CATEGORY'),
                         'msg'  => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_CATEGORY_ROBOTS'),
@@ -239,8 +258,8 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $selector = 'category_name_' . $key;
                     $title    = (!empty($row->$selector)) ? $row->$selector : $defaultTitle;
 
-                    $loc = $defaultLoc;
-                    if ($multilanguage) {
+                    $loc = $routeUrls ? $this->routeVirtuemartUrl($routeQuery, $code) : $defaultLoc;
+                    if ($multilanguage && !$routeUrls) {
                         $loc .= '&lang=' . $code;
                     }
 
@@ -253,9 +272,12 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $category->priority   = $priority;
                     $category->exclude    = (!empty($exclude)) ? $exclude : false;
                     $category->alternates = ($multilanguage) ? [] : false;
+                    $category->noRoute    = $routeUrls;
                     if ($multilanguage) {
                         foreach ($languages as $alternate) {
-                            $category->alternates[$alternate] = $defaultLoc . '&lang=' . $alternate;
+                            $category->alternates[$alternate] = $routeUrls
+                                ? $this->routeVirtuemartUrl($routeQuery, $alternate)
+                                : $defaultLoc . '&lang=' . $alternate;
                         }
                     }
 
@@ -291,10 +313,17 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                 // Prepare default loc attribute
                 $defaultLoc = 'index.php?option=com_virtuemart&view=manufacturer&layout=details&Itemid=0&virtuemart_manufacturer_id='
                     . $row->id;
+                $routeQuery = [
+                    'option'                    => 'com_virtuemart',
+                    'view'                      => 'manufacturer',
+                    'layout'                    => 'details',
+                    'virtuemart_manufacturer_id' => (int) $row->id,
+                ];
 
                 // Prepare exclude attribute
                 $exclude = [];
-                if (preg_match('/noindex/', $row->metarobot)) {
+                $robots = trim((string) $row->metarobot);
+                if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_MANUFACTURER'),
                         'msg'  => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_MANUFACTURER_ROBOTS'),
@@ -308,11 +337,11 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                 }
 
                 foreach ($languages as $key => $code) {
-                    $selector = 'category_name_' . $key;
+                    $selector = 'manufacturer_name_' . $key;
                     $title    = (!empty($row->$selector)) ? $row->$selector : $defaultTitle;
 
-                    $loc = $defaultLoc;
-                    if ($multilanguage) {
+                    $loc = $routeUrls ? $this->routeVirtuemartUrl($routeQuery, $code) : $defaultLoc;
+                    if ($multilanguage && !$routeUrls) {
                         $loc .= '&lang=' . $code;
                     }
 
@@ -325,9 +354,12 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $manufacturer->priority   = $priority;
                     $manufacturer->exclude    = (!empty($exclude)) ? $exclude : false;
                     $manufacturer->alternates = ($multilanguage) ? [] : false;
+                    $manufacturer->noRoute    = $routeUrls;
                     if ($multilanguage) {
                         foreach ($languages as $alternate) {
-                            $manufacturer->alternates[$alternate] = $defaultLoc . '&lang=' . $alternate;
+                            $manufacturer->alternates[$alternate] = $routeUrls
+                                ? $this->routeVirtuemartUrl($routeQuery, $alternate)
+                                : $defaultLoc . '&lang=' . $alternate;
                         }
                     }
 
@@ -363,10 +395,17 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                 // Prepare default loc attribute
                 $defaultLoc = 'index.php?option=com_virtuemart&view=vendor&layout=tos&Itemid=&virtuemart_vendor_id='
                     . $row->id;
+                $routeQuery = [
+                    'option'               => 'com_virtuemart',
+                    'view'                 => 'vendor',
+                    'layout'               => 'tos',
+                    'virtuemart_vendor_id' => (int) $row->id,
+                ];
 
                 // Prepare exclude attribute
                 $exclude = [];
-                if (preg_match('/noindex/', $row->metarobot)) {
+                $robots = trim((string) $row->metarobot);
+                if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_VENDOR'),
                         'msg'  => Text::_('PLG_JLSITEMAP_VIRTUEMART_EXCLUDE_VENDOR_ROBOTS'),
@@ -377,8 +416,8 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $selector = 'vendor_name_' . $key;
                     $title    = (!empty($row->$selector)) ? $row->$selector : $defaultTitle;
 
-                    $loc = $defaultLoc;
-                    if ($multilanguage) {
+                    $loc = $routeUrls ? $this->routeVirtuemartUrl($routeQuery, $code) : $defaultLoc;
+                    if ($multilanguage && !$routeUrls) {
                         $loc .= '&lang=' . $code;
                     }
 
@@ -391,9 +430,12 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
                     $vendor->priority   = $priority;
                     $vendor->exclude    = (!empty($exclude)) ? $exclude : false;
                     $vendor->alternates = ($multilanguage) ? [] : false;
+                    $vendor->noRoute    = $routeUrls;
                     if ($multilanguage) {
                         foreach ($languages as $alternate) {
-                            $vendor->alternates[$alternate] = $defaultLoc . '&lang=' . $alternate;
+                            $vendor->alternates[$alternate] = $routeUrls
+                                ? $this->routeVirtuemartUrl($routeQuery, $alternate)
+                                : $defaultLoc . '&lang=' . $alternate;
                         }
                     }
 
@@ -404,5 +446,24 @@ final class Virtuemart extends CMSPlugin implements SubscriberInterface
         }
 
         $event->setArgument(0, $urls);
+    }
+
+    /**
+     * Route a VirtueMart URL while the VirtueMart language state matches the target language.
+     */
+    private function routeVirtuemartUrl(array $query, string $language): string
+    {
+        $previousLanguage = \vmLanguage::$currLangTag ?? null;
+        $query['lang'] = $language;
+
+        try {
+            \vmLanguage::setLanguageByTag($language, false);
+
+            return Route::link('site', 'index.php?' . http_build_query($query));
+        } finally {
+            if (!empty($previousLanguage)) {
+                \vmLanguage::setLanguageByTag($previousLanguage, false);
+            }
+        }
     }
 }

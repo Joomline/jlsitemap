@@ -2,5 +2,8 @@
 .vscode
 .phing
 .packages
+.playwright-mcp
+.agents
+.serena
 _dist
 _build

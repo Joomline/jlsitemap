@@ -11,7 +11,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
@@ -24,11 +23,7 @@ extract($displayData);
  */
 
 
-$stylesheet = Uri::getInstance()->toString(array('scheme', 'host', 'port')) .
-    HTMLHelper::stylesheet(
-        'com_jlsitemap/sitemap.min.css',
-        array('version' => 'auto', 'relative' => true, 'pathOnly' => true)
-    );
+$stylesheet = rtrim(Uri::root(), '/') . '/media/com_jlsitemap/css/sitemap.min.css';
 $sitename   = htmlspecialchars(Factory::getContainer()->get('config')->get('sitename'));
 ?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
