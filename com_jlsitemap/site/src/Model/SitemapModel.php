@@ -16,6 +16,7 @@ use Joomla\Component\JLSitemap\Administrator\Service\SitemapServiceFactory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -914,6 +915,12 @@ class SitemapModel extends BaseDatabaseModel implements SitemapGeneratorAdapterI
     protected function normalizeImageUrl(mixed $href): string
     {
         $href = trim((string) $href);
+
+        if ($href === '') {
+            return '';
+        }
+
+        $href = trim((string) HTMLHelper::_('cleanImageUrl', $href)->url);
 
         if ($href === '') {
             return '';
