@@ -99,6 +99,15 @@ class HtmlView extends BaseHtmlView
     protected $delete = 'index.php?option=com_jlsitemap&task=sitemap.delete';
 
     /**
+     * Task scheduler url
+     *
+     * @var  string
+     *
+     * @since  2.1.1
+     */
+    protected $scheduler = 'index.php?option=com_scheduler&view=tasks&filter[type]=plg_task_jlsitemapcron';
+
+    /**
      * Config link
      *
      * @var  false|object

@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\SiteRouter;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
@@ -38,7 +39,7 @@ return new class () implements ServiceProviderInterface {
                 $config  = (array)PluginHelper::getPlugin('system', 'jlsitemap_cron');
                 $plugin  = new Jlsitemap_cron($subject, $config);
                 $plugin->setApplication(Factory::getApplication());
-                $plugin->setDatabase($container->get('DatabaseDriver'));
+                $plugin->setDatabase($container->get(DatabaseInterface::class));
                 $plugin->setSiteRouter($container->get(SiteRouter::class));
 
                 return $plugin;

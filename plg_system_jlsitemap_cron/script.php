@@ -20,7 +20,7 @@ use Joomla\CMS\Installer\InstallerScriptInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Version;
-use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 
@@ -43,11 +43,11 @@ return new class () implements ServiceProviderInterface {
                 /**
                  * The Database object.
                  *
-                 * @var   DatabaseDriver
+                 * @var   DatabaseInterface
                  *
                  * @since  1.0.0
                  */
-                protected DatabaseDriver $db;
+                protected DatabaseInterface $db;
 
                 /**
                  * Minimum Joomla version required to install the extension.
@@ -56,7 +56,7 @@ return new class () implements ServiceProviderInterface {
                  *
                  * @since  1.0.0
                  */
-                protected string $minimumJoomla = '4.0';
+                protected string $minimumJoomla = '5.0.0';
 
                 /**
                  * Minimum PHP version required to install the extension.
@@ -65,7 +65,7 @@ return new class () implements ServiceProviderInterface {
                  *
                  * @since  1.0.0
                  */
-                protected string $minimumPhp = '7.4';
+                protected string $minimumPhp = '8.1.0';
 
                 /**
                  * @var array $providersInstallationMessageQueue
@@ -83,7 +83,7 @@ return new class () implements ServiceProviderInterface {
                 public function __construct(AdministratorApplication $app)
                 {
                     $this->app = $app;
-                    $this->db  = Factory::getContainer()->get('DatabaseDriver');
+                    $this->db  = Factory::getContainer()->get(DatabaseInterface::class);
                 }
 
                 /**
@@ -266,6 +266,7 @@ return new class () implements ServiceProviderInterface {
                     $folder = ((string)$element->attributes()->destination) ? '/' . $element->attributes(
                         )->destination : null;
                     $source = Path::clean(JPATH_ROOT . '/layouts' . $folder);
+                    $retval = true;
 
                     // Process each file in the $files array (children of $tagName).
                     foreach ($files as $file) {

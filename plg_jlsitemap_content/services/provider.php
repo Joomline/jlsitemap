@@ -13,6 +13,7 @@
 use Joomla\CMS\Factory;
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
@@ -37,7 +38,7 @@ return new class () implements ServiceProviderInterface {
                 $config  = (array)PluginHelper::getPlugin('jlsitemap', 'content');
                 $plugin  = new Content($subject, $config);
                 $plugin->setApplication(Factory::getApplication());
-                $plugin->setDatabase(Factory::getContainer()->get('DatabaseDriver'));
+                $plugin->setDatabase($container->get(DatabaseInterface::class));
 
                 return $plugin;
             }

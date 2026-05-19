@@ -85,7 +85,7 @@ class Jlsitemap_cron extends CMSPlugin implements SubscriberInterface
                 $link   = 'index.php?option=com_ajax&plugin=jlsitemap_cron&group=system&format=json';
                 $link   = str_replace('administrator/', '', $router->build($link)->toString());
                 $link   = str_replace('/?', '?', $link);
-                $link   = trim(Uri::root(true), '/') . '/' . trim($link, '/');
+                $link   = $this->prepareSiteRelativeUrl($link);
 
                 $params = ['ajax_url' => $link];
                 $app->getDocument()->addScriptOptions('jlsitemap_cron', $params);
@@ -133,6 +133,27 @@ class Jlsitemap_cron extends CMSPlugin implements SubscriberInterface
         $cache  = new Date($this->_lastRun . $offset);
 
         return (Factory::getDate()->toUnix() >= $cache->toUnix());
+    }
+
+    /**
+     * Method to prepare site-relative URL for installations in subdirectories.
+     *
+     * @param   string  $link  Raw router link.
+     *
+     * @return  string
+     *
+     * @since  2.1.1
+     */
+    protected function prepareSiteRelativeUrl(string $link): string
+    {
+        $root = rtrim(Uri::root(true), '/');
+        $link = '/' . ltrim($link, '/');
+
+        if ($root === '' || $link === $root || substr($link, 0, strlen($root) + 1) === $root . '/') {
+            return $link;
+        }
+
+        return $root . $link;
     }
 
     /**

@@ -40,6 +40,11 @@
 					<option value="0">JNO</option>
 					<option value="1">JYES</option>
 				</field>
+				<field type="note"
+					label="PLG_JLSITEMAP_CONTENT_PARAMS_ARTICLE_IMAGES_SOURCE"
+					description="PLG_JLSITEMAP_CONTENT_PARAMS_ARTICLE_IMAGES_SOURCE_DESC"
+					heading="h4"
+					showon="articles_images_enable:1"/>
 				<field name="articles_changefreq" type="list" default="weekly"
 					label="PLG_JLSITEMAP_CONTENT_PARAMS_CHANGEFREQ"
 					showon="articles_enable:1">

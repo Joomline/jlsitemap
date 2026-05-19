@@ -106,8 +106,12 @@ final class Tags extends CMSPlugin implements SubscriberInterface
             // Prepare exclude attribute
             $metadata = new Registry($row->metadata);
             $exclude  = [];
-	        $robots = $metadata->get('robots', $config->get('siteRobots'));
-	        if (!empty($robots) && preg_match('/noindex/', $robots)) {
+            $robots = trim((string) $metadata->get('robots', ''));
+            if ($robots === '') {
+                $robots = (string) $config->get('siteRobots', '');
+            }
+
+            if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                 $exclude[] = [
                     'type' => Text::_('PLG_JLSITEMAP_TAGS_EXCLUDE'),
                     'msg'  => Text::_('PLG_JLSITEMAP_TAGS_EXCLUDE_ROBOTS'),
@@ -142,7 +146,7 @@ final class Tags extends CMSPlugin implements SubscriberInterface
                 $lastmod = Factory::getDate($row->tag_date)->toUnix();
             }
 
-            $lastmod = Factory::getDate($lastmod)->toSql();
+            $lastmod = $lastmod ? Factory::getDate($lastmod)->toSql() : false;
 
             // Prepare tag object
             $tag             = new \stdClass();

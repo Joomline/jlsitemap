@@ -140,8 +140,12 @@ final class Content extends CMSPlugin implements SubscriberInterface
                 $metadata = new Registry($row->metadata);
                 $exclude  = [];
 
-	            $robots = $metadata->get('robots', $config->get('siteRobots'));
-	            if (!empty($robots) && preg_match('/noindex/', $robots)) {
+                $robots = trim((string) $metadata->get('robots', ''));
+                if ($robots === '') {
+                    $robots = (string) $config->get('siteRobots', '');
+                }
+
+                if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_CATEGORY_ROBOTS'),
@@ -246,7 +250,7 @@ final class Content extends CMSPlugin implements SubscriberInterface
             $rows = $db->loadObjectList();
 
             $nullDate   = $db->getNullDate();
-            $nowDate    = Factory::getDate()->toUnix();
+            $nowDate    = Factory::getDate('now')->toUnix();
             $changefreq = $this->params->get('articles_changefreq', $config->get('changefreq', 'weekly'));
             $priority   = $this->params->get('articles_priority', $config->get('priority', '0.5'));
 
@@ -266,8 +270,12 @@ final class Content extends CMSPlugin implements SubscriberInterface
                 // Prepare exclude attribute
                 $metadata = new Registry($row->metadata);
                 $exclude  = [];
-	            $robots = $metadata->get('robots', $config->get('siteRobots'));
-	            if (!empty($robots) && preg_match('/noindex/', $robots)) {
+                $robots = trim((string) $metadata->get('robots', ''));
+                if ($robots === '') {
+                    $robots = (string) $config->get('siteRobots', '');
+                }
+
+                if ($robots !== '' && preg_match('/\bnoindex\b/i', $robots)) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_ROBOTS'),
@@ -281,14 +289,18 @@ final class Content extends CMSPlugin implements SubscriberInterface
                     ];
                 }
 
-                if ($row->publish_up == $nullDate || Factory::getDate($row->publish_up)->toUnix() > $nowDate) {
+                $publishUp = $row->publish_up ?? null;
+
+                if (empty($publishUp) || $publishUp == $nullDate || Factory::getDate($publishUp)->toUnix() > $nowDate) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_UP'),
                     ];
                 }
 
-                if ($row->publish_down != $nullDate && Factory::getDate($row->publish_down)->toUnix() < $nowDate) {
+                $publishDown = $row->publish_down ?? null;
+
+                if (!empty($publishDown) && $publishDown != $nullDate && Factory::getDate($publishDown)->toUnix() < $nowDate) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_DOWN'),

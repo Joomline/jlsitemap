@@ -6,7 +6,7 @@ It provides full support for Joomla core content (Articles, Tags, Contacts) and 
 
 ## Key Features:
 
-*   **Joomla 4, 5, 6 Support** (Joomla 3 discontinued).
+*   **Joomla 5, 6 Support** (Joomla 4 and Joomla 3 discontinued).
 *   **Accurate Sitemap Generation:** Eliminates duplicates, handles unlimited pages.
 *   **Comprehensive Coverage:** Supports Joomla content, Kunena, Virtuemart via included plugins.
 *   **Automated Scheduling:** Generate sitemaps automatically.

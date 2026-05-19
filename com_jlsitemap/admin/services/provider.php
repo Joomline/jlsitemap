@@ -18,6 +18,8 @@ use Joomla\CMS\Extension\Service\Provider\RouterFactory;
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Component\JLSitemap\Administrator\Extension\JLSitemapComponent;
+use Joomla\Component\JLSitemap\Administrator\Service\SitemapGenerationService;
+use Joomla\Component\JLSitemap\Administrator\Service\SitemapRuntimeContextFactory;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 
@@ -41,6 +43,18 @@ return new class () implements ServiceProviderInterface {
         $container->registerServiceProvider(new MVCFactory('\\Joomla\\Component\\JLSitemap'));
         $container->registerServiceProvider(new ComponentDispatcherFactory('\\Joomla\\Component\\JLSitemap'));
         $container->registerServiceProvider(new RouterFactory('\\Joomla\\Component\\JLSitemap'));
+
+        $container->set(
+            SitemapRuntimeContextFactory::class,
+            static fn (Container $container) => new SitemapRuntimeContextFactory()
+        );
+
+        $container->set(
+            SitemapGenerationService::class,
+            static fn (Container $container) => new SitemapGenerationService(
+                $container->get(SitemapRuntimeContextFactory::class)
+            )
+        );
 
         $container->set(
             ComponentInterface::class,

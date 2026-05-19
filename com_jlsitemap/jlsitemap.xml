@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sale@joomline.ru</authorEmail>
 	<authorUrl>https://joomline.ru/</authorUrl>
-	<version>2.0.0</version>
+	<version>@version@</version>
 	<description>COM_JLSITEMAP_DESCRIPTION</description>
 	<namespace path="src">Joomla\Component\JLSitemap</namespace>
 	<scriptfile>script.php</scriptfile>
@@ -44,6 +44,8 @@
 	<media destination="com_jlsitemap" folder="media">
 		<folder>css</folder>
 		<folder>icons</folder>
+		<folder>js</folder>
+		<filename>joomla.asset.json</filename>
 	</media>
 	<layouts destination="components/jlsitemap" folder="layouts">
 		<folder>admin</folder>

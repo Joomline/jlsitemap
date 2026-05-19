@@ -27,6 +27,8 @@ extract($displayData);
  * @var  string  $icon      Action icon
  * @var  boolean $newWindow Open in new window
  * @var  string  $badge     Badge text
+ * @var  boolean $ajax      Use AJAX action
+ * @var  string  $ajaxTask  AJAX action name
  */
 
 // Prepare variables
@@ -34,6 +36,8 @@ $url       = (!empty($url)) ? Route::_($url) : false;
 $class     = (!empty($class)) ? 'action ' . $class : 'action';
 $title     = (!empty($title)) ? Text::_($title) : '';
 $newWindow = (isset($newWindow)) ? $newWindow : false;
+$ajax      = !empty($ajax);
+$ajaxTask  = !empty($ajaxTask) ? (string) $ajaxTask : '';
 $icon      = (isset($icon) && \is_file(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg')) ?
     file_get_contents(JPATH_ROOT . '/media/com_jlsitemap/icons/' . $icon . '.svg') : false;
 $badge     = (!empty($badge)) ? Text::_($badge) : false;
@@ -63,6 +67,12 @@ echo $class; ?>">
             $link_attribs = [
                 'class' => 'stretched-link link-body-emphasis'
             ];
+
+            if ($ajax) {
+                $link_attribs['data-jlsitemap-ajax'] = '1';
+                $link_attribs['data-jlsitemap-task'] = $ajaxTask;
+            }
+
             if ($newWindow) {
                 $link_attribs['target'] = '_blank';
             }

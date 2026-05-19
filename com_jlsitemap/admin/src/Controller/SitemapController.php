@@ -15,6 +15,7 @@ namespace Joomla\Component\JLSitemap\Administrator\Controller;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\JLSitemap\Administrator\Helper\SecretsHelper;
@@ -33,72 +34,42 @@ class SitemapController extends BaseController
      */
     public function generate()
     {
-        $app    = Factory::getApplication();
-        $cookie = 'jlsitemap_generation';
-        $result = $this->input->cookie->get($cookie, false, 'raw');
-        $debug  = (!empty($this->input->get('debug', '')));
+        $app   = Factory::getApplication();
+        $debug = (!empty($this->input->get('debug', '')));
+        $json  = $this->input->getCmd('response') === 'json';
 
-        // Redirect to site controller
-        if (!$result || $debug) {
-            // Prepare redirect
+        if ($debug) {
             $redirect = [
                 'option'     => 'com_jlsitemap',
                 'task'       => 'sitemap.generate',
                 'access_key' => $this->getAccessKey(),
                 'messages'   => 0,
-                'cookies'    => ($debug) ? 0 : 1,
-                'redirect'   => ($debug) ? 0 : 1
+                'cookies'    => 0,
+                'redirect'   => 0,
+                'debug'      => 1,
             ];
-            if ($debug) {
-                $redirect['debug'] = 1;
-            } else {
-                $redirect['return'] = base64_encode(Route::_('index.php?option=com_jlsitemap&task=sitemap.generate'));
-            }
 
-            $app->redirect(trim(Uri::root(true), '/') . '/index.php?' . http_build_query($redirect));
+            $app->redirect($this->getSiteEntryPointUrl($redirect));
 
             return true;
         }
 
-        // Get Response
-        $response = new Registry($result);
-        $message  = $response->get('message');
-        $data     = new Registry($response->get('data'));
-        $all      = $data->get('all', 0);
-        $includes = $data->get('includes', 0);
-        $excludes = $data->get('excludes', 0);
+        $redirect = [
+            'option'     => 'com_jlsitemap',
+            'task'       => 'sitemap.generate',
+            'access_key' => $this->getAccessKey(),
+            'messages'   => $json ? 0 : 1,
+            'cookies'    => $json ? 0 : 1,
+            'redirect'   => $json ? 0 : 1,
+        ];
 
-        // Remove cookie
-        $this->input->cookie->set(
-            $cookie,
-            '',
-            Factory::getDate('-1 day')->toUnix(),
-            $app->get('cookie_path', '/'),
-            $app->get('cookie_domain'),
-            $app->isSSLConnection()
-        );
-
-        // Set error
-        if (!$response->get('success')) {
-            $this->setError($message);
-            $this->setMessage($message, 'error');
-            $this->setRedirect('index.php?option=com_jlsitemap');
-
-            return false;
+        if ($json) {
+            $redirect['response'] = 'json';
+        } else {
+            $redirect['return'] = base64_encode(Route::_('index.php?option=com_jlsitemap', false));
         }
 
-        // Set success
-        $app->enqueueMessage(Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS', $all));
-        $app->enqueueMessage(
-            Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_EXCLUDES', $excludes),
-            'warning'
-        );
-        $app->enqueueMessage(
-            Text::sprintf('COM_JLSITEMAP_SITEMAP_GENERATION_SUCCESS_INCLUDES', $includes),
-            'notice'
-        );
-
-        $this->setRedirect('index.php?option=com_jlsitemap');
+        $app->redirect($this->getSiteEntryPointUrl($redirect));
 
         return true;
     }
@@ -116,6 +87,65 @@ class SitemapController extends BaseController
     }
 
     /**
+     * Method to build a site entry point URL from the administrator application.
+     *
+     * @param   array  $query  Query parameters.
+     *
+     * @return  string
+     *
+     * @since  2.1.1
+     */
+    protected function getSiteEntryPointUrl(array $query): string
+    {
+        return rtrim(Uri::root(true), '/') . '/index.php?' . http_build_query($query);
+    }
+
+    /**
+     * Method to get a non-empty cookie path.
+     *
+     * @return  string
+     *
+     * @since  2.1.1
+     */
+    protected function getCookiePath(): string
+    {
+        $path = (string) Factory::getApplication()->get('cookie_path', '/');
+
+        return ($path !== '') ? $path : '/';
+    }
+
+    /**
+     * Method to get cookie domain.
+     *
+     * @return  string
+     *
+     * @since  2.1.1
+     */
+    protected function getCookieDomain(): string
+    {
+        return (string) Factory::getApplication()->get('cookie_domain', '');
+    }
+
+    /**
+     * Method to get cookie options.
+     *
+     * @param   int  $expires  Cookie expiration timestamp.
+     *
+     * @return  array
+     *
+     * @since  2.1.1
+     */
+    protected function getCookieOptions(int $expires): array
+    {
+        return [
+            'expires' => $expires,
+            'path'     => $this->getCookiePath(),
+            'domain'   => $this->getCookieDomain(),
+            'secure'   => Factory::getApplication()->isSSLConnection(),
+        ];
+    }
+
+    /**
      * Method to delete sitemap.
      *
      * @return  bool True on success, False on failure.
@@ -129,6 +159,31 @@ class SitemapController extends BaseController
         $app    = Factory::getApplication();
         $cookie = 'jlsitemap_delete';
         $result = $this->input->cookie->get($cookie, false, 'raw');
+        $json   = $this->input->getCmd('response') === 'json';
+
+        if ($json) {
+            $model = $app
+                ->bootComponent('com_jlsitemap')
+                ->getMVCFactory()
+                ->createModel('Sitemap', 'Site', ['ignore_request' => true]);
+
+            $success = $model->delete();
+            $message = $success ? Text::_('COM_JLSITEMAP_SITEMAP_DELETE_SUCCESS') : Text::_('COM_JLSITEMAP_SITEMAP_DELETE_FAILURE');
+
+            if (!$success) {
+                echo new JsonResponse(null, $message, true);
+                $app->close();
+            }
+
+            echo new JsonResponse(
+                [
+                    'messages' => [
+                        ['type' => 'message', 'text' => $message],
+                    ],
+                ]
+            );
+            $app->close();
+        }
 
         // Redirect to site controller
         if (!$result) {
@@ -143,7 +198,7 @@ class SitemapController extends BaseController
                 'return'     => base64_encode(Route::_('index.php?option=com_jlsitemap&task=sitemap.delete'))
             );
 
-            $app->redirect(trim(Uri::root(true), '/') . '/index.php?' . http_build_query($redirect));
+            $app->redirect($this->getSiteEntryPointUrl($redirect));
 
             return true;
         }
@@ -157,10 +212,7 @@ class SitemapController extends BaseController
         $this->input->cookie->set(
             $cookie,
             '',
-            Factory::getDate('-1 day')->toUnix(),
-            $app->get('cookie_path', '/'),
-            $app->get('cookie_domain'),
-            $app->isSSLConnection()
+            $this->getCookieOptions(Factory::getDate('-1 day')->toUnix())
         );
 
         // Set error
