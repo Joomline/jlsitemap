@@ -13,7 +13,6 @@ namespace Joomla\Component\JLSitemap\Administrator\Helper;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\Filesystem\File;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\HTML\Helpers\Sidebar;
 use Joomla\CMS\Language\Text;
@@ -46,7 +45,7 @@ class JLSitemapHelper extends ContentHelper
         );
 
         $filename = ComponentHelper::getParams('com_jlsitemap')->get('filename', 'sitemap');
-        if (File::exists(JPATH_ROOT . '/' . $filename . '.xml')) {
+        if (\is_file(JPATH_ROOT . '/' . $filename . '.xml')) {
             Sidebar::addEntry(
                 Text::_('COM_JLSITEMAP_SITEMAP'),
                 Uri::root() . 'sitemap.xml',

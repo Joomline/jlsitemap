@@ -118,7 +118,7 @@ return new class () implements ServiceProviderInterface {
 				$files [] = JPATH_ROOT . '/' . $filename . '_sitemapindex.xsl';
 				foreach ($files as $file)
 				{
-					if (File::exists($file))
+					if (\is_file($file))
 					{
 						File::delete($file);
 					}
