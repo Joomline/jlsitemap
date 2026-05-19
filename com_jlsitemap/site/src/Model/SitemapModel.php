@@ -850,21 +850,21 @@ class SitemapModel extends BaseDatabaseModel implements SitemapGeneratorAdapterI
                 $url = $sitemap->addChild('url');
 
                 // Loc
-                $url->addChild('loc', $loc);
+                $this->addTextChild($url, 'loc', $loc);
 
                 // Changefreq
                 if ($changefreq = $row->get('changefreq', false)) {
-                    $url->addChild('changefreq', $changefreq);
+                    $this->addTextChild($url, 'changefreq', $changefreq);
                 }
 
                 // Priority
                 if ($priority = $row->get('priority', false)) {
-                    $url->addChild('priority', $row->get('priority'));
+                    $this->addTextChild($url, 'priority', $row->get('priority'));
                 }
 
                 // Lastmod
                 if ($lastmod = $row->get('lastmod', false)) {
-                    $url->addChild('lastmod', Factory::getDate($lastmod)->toISO8601());
+                    $this->addTextChild($url, 'lastmod', Factory::getDate($lastmod)->toISO8601());
                 }
 
                 // Alternates
@@ -893,7 +893,7 @@ class SitemapModel extends BaseDatabaseModel implements SitemapGeneratorAdapterI
                         }
 
                         $image = $url->addChild('image', '', 'http://www.google.com/schemas/sitemap-image/1.1');
-                        $image->addChild('loc', $href, 'http://www.google.com/schemas/sitemap-image/1.1');
+                        $this->addTextChild($image, 'loc', $href, 'http://www.google.com/schemas/sitemap-image/1.1');
                     }
                 }
             }
@@ -931,6 +931,29 @@ class SitemapModel extends BaseDatabaseModel implements SitemapGeneratorAdapterI
         }
 
         return $href;
+    }
+
+    /**
+     * Add a text child with XML-safe content.
+     *
+     * @param   \SimpleXMLElement  $element    Parent element.
+     * @param   string             $name       Child element name.
+     * @param   mixed              $value      Raw text value.
+     * @param   ?string            $namespace  Optional namespace.
+     *
+     * @return  \SimpleXMLElement
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function addTextChild(
+        \SimpleXMLElement $element,
+        string $name,
+        mixed $value,
+        ?string $namespace = null
+    ): \SimpleXMLElement {
+        $value = htmlspecialchars((string) $value, ENT_XML1 | ENT_COMPAT, 'UTF-8', false);
+
+        return $element->addChild($name, $value, $namespace);
     }
 
     /**
