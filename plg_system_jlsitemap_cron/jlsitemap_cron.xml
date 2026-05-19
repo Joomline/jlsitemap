@@ -27,6 +27,11 @@
 	<config>
 		<fields name="params">
 			<fieldset name="basic" addfieldprefix="Joomla\Plugin\System\Jlsitemap_cron\Fields">
+				<field name="deprecated_note"
+					type="note"
+					label="PLG_SYSTEM_JLSITEMAP_CRON_DEPRECATED_NOTE_LABEL"
+					description="PLG_SYSTEM_JLSITEMAP_CRON_DEPRECATED_NOTE_DESC"
+					class="alert alert-warning" />
 				<field name="link"
 					type="link"
 					label="PLG_SYSTEM_JLSITEMAP_CRON_PARAMS_LINK" />
