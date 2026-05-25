@@ -190,7 +190,9 @@ final class Contact extends CMSPlugin implements SubscriberInterface
             // Add alternates to categories
             if (!empty($alternates)) {
                 foreach ($categories as &$category) {
-                    $category->alternates = ($category->alternates) ? $alternates[$category->alternates] : false;
+                    $category->alternates = ($category->alternates && isset($alternates[$category->alternates]))
+                        ? $alternates[$category->alternates]
+                        : false;
                 }
             }
 
@@ -342,7 +344,9 @@ final class Contact extends CMSPlugin implements SubscriberInterface
             // Add alternates to contacts
             if (!empty($alternates)) {
                 foreach ($contacts as &$contact) {
-                    $contact->alternates = ($contact->alternates) ? $alternates[$contact->alternates] : false;
+                    $contact->alternates = ($contact->alternates && isset($alternates[$contact->alternates]))
+                        ? $alternates[$contact->alternates]
+                        : false;
                 }
             }
 
