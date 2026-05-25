@@ -203,7 +203,9 @@ final class Content extends CMSPlugin implements SubscriberInterface
             // Add alternates to categories
             if (!empty($alternates)) {
                 foreach ($categories as &$category) {
-                    $category->alternates = ($category->alternates) ? $alternates[$category->alternates] : false;
+                    $category->alternates = ($category->alternates && isset($alternates[$category->alternates]))
+                        ? $alternates[$category->alternates]
+                        : false;
                 }
             }
 
@@ -291,7 +293,7 @@ final class Content extends CMSPlugin implements SubscriberInterface
 
                 $publishUp = $row->publish_up ?? null;
 
-                if (empty($publishUp) || $publishUp == $nullDate || Factory::getDate($publishUp)->toUnix() > $nowDate) {
+                if (!empty($publishUp) && $publishUp != $nullDate && Factory::getDate($publishUp)->toUnix() > $nowDate) {
                     $exclude[] = [
                         'type' => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE'),
                         'msg'  => Text::_('PLG_JLSITEMAP_CONTENT_EXCLUDE_ARTICLE_PUBLISH_UP'),
@@ -365,7 +367,9 @@ final class Content extends CMSPlugin implements SubscriberInterface
             // Add alternates to articles
             if (!empty($alternates)) {
                 foreach ($articles as &$article) {
-                    $article->alternates = ($article->alternates) ? $alternates[$article->alternates] : false;
+                    $article->alternates = ($article->alternates && isset($alternates[$article->alternates]))
+                        ? $alternates[$article->alternates]
+                        : false;
                 }
             }
 
