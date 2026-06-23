@@ -18,6 +18,7 @@ use Joomla\CMS\Version;
 use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
+use Joomla\Registry\Registry;
 
 \defined('_JEXEC') or die;
 
@@ -173,6 +174,10 @@ return new class () implements ServiceProviderInterface {
 			 */
 			public function postflight(string $type, InstallerAdapter $adapter): bool
 			{
+				if ($type !== 'uninstall')
+				{
+					$this->addAccessKey();
+				}
 
 				return true;
 
@@ -213,6 +218,74 @@ return new class () implements ServiceProviderInterface {
 				}
 
 				return true;
+			}
+
+			/**
+			 * Method to add access key to component params.
+			 *
+			 * @since  2.2.0
+			 */
+			protected function addAccessKey(): void
+			{
+				$params    = $this->getComponentParams();
+				$accessKey = (string) $params->get('access_key');
+
+				if ($accessKey !== '')
+				{
+					return;
+				}
+
+				$accessKey = $this->generateSecret();
+				$params->set('access_key', $accessKey);
+
+				$component          = new \stdClass();
+				$component->element = 'com_jlsitemap';
+				$component->params  = (string) $params;
+
+				$this->db->updateObject('#__extensions', $component, ['element']);
+			}
+
+			/**
+			 * Generate an installer-safe access key.
+			 *
+			 * @param   int  $length  Access key length.
+			 *
+			 * @return  string
+			 *
+			 * @since   2.2.0
+			 */
+			protected function generateSecret(int $length = 15): string
+			{
+				$secret = '';
+				$chars  = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's',
+					't', 'u', 'v', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+					'P', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+				for ($i = 0; $i < $length; $i++)
+				{
+					$key     = random_int(0, count($chars) - 1);
+					$secret .= (string) $chars[$key];
+				}
+
+				return $secret;
+			}
+
+			/**
+			 * Method to get component params.
+			 *
+			 * @return  Registry  Component params registry.
+			 *
+			 * @since   2.2.0
+			 */
+			protected function getComponentParams(): Registry
+			{
+				$db    = $this->db;
+				$query = $db->createQuery()
+					->select('params')
+					->from('#__extensions')
+					->where($db->quoteName('element') . ' = ' . $db->quote('com_jlsitemap'));
+
+				return new Registry($db->setQuery($query)->loadResult());
 			}
 		});
 	}
