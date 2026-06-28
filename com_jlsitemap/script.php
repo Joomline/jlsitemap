@@ -17,14 +17,11 @@ use Joomla\CMS\Installer\InstallerAdapter;
 use Joomla\CMS\Installer\InstallerScriptInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
-use Joomla\Component\JLSitemap\Administrator\Helper\SecretsHelper;
-use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\CMS\Version;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
-use Joomla\Registry\Registry;
 
 return new class () implements ServiceProviderInterface {
 	public function register(Container $container)
@@ -39,15 +36,6 @@ return new class () implements ServiceProviderInterface {
 			 * @since  1.0.0
 			 */
 			protected AdministratorApplication $app;
-
-			/**
-			 * The Database object.
-			 *
-			 * @var   DatabaseInterface
-			 *
-			 * @since  1.0.0
-			 */
-			protected DatabaseInterface $db;
 
 			/**
 			 * Minimum Joomla version required to install the extension.
@@ -77,7 +65,6 @@ return new class () implements ServiceProviderInterface {
 			public function __construct(AdministratorApplication $app)
 			{
 				$this->app = $app;
-				$this->db  = Factory::getContainer()->get(DatabaseInterface::class);
 			}
 
 			/**
@@ -175,9 +162,6 @@ return new class () implements ServiceProviderInterface {
 			{
 				if ($type != 'uninstall')
 				{
-					// Add access key
-					$this->addAccessKey();
-
 					// Parse layouts
 					$this->parseLayouts($adapter->getParent()->getManifest()->layouts, $adapter->getParent());
 				}
@@ -240,19 +224,6 @@ return new class () implements ServiceProviderInterface {
 			}
 
 			/**
-			 * Method to add access key to component params.
-			 *
-			 * @since  1.4.0
-			 */
-			protected function addAccessKey()
-			{
-				$this->app->bootComponent('com_jlsitemap');
-
-				SecretsHelper::getAccessKey();
-			}
-
-
-			/**
 			 * Method to parse through a layouts element of the installation manifest and remove the files that were installed.
 			 *
 			 * @param   SimpleXMLElement  $element  The XML node to process.
@@ -304,24 +275,6 @@ return new class () implements ServiceProviderInterface {
 				}
 
 				return true;
-			}
-
-			/**
-			 * Method to get component params.
-			 *
-			 * @return  Registry  Component params registry.
-			 *
-			 * @since  1.3.1
-			 */
-			protected function getComponentParams()
-			{
-				$db    = $this->db;
-				$query = $db->getQuery(true)
-					->select('params')
-					->from('#__extensions')
-					->where($db->quoteName('element') . ' = ' . $db->quote('com_jlsitemap'));
-
-				return new Registry($db->setQuery($query)->loadResult());
 			}
 
 		});
