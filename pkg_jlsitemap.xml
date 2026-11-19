@@ -14,6 +14,7 @@
 	<languages folder="language">
 		<language tag="de-DE">de-DE/pkg_jlsitemap.sys.ini</language>
 		<language tag="en-GB">en-GB/pkg_jlsitemap.sys.ini</language>
+		<language tag="es-ES">es-ES/pkg_jlsitemap.sys.ini</language>
 		<language tag="ru-RU">ru-RU/pkg_jlsitemap.sys.ini</language>
 	</languages>
 	<files>

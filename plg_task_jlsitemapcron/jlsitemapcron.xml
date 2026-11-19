@@ -22,6 +22,8 @@
 		<language tag="en-GB">language/en-GB/plg_task_jlsitemapcron.sys.ini</language>
 		<language tag="de-DE">language/de-DE/plg_task_jlsitemapcron.ini</language>
 		<language tag="de-DE">language/de-DE/plg_task_jlsitemapcron.sys.ini</language>
+		<language tag="es-ES">language/es-ES/plg_task_jlsitemapcron.ini</language>
+		<language tag="es-ES">language/es-ES/plg_task_jlsitemapcron.sys.ini</language>
 	</languages>
 	<config>
 		<fields name="params">
